@@ -118,6 +118,7 @@ AnalysisModelTransformation returns AnalysisModelTransformation:
 			'minimal-element-set' ':' ('false' | minimalElementSet?='true') |
 			'scheduler' ':' scheduler+=Scheduler |
 			'constraint' ':' constraint=Constraint |
+			'split-by' ':' split=AnalysisSplit |
 			coverages+=Coverage
 		)*
 	'}'
@@ -188,6 +189,10 @@ enum Scheduler returns Scheduler:
 
 enum AnalysisLanguage returns AnalysisLanguage:
 	UPPAAL = "UPPAAL" | THETA = "Theta" | XSTS_UPPAAL = "XSTS-UPPAAL"
+;
+
+enum AnalysisSplit returns AnalysisSplit:
+	NONE = "NONE" | CHOICE = "CHOICE"
 ;
 
 Coverage returns Coverage:

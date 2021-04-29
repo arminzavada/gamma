@@ -29,6 +29,7 @@ import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 import java.io.File
 import java.util.List
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
 
 class Gamma2XstsTransformerSerializer {
 	
@@ -37,6 +38,7 @@ class Gamma2XstsTransformerSerializer {
 	protected final String targetFolderUri
 	protected final String fileName
 	protected final Integer schedulingConstraint
+	protected final AnalysisSplit split
 	// Slicing
 	protected final PropertyPackage propertyPackage
 	// Annotation
@@ -68,7 +70,7 @@ class Gamma2XstsTransformerSerializer {
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint) {
-		this(component, arguments, targetFolderUri, fileName, schedulingConstraint,
+		this(component, arguments, targetFolderUri, fileName, schedulingConstraint, AnalysisSplit.NONE,
 			null, null, null, null, null, null,InteractionCoverageCriterion.EVERY_INTERACTION,
 			InteractionCoverageCriterion.EVERY_INTERACTION,
 			null, DataflowCoverageCriterion.ALL_USE)
@@ -77,6 +79,7 @@ class Gamma2XstsTransformerSerializer {
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint,
+			AnalysisSplit split,
 			PropertyPackage propertyPackage,
 			ComponentInstanceReferences testedComponentsForStates,
 			ComponentInstanceReferences testedComponentsForTransitions,
@@ -92,6 +95,7 @@ class Gamma2XstsTransformerSerializer {
 		this.targetFolderUri = targetFolderUri
 		this.fileName = fileName
 		this.schedulingConstraint = schedulingConstraint
+		this.split = split
 		//
 		this.propertyPackage = propertyPackage
 		//
@@ -121,9 +125,9 @@ class Gamma2XstsTransformerSerializer {
 				dataflowTestedVariables, dataflowCoverageCriterion,
 				targetFolderUri, fileName)
 		slicerAnnotatorAndPropertyGenerator.execute
-		val gammaToXSTSTransformer = new GammaToXstsTransformer(schedulingConstraint, true, true)
+		val gammaToXstsTransformer = new GammaToXstsTransformer(schedulingConstraint, true, true, split)
 		// Normal transformation
-		val xSts = gammaToXSTSTransformer.execute(newGammaPackage)
+		val xSts = gammaToXstsTransformer.execute(newGammaPackage)
 		// EMF
 		xSts.normalSave(targetFolderUri, fileName.emfXStsFileName)
 		// String

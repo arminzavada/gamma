@@ -15,6 +15,7 @@ import hu.bme.mit.gamma.xsts.model.XSTS
 import java.util.List
 import hu.bme.mit.gamma.xsts.transformation.api.Gamma2XstsTransformerSerializer
 import hu.bme.mit.gamma.xsts.uppaal.transformation.api.Xsts2UppaalTransformerSerializer
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
 
 class Gamma2XstsUppaalTransformerSerializer {
 
@@ -23,6 +24,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 	protected final String targetFolderUri
 	protected final String fileName
 	protected final Integer schedulingConstraint
+	protected final AnalysisSplit split
 	// Slicing
 	protected final PropertyPackage propertyPackage
 	// Annotation
@@ -51,7 +53,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint) {
-		this(component, arguments, targetFolderUri, fileName, schedulingConstraint,
+		this(component, arguments, targetFolderUri, fileName, schedulingConstraint, AnalysisSplit.NONE,
 			null, null, null, null, null, null, InteractionCoverageCriterion.EVERY_INTERACTION,
 			InteractionCoverageCriterion.EVERY_INTERACTION,
 			null, DataflowCoverageCriterion.ALL_USE)
@@ -60,6 +62,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint,
+			AnalysisSplit split,
 			PropertyPackage propertyPackage,
 			ComponentInstanceReferences testedComponentsForStates,
 			ComponentInstanceReferences testedComponentsForTransitions,
@@ -75,6 +78,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 		this.targetFolderUri = targetFolderUri
 		this.fileName = fileName
 		this.schedulingConstraint = schedulingConstraint
+		this.split = split
 		//
 		this.propertyPackage = propertyPackage
 		//
@@ -92,7 +96,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 	def execute() {
 		val xStsTransformer = new Gamma2XstsTransformerSerializer(component,
 			arguments, targetFolderUri,
-			fileName, schedulingConstraint,
+			fileName, schedulingConstraint, split,
 			propertyPackage,
 			testedComponentsForStates, testedComponentsForTransitions,
 			testedComponentsForTransitionPairs, testedComponentsForOutEvents,

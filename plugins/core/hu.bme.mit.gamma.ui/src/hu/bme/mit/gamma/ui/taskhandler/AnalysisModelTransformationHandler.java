@@ -74,6 +74,8 @@ import hu.bme.mit.gamma.uppaal.composition.transformation.api.util.UppaalModelPr
 import hu.bme.mit.gamma.util.FileUtil;
 import hu.bme.mit.gamma.util.GammaEcoreUtil;
 import hu.bme.mit.gamma.xsts.model.XSTS;
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer;
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit;
 import hu.bme.mit.gamma.xsts.transformation.api.Gamma2XstsTransformerSerializer;
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer;
 import hu.bme.mit.gamma.xsts.uppaal.transformation.api.Xsts2UppaalTransformerSerializer;
@@ -97,17 +99,17 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 						transformer = new Gamma2UppaalTransformer();
 					}
 					else if (modelReference instanceof XSTSReference) {
-						transformer = new XSTS2UppaalTransformer();
+						transformer = new Xsts2UppaalTransformer();
 					}
 					else {
 						throw new IllegalArgumentException("Not known model reference: " + modelReference);
 					}
 					break;
 				case THETA:
-					transformer = new Gamma2XSTSTransformer();
+					transformer = new Gamma2XstsTransformer();
 					break;
 				case XSTS_UPPAAL:
-					transformer = new Gamma2XSTSUppaalTransformer();
+					transformer = new Gamma2XstsUppaalTransformer();
 					break;
 				default:
 					throw new IllegalArgumentException("Only UPPAAL and Theta are supported.");
@@ -303,6 +305,18 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			}
 		}
 		
+		protected GammaToXstsTransformer.AnalysisSplit transformAnalysisSplit(
+				hu.bme.mit.gamma.genmodel.model.AnalysisSplit split) {
+			switch (split) {
+				case NONE:
+					return GammaToXstsTransformer.AnalysisSplit.NONE;
+				case CHOICE:
+					return GammaToXstsTransformer.AnalysisSplit.CHOICE;
+				default:
+					throw new IllegalArgumentException("Not known split: " + split);
+			}
+		}
+		
 	}
 	
 	class Gamma2UppaalTransformer extends AnalysisModelTransformer {
@@ -400,7 +414,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 	}
 	
-	class Gamma2XSTSTransformer extends AnalysisModelTransformer {
+	class Gamma2XstsTransformer extends AnalysisModelTransformer {
 		
 		protected final AnalysisModelPreprocessor modelPreprocessor = AnalysisModelPreprocessor.INSTANCE;
 		protected final ActionSerializer actionSerializer = ActionSerializer.INSTANCE;
@@ -410,6 +424,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = transformConstraint(transformation.getConstraint());
+			AnalysisSplit split = transformAnalysisSplit(transformation.getSplit());
 			String fileName = transformation.getFileName().get(0);
 			// Coverages
 			List<Coverage> coverages = transformation.getCoverages();
@@ -434,7 +449,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			Gamma2XstsTransformerSerializer transformer = new Gamma2XstsTransformerSerializer(
 					component,
 					reference.getArguments(), targetFolderUri, fileName,
-					schedulingConstraint, transformation.getPropertyPackage(),
+					schedulingConstraint, split, transformation.getPropertyPackage(),
 					testedComponentsForStates, testedComponentsForTransitions,
 					testedComponentsForTransitionPairs, testedComponentsForOutEvents,
 					testedInteractions, senderCoverageCriterion, receiverCoverageCriterion,
@@ -457,7 +472,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 	
 	}
 	
-	class XSTS2UppaalTransformer extends AnalysisModelTransformer {
+	class Xsts2UppaalTransformer extends AnalysisModelTransformer {
 		
 		public void execute(AnalysisModelTransformation transformation) {
 			logger.log(Level.INFO, "Starting XSTS-UPPAAL transformation.");
@@ -485,13 +500,14 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 	}
 	
-	class Gamma2XSTSUppaalTransformer extends AnalysisModelTransformer {
+	class Gamma2XstsUppaalTransformer extends AnalysisModelTransformer {
 		
 		public void execute(AnalysisModelTransformation transformation) throws IOException {
 			logger.log(Level.INFO, "Starting Gamma -> XSTS-UPPAAL transformation.");
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = transformConstraint(transformation.getConstraint());
+			AnalysisSplit split = transformAnalysisSplit(transformation.getSplit());
 			String fileName = transformation.getFileName().get(0);
 			// Coverages
 			List<Coverage> coverages = transformation.getCoverages();
@@ -516,7 +532,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			Gamma2XstsUppaalTransformerSerializer transformer = new Gamma2XstsUppaalTransformerSerializer(
 					component,
 					reference.getArguments(), targetFolderUri, fileName,
-					schedulingConstraint, transformation.getPropertyPackage(),
+					schedulingConstraint, split, transformation.getPropertyPackage(),
 					testedComponentsForStates, testedComponentsForTransitions,
 					testedComponentsForTransitionPairs, testedComponentsForOutEvents,
 					testedInteractions, senderCoverageCriterion, receiverCoverageCriterion,

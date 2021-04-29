@@ -84,9 +84,9 @@ public class CommandHandler extends AbstractHandler {
 							resource = resourceSet.getResource(flattenedFileUri, true);
 							logger.log(Level.INFO, "Starting XSTS transformation.");
 							Package _package = (Package) resource.getContents().get(0);
-							GammaToXstsTransformer gammaToXSTSTransformer = new GammaToXstsTransformer();
+							GammaToXstsTransformer gammaToXstsTransformer = new GammaToXstsTransformer();
 							File xStsFile = new File(absoluteParentFolder + File.separator + fileNamer.getXtextXStsFileName(fileName));
-							String xStsString = gammaToXSTSTransformer.preprocessAndExecuteAndSerialize(_package, absoluteParentFolder, fileName);
+							String xStsString = gammaToXstsTransformer.preprocessAndExecuteAndSerialize(_package, absoluteParentFolder, fileName);
 							fileUtil.saveString(xStsFile, xStsString);
 							logger.log(Level.INFO, "XSTS transformation has been finished.");
 						}

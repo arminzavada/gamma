@@ -78,8 +78,10 @@ class GammaToXstsTransformer {
 	protected final extension XstsActionUtil xStsActionUtil = XstsActionUtil.INSTANCE
 	protected final extension StatechartUtil statechartUtil = StatechartUtil.INSTANCE
 	protected final extension ExpressionEvaluator expressionEvaluator = ExpressionEvaluator.INSTANCE
+	protected final extension XstsSplitter xStsSplitter = XstsSplitter.INSTANCE
 	// Transformation settings
 	protected final Integer schedulingConstraint
+	protected final AnalysisSplit split
 	protected boolean transformOrthogonalActions
 	protected boolean optimize
 	// Logger
@@ -91,9 +93,15 @@ class GammaToXstsTransformer {
 	
 	new(Integer schedulingConstraint,
 			boolean transformOrthogonalActions, boolean optimize) {
+		this(schedulingConstraint, transformOrthogonalActions, optimize, AnalysisSplit.NONE)
+	}
+	
+	new(Integer schedulingConstraint,
+			boolean transformOrthogonalActions, boolean optimize, AnalysisSplit split) {
 		this.schedulingConstraint = schedulingConstraint
 		this.transformOrthogonalActions = transformOrthogonalActions
 		this.optimize = optimize
+		this.split = split
 	}
 	
 	def preprocessAndExecuteAndSerialize(hu.bme.mit.gamma.statechart.interface_.Package _package,
@@ -146,7 +154,13 @@ class GammaToXstsTransformer {
 		}
 		// Optimizing
 		xSts.optimize
-		return xSts
+		// Splitting
+		if (split == AnalysisSplit.NONE) {
+			return xSts
+		}
+		else {
+			return xSts.split
+		}
 	}
 	
 	protected def transformParameters(Component component, List<Expression> arguments) {
@@ -369,8 +383,8 @@ class GammaToXstsTransformer {
 		// Note that the package is already transformed and traced because of the "val lowlevelPackage = gammaToLowlevelTransformer.transform(_package)" call
 		val lowlevelStatechart = gammaToLowlevelTransformer.transform(statechart)
 		lowlevelPackage.components += lowlevelStatechart
-		val lowlevelToXSTSTransformer = new LowlevelToXstsTransformer(lowlevelPackage, optimize)
-		val xStsEntry = lowlevelToXSTSTransformer.execute
+		val lowlevelToXstsTransformer = new LowlevelToXstsTransformer(lowlevelPackage, optimize)
+		val xStsEntry = lowlevelToXstsTransformer.execute
 		lowlevelPackage.components -= lowlevelStatechart // So that next time the matches do not return elements from this statechart
 		val xSts = xStsEntry.key
 		// 0-ing all variable declaration initial expression, the normal ones are in the init action
@@ -553,4 +567,7 @@ class GammaToXstsTransformer {
 		xSts.changeTransitions(xSts.transitions.optimize)
 	}
 	
+	enum AnalysisSplit {
+		NONE, CHOICE
+	}
 }
