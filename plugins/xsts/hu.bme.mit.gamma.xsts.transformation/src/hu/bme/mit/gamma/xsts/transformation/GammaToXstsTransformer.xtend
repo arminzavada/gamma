@@ -106,12 +106,12 @@ class GammaToXstsTransformer {
 	
 	def preprocessAndExecuteAndSerialize(hu.bme.mit.gamma.statechart.interface_.Package _package,
 			String targetFolderUri, String fileName) {
-		return _package.preprocessAndExecute(#[], targetFolderUri, fileName).serializeXSTS
+		return _package.preprocessAndExecute(#[], targetFolderUri, fileName).serializeXsts
 	}
 	
 	def preprocessAndExecuteAndSerialize(hu.bme.mit.gamma.statechart.interface_.Package _package,
 			List<Expression> topComponentArguments, String targetFolderUri, String fileName) {
-		return _package.preprocessAndExecute(topComponentArguments, targetFolderUri, fileName).serializeXSTS
+		return _package.preprocessAndExecute(topComponentArguments, targetFolderUri, fileName).serializeXsts
 	}
 
 	def preprocessAndExecute(hu.bme.mit.gamma.statechart.interface_.Package _package,
