@@ -21,6 +21,10 @@ import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
 import org.eclipse.emf.ecore.util.EcoreUtil
+import hu.bme.mit.gamma.xsts.util.XstsActionUtil
+import hu.bme.mit.gamma.expression.util.ExpressionUtil
+import hu.bme.mit.gamma.expression.model.Expression
+import hu.bme.mit.gamma.xsts.model.CompositeAction
 
 class XstsSplitter {
 	static class XstsSlice {
@@ -46,16 +50,14 @@ class XstsSplitter {
 		def toTransition() {
 			val seq = xstsFactory.createSequentialAction
 		 	seq.actions.addAll(actions)
-		 	return xstsFactory.createXTransition => [
-		 		action = seq
-		 	]
+		 	return actionUtil.wrap(seq)
 		}
-		def isTranEndSlice() {
+		def isTranEndSlice(int endId) {
 			return (actions.last instanceof AssignmentAction &&
 				(actions.last as AssignmentAction).lhs instanceof DirectReferenceExpression &&
 				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == xStsSplitter._last &&
 				(actions.last as AssignmentAction).rhs instanceof IntegerLiteralExpression &&
-				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value == 0);
+				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value == endId);
 		}
 	}
 	
@@ -64,6 +66,8 @@ class XstsSplitter {
 	protected static final GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE;
 	protected static final XSTSModelFactory xstsFactory = XSTSModelFactory.eINSTANCE
  	protected static final ExpressionModelFactory exprFactory = ExpressionModelFactory.eINSTANCE
+ 	protected static final XstsActionUtil actionUtil = XstsActionUtil.INSTANCE
+ 	protected static final ExpressionUtil exprUtil = ExpressionUtil.INSTANCE
 		
 	var VariableDeclaration _last = null
 	int _id = 0
@@ -73,23 +77,36 @@ class XstsSplitter {
 	}
 	
 	val Set<VariableDeclarationAction> localVarDecls = newHashSet
- 	val Map<XTransition, Set<XstsSlice>> tranEndSlices = newHashMap
  	val Map<XstsSlice, XTransition> sliceOriginalTranMap = newHashMap
+ 	val Map<XTransition, Set<XstsSlice>> tranEndSlices = newHashMap
+ 	val Map<XstsSlice, CompositeAction> sliceCompositeActionMap = newHashMap
+ 	val Map<CompositeAction, Set<XstsSlice>> compositeActionEndSlices = newHashMap
  	val Map<VariableDeclarationAction, XstsSlice> varDeclSlice = newHashMap
  	val Map<VariableDeclaration, Set<XstsSlice>> varUseSlices = newHashMap
+	
+	def getScopeEndSlices(XstsSlice slice) {
+		if (sliceCompositeActionMap.containsKey(slice)) {
+			var scope = sliceCompositeActionMap.get(slice)
+			return compositeActionEndSlices.get(scope)
+		} else {
+			var scope = sliceOriginalTranMap.get(slice)
+			return tranEndSlices.get(scope)
+		}
+	}
 	
 	def init() {
 		_id = 0
 		localVarDecls.clear
-		tranEndSlices.clear
 		sliceOriginalTranMap.clear
+		tranEndSlices.clear
+		sliceCompositeActionMap.clear
+		compositeActionEndSlices.clear
 		varDeclSlice.clear
 		varUseSlices.clear
 	}
 	
 	 def XSTS split(XSTS input) {
 	 	val result = ecoreUtil.clone(input)
-	 	//TODO Check existence of this variable name
 	 	_last = exprFactory.createVariableDeclaration => [
 	 		name = "__last"
 	 		type = exprFactory.createIntegerTypeDefinition
@@ -97,6 +114,9 @@ class XstsSplitter {
 	 			value = BigInteger.valueOf(0)
 	 		]
 	 	]
+	 	while (result.hasGlobalVarWithName(_last.name)) {
+	 		_last.name = "_" + _last.name
+	 	}
 	 	result.variableDeclarations.add(_last)
 	 	
 	 	init()
@@ -108,7 +128,7 @@ class XstsSplitter {
 	 		// Every transition starts and ends with assuming 0
 	 		val slices = tran.action.slice(0, 0)
 	 		
-	 		tranEndSlices += (tran -> slices.getEndSlices)
+	 		tranEndSlices += (tran -> slices.getEndSlices(0))
 	 		for (slice : slices)
 	 			sliceOriginalTranMap += (slice -> tran)
 	 		
@@ -123,15 +143,17 @@ class XstsSplitter {
 	 		var localVar = localVarDecl.variableDeclaration
 	 		if (varUseSlices.get(localVar).size > 1) {
 	 			var declSlice = varDeclSlice.get(localVarDecl)
-	 			var declOriginalTran = sliceOriginalTranMap.get(declSlice)
 	 			// Replace with global var
-	 			result.variableDeclarations += localVar
 	 			localVarDecl.variableDeclaration = null
-	 			EcoreUtil.delete(localVarDecl) //TODO ez így jó?
-	 			// Reset
-	 			declSlice.actions.add(0, createAssignment(localVar, 0))
-	 			for (endSlice : tranEndSlices.get(declOriginalTran)) {
-	 				endSlice.actions.add(createAssignment(localVar, 0))
+	 			localVar.renameVarIfNecessary(result)
+	 			result.variableDeclarations += localVar
+	 			EcoreUtil.delete(localVarDecl)
+	 			val initialVal = exprUtil.getInitialValue(localVar)
+	 			// Replace original declaration with initial value assignment
+	 			declSlice.actions.add(1, createAssignment(localVar, initialVal))
+	 			// Add initial value assignment to every end of its scope
+	 			for (endSlice : declSlice.scopeEndSlices) {
+	 				endSlice.actions.add(createAssignment(localVar, initialVal))
 	 			}
 	 		}
 	 	}
@@ -139,9 +161,22 @@ class XstsSplitter {
 	 	return result
 	 }
 	 
-	 def Set<XstsSlice> getEndSlices(Collection<XstsSlice> slices) {
+	 def hasGlobalVarWithName(XSTS xSts, String name) {
+	 	return !(xSts.variableDeclarations.filter[v | v.name.equals(name)].isEmpty)
+	 }
+	 def renameVarIfNecessary(VariableDeclaration varDecl, XSTS xSts) {
+	 	if (xSts.hasGlobalVarWithName(varDecl.name)) {
+	 		var cnt = 0
+		 	while (xSts.hasGlobalVarWithName(varDecl.name + cnt)) {
+		 		cnt++
+		 	}
+		 	varDecl.name = varDecl.name + cnt
+	 	}
+	 }
+	 
+	 def Set<XstsSlice> getEndSlices(Collection<XstsSlice> slices, int endId) {
 	 	return slices.stream
-		 	.filter[s | s.isTranEndSlice]
+		 	.filter[s | s.isTranEndSlice(endId)]
 		 	.collect(Collectors.toSet)
 	 }
 	 
@@ -167,7 +202,8 @@ class XstsSplitter {
 	 	
 	 	for (action : seq.actions) {
 	 		val last = (action == seq.actions.last)
-	 		if (action instanceof NonDeterministicAction) {
+	 		//TODO Every CompositeAction (not only choice)
+	 		if (action instanceof NonDeterministicAction) {// Should slice
 	 			var int sliceSeparatorId
 	 			
 	 			// To avoid 'empty' slice between consecutive choices
@@ -180,16 +216,18 @@ class XstsSplitter {
 	 				sliceSeparatorId = _id
 	 			}
 	 			
-	 			if (last) {
-	 				slices += action.slice(sliceSeparatorId, endId)
+	 			val sliceEndId = last ? endId : nextId()
+	 			var newSlices = action.slice(sliceSeparatorId, sliceEndId)
+	 			compositeActionEndSlices += (action -> newSlices.getEndSlices(endId))
+	 			if (!last) {
+	 				slice = new XstsSlice(sliceEndId)
 	 			}
-	 			else {
-	 				val choiceEndId = nextId()
-	 				slices += action.slice(sliceSeparatorId, choiceEndId)
-	 				slice = new XstsSlice(choiceEndId)
+	 			slices += newSlices
+	 			for (newSlice : newSlices) {
+	 				sliceCompositeActionMap += (newSlice -> action)
 	 			}
 	 		}
-	 		else {// Non-choice
+	 		else {// Should not slice
 	 			slice += action
 	 			
 	 			if (action instanceof VariableDeclarationAction) {
@@ -216,6 +254,7 @@ class XstsSplitter {
 	 	}
 	 	return slices
 	 }
+	 //TODO For every CompositeAction (LoopAction should just return itself in one slice)
 	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, int beginId, int endId) {
 	 	val List<XstsSlice> slices = newArrayList
 	 	for (subaction : choice.actions) {
@@ -251,6 +290,12 @@ class XstsSplitter {
 	 	xstsFactory.createAssignmentAction => [
 	 		lhs = createDirectReference(varDecl)
 	 		rhs = createIntegerLiteralExpr(value)
+	 	]
+	 }
+	 def createAssignment(VariableDeclaration varDecl, Expression expr) {
+	 	xstsFactory.createAssignmentAction => [
+	 		lhs = createDirectReference(varDecl)
+	 		rhs = expr
 	 	]
 	 }
  }
