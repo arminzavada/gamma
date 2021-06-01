@@ -34,12 +34,14 @@ class XstsSplitter {
 		protected static final XstsSplitter xStsSplitter = XstsSplitter.INSTANCE;
 		
 		List<Action> actions = newArrayList
+		var boolean trans
 		
-		new(int beginId) {
-	 		actions += xStsSplitter.create_lastAssumption(beginId);
+		new(boolean trans, int beginId) {
+			this.trans = trans
+	 		actions += xStsSplitter.create_lastAssumption(trans, beginId);
 		}
-		new(Action action, int beginId, int endId) {
-			this(beginId)
+		new(boolean trans, Action action, int beginId, int endId) {
+			this(trans, beginId)
 			add(action)
 			end(endId)
 		}
@@ -55,6 +57,9 @@ class XstsSplitter {
 		def end(int endId) {
 			actions += xStsSplitter.create_lastAssignment(endId)
 		}
+		def endChangeTrans() {
+			actions += xStsSplitter.create_transAssignment(!trans)
+		}
 		def toTransition() {
 			val seq = xstsFactory.createSequentialAction
 		 	seq.actions.addAll(actions)
@@ -65,7 +70,7 @@ class XstsSplitter {
 				(actions.last as AssignmentAction).lhs instanceof DirectReferenceExpression &&
 				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == xStsSplitter._last &&
 				(actions.last as AssignmentAction).rhs instanceof IntegerLiteralExpression &&
-				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value == endId)
+				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value.intValue == endId)
 		}
 	}
 	
@@ -78,6 +83,7 @@ class XstsSplitter {
  	protected static final ExpressionUtil exprUtil = ExpressionUtil.INSTANCE
 		
 	var VariableDeclaration _last = null
+	var VariableDeclaration _trans = null
 	int _id = 0
 	int idShouldRevert = 0
 	def resetIdRevert() {
@@ -103,24 +109,35 @@ class XstsSplitter {
 	
 	 def XSTS split(XSTS input) {
 	 	val result = ecoreUtil.clone(input)
-	 	result.addLastVar
+	 	result.addLastAndTransVars
 	 	
 	 	init()
-	 	
 	 	val List<XTransition> toRemove = newArrayList
 	 	val List<XstsSlice> toAdd = newArrayList
 	 	
 	 	for (tran : result.transitions) {
 	 		// Every transition starts and ends with assuming/setting __last = 0
-	 		val slices = tran.action.slice(0, 0)
+	 		val slices = tran.action.slice(true, 0, 0)
 	 		
-	 		tranEndSlices += (tran -> slices.getEndSlices(0))
+	 		var endSlices = slices.getEndSlices(0)
+	 		tranEndSlices += (tran -> endSlices)
+	 		for (endSlice : endSlices) {
+	 			endSlice.endChangeTrans
+	 		}
 	 		for (slice : slices)
 	 			sliceOriginalTranMap += (slice -> tran)
 	 		
 	 		toAdd += slices
 	 		toRemove += tran
 	 	}
+	 	
+	 	// Transform env to trans
+	 	val envAction = XstsDerivedFeatures.getEnvironmentalAction(result)
+	 	val envSlice = new XstsSlice(false, envAction, 0, 0)
+	 	envSlice.endChangeTrans
+	 	toAdd += envSlice
+	 	result.inEventTransition.action = xstsFactory.createEmptyAction
+	 	result.outEventTransition.action = xstsFactory.createEmptyAction
 	 	
 	 	// Fix local variables
 	 	for (localVarDecl : localVarDecls) {
@@ -129,8 +146,7 @@ class XstsSplitter {
 	 			var declSlice = varDeclSlice.get(localVarDecl)
 	 			// Replace with global var
 	 			localVarDecl.variableDeclaration = null
-	 			localVar.renameVarIfNecessary(result)
-	 			result.variableDeclarations += localVar
+	 			result.addGlobalVar(localVar)
 	 			declSlice.actions -= localVarDecl
 	 			val initialVal = exprUtil.getInitialValue(localVar)
 	 			// Replace original declaration with initial value assignment
@@ -148,20 +164,20 @@ class XstsSplitter {
 	 	return result
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(Action action, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(Action action, boolean trans, int beginId, int endId) {
 	 	throw new IllegalArgumentException("Not known action: " + action)
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(AtomicAction atomic, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(AtomicAction atomic, boolean trans, int beginId, int endId) {
 	 	return null
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(LoopAction loop, int beginId, int endId) {
-	 	val slice = new XstsSlice(loop.action, beginId, endId)
+	 def dispatch List<XstsSlice> slice(LoopAction loop, boolean trans, int beginId, int endId) {
+	 	val slice = new XstsSlice(trans, loop.action, beginId, endId)
 	 	return newArrayList(slice)
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(SequentialAction seq, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(SequentialAction seq, boolean trans, int beginId, int endId) {
 	 	val List<XstsSlice> slices = newArrayList
 	 	var XstsSlice slice = null
 	 	var int sliceBeginId = beginId
@@ -172,10 +188,10 @@ class XstsSplitter {
 	 		if (slice !== null)
 	 			sliceBeginId = nextId()
 	 		val sliceEndId = last ? endId : nextId()
-	 		val subslices = action.slice(sliceBeginId, sliceEndId)
+	 		val subslices = action.slice(trans, sliceBeginId, sliceEndId)
 	 		if (subslices === null) {// No slicing
 	 			if (slice === null)
-	 				slice = new XstsSlice(sliceBeginId)
+	 				slice = new XstsSlice(trans, sliceBeginId)
  				
 	 			slice += action
 	 			registerVarSliceRelations(action, slice)
@@ -199,12 +215,12 @@ class XstsSplitter {
  		return slices
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, boolean trans, int beginId, int endId) {
 	 	val List<XstsSlice> slices = newArrayList
 	 	for (subaction : choice.actions) {
-	 		val subslices = subaction.slice(beginId, endId)
+	 		val subslices = subaction.slice(trans, beginId, endId)
 	 		if (subslices === null)
-	 			slices += new XstsSlice(subaction, beginId, endId)
+	 			slices += new XstsSlice(trans, subaction, beginId, endId)
 	 		else
 	 			slices += subslices
 	 	}
@@ -212,11 +228,11 @@ class XstsSplitter {
 	 	return slices
 	 }
 	 //TODO Support ort and par
-	 def dispatch List<XstsSlice> slice(OrthogonalAction ort, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(OrthogonalAction ort, boolean trans, int beginId, int endId) {
 	 	throw new IllegalArgumentException("ort is currently not supported")
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(ParallelAction par, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(ParallelAction par, boolean trans, int beginId, int endId) {
 	 	throw new IllegalArgumentException("par is currently not supported")
 	 }
 	 
@@ -249,7 +265,7 @@ class XstsSplitter {
  	 def hasGlobalVarWithName(XSTS xSts, String name) {
 	 	return !(xSts.variableDeclarations.filter[v | v.name.equals(name)].isEmpty)
 	 }
-	 def renameVarIfNecessary(VariableDeclaration varDecl, XSTS xSts) {
+	 def addGlobalVar(XSTS xSts, VariableDeclaration varDecl) {
 	 	if (xSts.hasGlobalVarWithName(varDecl.name)) {
 	 		var cnt = 0
 		 	while (xSts.hasGlobalVarWithName(varDecl.name + cnt)) {
@@ -257,6 +273,7 @@ class XstsSplitter {
 		 	}
 		 	varDecl.name = varDecl.name + cnt
 	 	}
+	 	xSts.variableDeclarations += varDecl
 	 }
 	 
 	 def Set<XstsSlice> getEndSlices(Collection<XstsSlice> slices, int endId) {
@@ -291,7 +308,7 @@ class XstsSplitter {
 		}
 	}
 	
-	def addLastVar(XSTS xSts) {
+	def addLastAndTransVars(XSTS xSts) {
 		_last = exprFactory.createVariableDeclaration => [
 	 		name = "__last"
 	 		type = exprFactory.createIntegerTypeDefinition
@@ -299,11 +316,20 @@ class XstsSplitter {
 	 			value = BigInteger.valueOf(0)
 	 		]
 	 	]
-	 	while (xSts.hasGlobalVarWithName(_last.name)) {
-	 		_last.name = "_" + _last.name
-	 	}
-	 	xSts.variableDeclarations.add(_last)
+	 	_trans = exprFactory.createVariableDeclaration => [
+	 		name = "__trans"
+	 		type = exprFactory.createBooleanTypeDefinition
+	 		expression = exprFactory.createFalseExpression
+	 	]
+	 	xSts.addUtilGlobalVar(_last)
+	 	xSts.addUtilGlobalVar(_trans)
 	}
+	def addUtilGlobalVar(XSTS xSts, VariableDeclaration varDecl) {
+	 	while (xSts.hasGlobalVarWithName(varDecl.name)) {
+	 		varDecl.name = "_" + varDecl.name
+	 	}
+	 	xSts.variableDeclarations += varDecl
+	 }
 	
 	def init() {
 		_id = 0
@@ -317,16 +343,30 @@ class XstsSplitter {
 	}
 	 
 	 // Create methods
-	 def create_lastAssumption(int value) {
+	 def create_lastAssumption(boolean trans, int value) {
 	 	xstsFactory.createAssumeAction => [
-			assumption = exprFactory.createEqualityExpression => [
+	 		assumption = exprFactory.createAndExpression => [
+	 			operands += exprFactory.createEqualityExpression => [
+	 				leftOperand = createDirectReference(_trans)
+	 				rightOperand = createBooleanLiteralExpr(trans)
+	 			]
+	 			operands += exprFactory.createEqualityExpression => [
+					leftOperand = createDirectReference(_last)
+					rightOperand = createIntegerLiteralExpr(value)
+				]
+	 		]
+	 		
+			/*assumption = exprFactory.createEqualityExpression => [
 				leftOperand = createDirectReference(_last)
 				rightOperand = createIntegerLiteralExpr(value)
-			]
+			]*/
 		]
 	 }
 	 def create_lastAssignment(int value) {
 	 	createAssignment(_last, value)
+	 }
+	 def create_transAssignment(boolean value) {
+	 	createAssignment(_trans, createBooleanLiteralExpr(value))
 	 }
 	 def createDirectReference(VariableDeclaration varDecl) {
 	 	exprFactory.createDirectReferenceExpression => [
@@ -337,6 +377,9 @@ class XstsSplitter {
 	 	exprFactory.createIntegerLiteralExpression => [
 			value = BigInteger.valueOf(value)
 		]
+	 }
+	 def createBooleanLiteralExpr(boolean value) {
+	 	value ? exprFactory.createTrueExpression : exprFactory.createFalseExpression
 	 }
 	 def createAssignment(VariableDeclaration varDecl, int value) {
 	 	xstsFactory.createAssignmentAction => [
