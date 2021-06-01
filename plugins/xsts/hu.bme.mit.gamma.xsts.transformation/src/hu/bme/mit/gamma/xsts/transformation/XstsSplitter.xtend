@@ -107,17 +107,30 @@ class XstsSplitter {
  	val Map<VariableDeclarationAction, XstsSlice> varDeclSlice = newHashMap
  	val Map<VariableDeclaration, Set<XstsSlice>> varUseSlices = newHashMap
 	
-	 def XSTS split(XSTS input) {
-	 	val result = ecoreUtil.clone(input)
+	def XSTS split(XSTS input) {
+ 		val result = ecoreUtil.clone(input)
 	 	result.addLastAndTransVars
 	 	
+	 	result.splitTransSet(result.transitions, true)
+	 	
+	 	// Transform env into trans
+	 	result.splitTransSet(#[xstsFactory.createXTransition => [
+	 		action = XstsDerivedFeatures.getEnvironmentalAction(result)
+	 	]], false)
+	 	result.inEventTransition.action = xstsFactory.createEmptyAction
+	 	result.outEventTransition.action = xstsFactory.createEmptyAction
+	 	
+	 	return result
+	 }
+	 
+	 def splitTransSet(XSTS xSts, List<XTransition> transitionsToSplit, boolean trans) {
 	 	init()
 	 	val List<XTransition> toRemove = newArrayList
 	 	val List<XstsSlice> toAdd = newArrayList
 	 	
-	 	for (tran : result.transitions) {
+	 	for (tran : transitionsToSplit) {
 	 		// Every transition starts and ends with assuming/setting __last = 0
-	 		val slices = tran.action.slice(true, 0, 0)
+	 		val slices = tran.action.slice(trans, 0, 0)
 	 		
 	 		var endSlices = slices.getEndSlices(0)
 	 		tranEndSlices += (tran -> endSlices)
@@ -131,14 +144,6 @@ class XstsSplitter {
 	 		toRemove += tran
 	 	}
 	 	
-	 	// Transform env to trans
-	 	val envAction = XstsDerivedFeatures.getEnvironmentalAction(result)
-	 	val envSlice = new XstsSlice(false, envAction, 0, 0)
-	 	envSlice.endChangeTrans
-	 	toAdd += envSlice
-	 	result.inEventTransition.action = xstsFactory.createEmptyAction
-	 	result.outEventTransition.action = xstsFactory.createEmptyAction
-	 	
 	 	// Fix local variables
 	 	for (localVarDecl : localVarDecls) {
 	 		var localVar = localVarDecl.variableDeclaration
@@ -146,7 +151,7 @@ class XstsSplitter {
 	 			var declSlice = varDeclSlice.get(localVarDecl)
 	 			// Replace with global var
 	 			localVarDecl.variableDeclaration = null
-	 			result.addGlobalVar(localVar)
+	 			xSts.addGlobalVar(localVar)
 	 			declSlice.actions -= localVarDecl
 	 			val initialVal = exprUtil.getInitialValue(localVar)
 	 			// Replace original declaration with initial value assignment
@@ -158,10 +163,8 @@ class XstsSplitter {
 	 		}
 	 	}
 	 	
-	 	result.transitions += toAdd.toTransitions
-	 	result.transitions -= toRemove
-	 	
-	 	return result
+	 	xSts.transitions += toAdd.toTransitions
+	 	xSts.transitions -= toRemove
 	 }
 	 
 	 def dispatch List<XstsSlice> slice(Action action, boolean trans, int beginId, int endId) {
