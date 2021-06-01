@@ -38,7 +38,7 @@ class XstsSplitter {
 		
 		new(boolean trans, int beginId) {
 			this.trans = trans
-	 		actions += xStsSplitter.create_lastAssumption(trans, beginId);
+	 		actions += xStsSplitter.create_pcAssumption(trans, beginId);
 		}
 		new(boolean trans, Action action, int beginId, int endId) {
 			this(trans, beginId)
@@ -55,7 +55,7 @@ class XstsSplitter {
 			return actions.size
 		}
 		def end(int endId) {
-			actions += xStsSplitter.create_lastAssignment(endId)
+			actions += xStsSplitter.create_pcAssignment(endId)
 		}
 		def endChangeTrans() {
 			actions += xStsSplitter.create_transAssignment(!trans)
@@ -68,7 +68,7 @@ class XstsSplitter {
 		def isEndSlice(int endId) {
 			return (actions.last instanceof AssignmentAction &&
 				(actions.last as AssignmentAction).lhs instanceof DirectReferenceExpression &&
-				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == xStsSplitter._last &&
+				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == xStsSplitter._pc &&
 				(actions.last as AssignmentAction).rhs instanceof IntegerLiteralExpression &&
 				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value.intValue == endId)
 		}
@@ -82,7 +82,7 @@ class XstsSplitter {
  	protected static final XstsActionUtil actionUtil = XstsActionUtil.INSTANCE
  	protected static final ExpressionUtil exprUtil = ExpressionUtil.INSTANCE
 		
-	var VariableDeclaration _last = null
+	var VariableDeclaration _pc = null
 	var VariableDeclaration _trans = null
 	int _id = 0
 	int idShouldRevert = 0
@@ -109,7 +109,7 @@ class XstsSplitter {
 	
 	def XSTS split(XSTS input) {
  		val result = ecoreUtil.clone(input)
-	 	result.addLastAndTransVars
+	 	result.addPcAndTransVars
 	 	
 	 	result.splitTransSet(result.transitions, true)
 	 	
@@ -129,7 +129,7 @@ class XstsSplitter {
 	 	val List<XstsSlice> toAdd = newArrayList
 	 	
 	 	for (tran : transitionsToSplit) {
-	 		// Every transition starts and ends with assuming/setting __last = 0
+	 		// Every transition starts and ends with assuming/setting __pc = 0
 	 		val slices = tran.action.slice(trans, 0, 0)
 	 		
 	 		var endSlices = slices.getEndSlices(0)
@@ -311,9 +311,9 @@ class XstsSplitter {
 		}
 	}
 	
-	def addLastAndTransVars(XSTS xSts) {
-		_last = exprFactory.createVariableDeclaration => [
-	 		name = "__last"
+	def addPcAndTransVars(XSTS xSts) {
+		_pc = exprFactory.createVariableDeclaration => [
+	 		name = "__pc"
 	 		type = exprFactory.createIntegerTypeDefinition
 	 		expression = exprFactory.createIntegerLiteralExpression => [
 	 			value = BigInteger.valueOf(0)
@@ -324,7 +324,7 @@ class XstsSplitter {
 	 		type = exprFactory.createBooleanTypeDefinition
 	 		expression = exprFactory.createFalseExpression
 	 	]
-	 	xSts.addUtilGlobalVar(_last)
+	 	xSts.addUtilGlobalVar(_pc)
 	 	xSts.addUtilGlobalVar(_trans)
 	}
 	def addUtilGlobalVar(XSTS xSts, VariableDeclaration varDecl) {
@@ -346,7 +346,7 @@ class XstsSplitter {
 	}
 	 
 	 // Create methods
-	 def create_lastAssumption(boolean trans, int value) {
+	 def create_pcAssumption(boolean trans, int value) {
 	 	xstsFactory.createAssumeAction => [
 	 		assumption = exprFactory.createAndExpression => [
 	 			operands += exprFactory.createEqualityExpression => [
@@ -354,19 +354,14 @@ class XstsSplitter {
 	 				rightOperand = createBooleanLiteralExpr(trans)
 	 			]
 	 			operands += exprFactory.createEqualityExpression => [
-					leftOperand = createDirectReference(_last)
+					leftOperand = createDirectReference(_pc)
 					rightOperand = createIntegerLiteralExpr(value)
 				]
 	 		]
-	 		
-			/*assumption = exprFactory.createEqualityExpression => [
-				leftOperand = createDirectReference(_last)
-				rightOperand = createIntegerLiteralExpr(value)
-			]*/
 		]
 	 }
-	 def create_lastAssignment(int value) {
-	 	createAssignment(_last, value)
+	 def create_pcAssignment(int value) {
+	 	createAssignment(_pc, value)
 	 }
 	 def create_transAssignment(boolean value) {
 	 	createAssignment(_trans, createBooleanLiteralExpr(value))
