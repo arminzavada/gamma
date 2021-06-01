@@ -1,30 +1,33 @@
 package hu.bme.mit.gamma.xsts.transformation
 
 import hu.bme.mit.gamma.expression.model.DirectReferenceExpression
+import hu.bme.mit.gamma.expression.model.Expression
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory
 import hu.bme.mit.gamma.expression.model.IntegerLiteralExpression
 import hu.bme.mit.gamma.expression.model.VariableDeclaration
+import hu.bme.mit.gamma.expression.util.ExpressionUtil
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures
 import hu.bme.mit.gamma.xsts.model.Action
 import hu.bme.mit.gamma.xsts.model.AssignmentAction
+import hu.bme.mit.gamma.xsts.model.AtomicAction
+import hu.bme.mit.gamma.xsts.model.CompositeAction
+import hu.bme.mit.gamma.xsts.model.LoopAction
 import hu.bme.mit.gamma.xsts.model.NonDeterministicAction
+import hu.bme.mit.gamma.xsts.model.OrthogonalAction
+import hu.bme.mit.gamma.xsts.model.ParallelAction
 import hu.bme.mit.gamma.xsts.model.SequentialAction
 import hu.bme.mit.gamma.xsts.model.VariableDeclarationAction
 import hu.bme.mit.gamma.xsts.model.XSTS
 import hu.bme.mit.gamma.xsts.model.XSTSModelFactory
 import hu.bme.mit.gamma.xsts.model.XTransition
+import hu.bme.mit.gamma.xsts.util.XstsActionUtil
 import java.math.BigInteger
 import java.util.Collection
 import java.util.List
 import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
-import org.eclipse.emf.ecore.util.EcoreUtil
-import hu.bme.mit.gamma.xsts.util.XstsActionUtil
-import hu.bme.mit.gamma.expression.util.ExpressionUtil
-import hu.bme.mit.gamma.expression.model.Expression
-import hu.bme.mit.gamma.xsts.model.CompositeAction
 
 class XstsSplitter {
 	static class XstsSlice {
@@ -34,6 +37,11 @@ class XstsSplitter {
 		
 		new(int beginId) {
 	 		actions += xStsSplitter.create_lastAssumption(beginId);
+		}
+		new(Action action, int beginId, int endId) {
+			this(beginId)
+			add(action)
+			end(endId)
 		}
 		def add(Action action) {
 			actions += action
@@ -52,12 +60,12 @@ class XstsSplitter {
 		 	seq.actions.addAll(actions)
 		 	return actionUtil.wrap(seq)
 		}
-		def isTranEndSlice(int endId) {
+		def isEndSlice(int endId) {
 			return (actions.last instanceof AssignmentAction &&
 				(actions.last as AssignmentAction).lhs instanceof DirectReferenceExpression &&
 				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == xStsSplitter._last &&
 				(actions.last as AssignmentAction).rhs instanceof IntegerLiteralExpression &&
-				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value == endId);
+				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value == endId)
 		}
 	}
 	
@@ -71,8 +79,17 @@ class XstsSplitter {
 		
 	var VariableDeclaration _last = null
 	int _id = 0
+	int idShouldRevert = 0
+	def resetIdRevert() {
+		idShouldRevert = 0
+	}
+	def revertId() {
+		_id -= idShouldRevert
+		resetIdRevert()
+	}
 	def int nextId() {
 		_id++
+		idShouldRevert++
 		return _id
 	}
 	
@@ -84,59 +101,26 @@ class XstsSplitter {
  	val Map<VariableDeclarationAction, XstsSlice> varDeclSlice = newHashMap
  	val Map<VariableDeclaration, Set<XstsSlice>> varUseSlices = newHashMap
 	
-	def getScopeEndSlices(XstsSlice slice) {
-		if (sliceCompositeActionMap.containsKey(slice)) {
-			var scope = sliceCompositeActionMap.get(slice)
-			return compositeActionEndSlices.get(scope)
-		} else {
-			var scope = sliceOriginalTranMap.get(slice)
-			return tranEndSlices.get(scope)
-		}
-	}
-	
-	def init() {
-		_id = 0
-		localVarDecls.clear
-		sliceOriginalTranMap.clear
-		tranEndSlices.clear
-		sliceCompositeActionMap.clear
-		compositeActionEndSlices.clear
-		varDeclSlice.clear
-		varUseSlices.clear
-	}
-	
 	 def XSTS split(XSTS input) {
 	 	val result = ecoreUtil.clone(input)
-	 	_last = exprFactory.createVariableDeclaration => [
-	 		name = "__last"
-	 		type = exprFactory.createIntegerTypeDefinition
-	 		expression = exprFactory.createIntegerLiteralExpression => [
-	 			value = BigInteger.valueOf(0)
-	 		]
-	 	]
-	 	while (result.hasGlobalVarWithName(_last.name)) {
-	 		_last.name = "_" + _last.name
-	 	}
-	 	result.variableDeclarations.add(_last)
+	 	result.addLastVar
 	 	
 	 	init()
 	 	
 	 	val List<XTransition> toRemove = newArrayList
-	 	val List<XTransition> toAdd = newArrayList
+	 	val List<XstsSlice> toAdd = newArrayList
 	 	
 	 	for (tran : result.transitions) {
-	 		// Every transition starts and ends with assuming 0
+	 		// Every transition starts and ends with assuming/setting __last = 0
 	 		val slices = tran.action.slice(0, 0)
 	 		
 	 		tranEndSlices += (tran -> slices.getEndSlices(0))
 	 		for (slice : slices)
 	 			sliceOriginalTranMap += (slice -> tran)
 	 		
-	 		toAdd += slices.toTransitions
+	 		toAdd += slices
 	 		toRemove += tran
 	 	}
-	 	result.transitions += toAdd
-	 	result.transitions -= toRemove
 	 	
 	 	// Fix local variables
 	 	for (localVarDecl : localVarDecls) {
@@ -147,21 +131,122 @@ class XstsSplitter {
 	 			localVarDecl.variableDeclaration = null
 	 			localVar.renameVarIfNecessary(result)
 	 			result.variableDeclarations += localVar
-	 			EcoreUtil.delete(localVarDecl)
+	 			declSlice.actions -= localVarDecl
 	 			val initialVal = exprUtil.getInitialValue(localVar)
 	 			// Replace original declaration with initial value assignment
 	 			declSlice.actions.add(1, createAssignment(localVar, initialVal))
 	 			// Add initial value assignment to every end of its scope
 	 			for (endSlice : declSlice.scopeEndSlices) {
-	 				endSlice.actions.add(createAssignment(localVar, initialVal))
+	 				endSlice.actions.add(endSlice.actions.size - 2, createAssignment(localVar, ecoreUtil.clone(initialVal)))
 	 			}
 	 		}
 	 	}
 	 	
+	 	result.transitions += toAdd.toTransitions
+	 	result.transitions -= toRemove
+	 	
 	 	return result
 	 }
 	 
-	 def hasGlobalVarWithName(XSTS xSts, String name) {
+	 def dispatch List<XstsSlice> slice(Action action, int beginId, int endId) {
+	 	throw new IllegalArgumentException("Not known action: " + action)
+	 }
+	 
+	 def dispatch List<XstsSlice> slice(AtomicAction atomic, int beginId, int endId) {
+	 	return null
+	 }
+	 
+	 def dispatch List<XstsSlice> slice(LoopAction loop, int beginId, int endId) {
+	 	val slice = new XstsSlice(loop.action, beginId, endId)
+	 	return newArrayList(slice)
+	 }
+	 
+	 def dispatch List<XstsSlice> slice(SequentialAction seq, int beginId, int endId) {
+	 	val List<XstsSlice> slices = newArrayList
+	 	var XstsSlice slice = null
+	 	var int sliceBeginId = beginId
+	 	
+	 	for (action : seq.actions) {
+	 		resetIdRevert()
+	 		val last = (action == seq.actions.last)
+	 		if (slice !== null)
+	 			sliceBeginId = nextId()
+	 		val sliceEndId = last ? endId : nextId()
+	 		val subslices = action.slice(sliceBeginId, sliceEndId)
+	 		if (subslices === null) {// No slicing
+	 			if (slice === null)
+	 				slice = new XstsSlice(sliceBeginId)
+ 				
+	 			slice += action
+	 			registerVarSliceRelations(action, slice)
+	 			
+	 			if (last) {
+	 				slice.end(endId)
+	 				slices += slice
+ 				}
+ 				revertId()
+	 		}
+	 		else {// Slicing
+	 			if (slice !== null) {
+	 				slice.end(sliceBeginId)
+ 					slices += slice
+ 					slice = null
+	 			}
+ 				slices += subslices
+ 				sliceBeginId = sliceEndId
+	 		}
+ 		}
+ 		return slices
+	 }
+	 
+	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, int beginId, int endId) {
+	 	val List<XstsSlice> slices = newArrayList
+	 	for (subaction : choice.actions) {
+	 		val subslices = subaction.slice(beginId, endId)
+	 		if (subslices === null)
+	 			slices += new XstsSlice(subaction, beginId, endId)
+	 		else
+	 			slices += subslices
+	 	}
+	 	registerCompositeActionRelations(choice, slices, endId)
+	 	return slices
+	 }
+	 //TODO Support ort and par
+	 def dispatch List<XstsSlice> slice(OrthogonalAction ort, int beginId, int endId) {
+	 	throw new IllegalArgumentException("ort is currently not supported")
+	 }
+	 
+	 def dispatch List<XstsSlice> slice(ParallelAction par, int beginId, int endId) {
+	 	throw new IllegalArgumentException("par is currently not supported")
+	 }
+	 
+	 // Util
+	 def void registerCompositeActionRelations(CompositeAction action, List<XstsSlice> slices, int endId) {
+	 	compositeActionEndSlices += (action -> slices.getEndSlices(endId))
+	 	for (slice : slices) {
+	 		sliceCompositeActionMap += (slice -> action)
+	 	}
+	 }
+	 
+	 def void registerVarSliceRelations(Action action, XstsSlice slice) {
+	 	if (action instanceof VariableDeclarationAction) {
+	 		localVarDecls += action
+			varDeclSlice += (action -> slice)
+		}
+		val usedVars = XstsDerivedFeatures.getReferredVariables(action)
+		for (usedVar : usedVars) {
+			if (XstsDerivedFeatures.isLocal(usedVar)) {
+				if (varUseSlices.containsKey(usedVar)) {
+ 					varUseSlices.get(usedVar) += slice
+ 				}
+ 				else {
+ 					varUseSlices += (usedVar -> newHashSet(slice))
+ 				}
+			}
+		}
+	 }
+	 
+ 	 def hasGlobalVarWithName(XSTS xSts, String name) {
 	 	return !(xSts.variableDeclarations.filter[v | v.name.equals(name)].isEmpty)
 	 }
 	 def renameVarIfNecessary(VariableDeclaration varDecl, XSTS xSts) {
@@ -175,8 +260,15 @@ class XstsSplitter {
 	 }
 	 
 	 def Set<XstsSlice> getEndSlices(Collection<XstsSlice> slices, int endId) {
+	 	var Set<XstsSlice> ret = newHashSet
+	 	for (var i = 0; i < slices.size; i++) {
+	 		if (slices.get(i).isEndSlice(endId)) {
+	 			ret += slices.get(i)
+	 		}
+	 	}
+	 	
 	 	return slices.stream
-		 	.filter[s | s.isTranEndSlice(endId)]
+		 	.filter[s | s.isEndSlice(endId)]
 		 	.collect(Collectors.toSet)
 	 }
 	 
@@ -188,81 +280,41 @@ class XstsSplitter {
 	 	return trans
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(Action action, int beginId, int endId) {
-	 	// Just a single non-choice action
-	 	val slice = new XstsSlice(beginId)
-	 	slice += action
-	 	slice.end(endId)
-	 	return newArrayList(slice)
-	 }
-	 
-	 def dispatch List<XstsSlice> slice(SequentialAction seq, int beginId, int endId) {
-	 	val List<XstsSlice> slices = newArrayList
-	 	var slice = new XstsSlice(beginId)
-	 	
-	 	for (action : seq.actions) {
-	 		val last = (action == seq.actions.last)
-	 		//TODO Every CompositeAction (not only choice)
-	 		if (action instanceof NonDeterministicAction) {// Should slice
-	 			var int sliceSeparatorId
-	 			
-	 			// To avoid 'empty' slice between consecutive choices
-	 			if (slice.size > 1) {
-	 				sliceSeparatorId = nextId()
-		 			slice.end(sliceSeparatorId)
-		 			slices += slice
-	 			}
-	 			else {
-	 				sliceSeparatorId = _id
-	 			}
-	 			
-	 			val sliceEndId = last ? endId : nextId()
-	 			var newSlices = action.slice(sliceSeparatorId, sliceEndId)
-	 			compositeActionEndSlices += (action -> newSlices.getEndSlices(endId))
-	 			if (!last) {
-	 				slice = new XstsSlice(sliceEndId)
-	 			}
-	 			slices += newSlices
-	 			for (newSlice : newSlices) {
-	 				sliceCompositeActionMap += (newSlice -> action)
-	 			}
-	 		}
-	 		else {// Should not slice
-	 			slice += action
-	 			
-	 			if (action instanceof VariableDeclarationAction) {
-	 				localVarDecls += action
-	 				varDeclSlice += (action -> slice)
-	 			}
-	 			val usedVars = XstsDerivedFeatures.getReferredVariables(action)
-	 			for (usedVar : usedVars) {
-	 				if (XstsDerivedFeatures.isLocal(usedVar)) {
-	 					if (varUseSlices.containsKey(usedVar)) {
-		 					varUseSlices.get(usedVar) += slice
-		 				}
-		 				else {
-		 					varUseSlices += (usedVar -> newHashSet(slice))
-		 				}
-	 				}
-	 			}
-	 			
-	 			if (last) {
-	 				slice.end(endId)
-	 				slices += slice
-	 			}
-	 		}
+ 	def getScopeEndSlices(XstsSlice slice) {
+		if (sliceCompositeActionMap.containsKey(slice)) {
+			var scope = sliceCompositeActionMap.get(slice)
+			return compositeActionEndSlices.get(scope)
+		}
+		else {
+			var scope = sliceOriginalTranMap.get(slice)
+			return tranEndSlices.get(scope)
+		}
+	}
+	
+	def addLastVar(XSTS xSts) {
+		_last = exprFactory.createVariableDeclaration => [
+	 		name = "__last"
+	 		type = exprFactory.createIntegerTypeDefinition
+	 		expression = exprFactory.createIntegerLiteralExpression => [
+	 			value = BigInteger.valueOf(0)
+	 		]
+	 	]
+	 	while (xSts.hasGlobalVarWithName(_last.name)) {
+	 		_last.name = "_" + _last.name
 	 	}
-	 	return slices
-	 }
-	 //TODO For every CompositeAction (LoopAction should just return itself in one slice)
-	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, int beginId, int endId) {
-	 	val List<XstsSlice> slices = newArrayList
-	 	for (subaction : choice.actions) {
-	 		val subslices = subaction.slice(beginId, endId)
-	 		slices += subslices
-	 	}
-	 	return slices
-	 }
+	 	xSts.variableDeclarations.add(_last)
+	}
+	
+	def init() {
+		_id = 0
+		localVarDecls.clear
+		sliceOriginalTranMap.clear
+		tranEndSlices.clear
+		sliceCompositeActionMap.clear
+		compositeActionEndSlices.clear
+		varDeclSlice.clear
+		varUseSlices.clear
+	}
 	 
 	 // Create methods
 	 def create_lastAssumption(int value) {
