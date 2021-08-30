@@ -31,7 +31,14 @@ class ActionSerializer {
 	protected final extension DeclarationSerializer declarationSerializer = DeclarationSerializer.INSTANCE
 	protected final extension ExpressionSerializer expressionSerializer = ExpressionSerializer.INSTANCE
 	
-	def String serializeXsts(XSTS xSts) '''
+	def String serializeXsts(XSTS xSts) {
+		serializeXsts(xSts, null)
+	}
+	
+	def String serializeXsts(XSTS xSts, String[] directives) '''
+		«IF directives !== null»«FOR directive : directives»
+		//@«directive»
+		«ENDFOR»«ENDIF»
 		«xSts.serializeDeclarations(false)»
 		
 		trans «FOR transition : xSts.transitions SEPARATOR " or "»{

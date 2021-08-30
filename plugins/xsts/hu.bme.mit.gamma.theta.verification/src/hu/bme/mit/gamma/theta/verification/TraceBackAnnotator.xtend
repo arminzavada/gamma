@@ -20,6 +20,7 @@ import hu.bme.mit.gamma.statechart.interface_.Package
 import hu.bme.mit.gamma.statechart.interface_.Port
 import hu.bme.mit.gamma.statechart.interface_.SchedulingConstraintAnnotation
 import hu.bme.mit.gamma.statechart.statechart.State
+import hu.bme.mit.gamma.theta.trace.model.XstsStateSequence
 import hu.bme.mit.gamma.trace.model.ExecutionTrace
 import hu.bme.mit.gamma.trace.model.RaiseEventAct
 import hu.bme.mit.gamma.trace.model.Step
@@ -28,8 +29,6 @@ import hu.bme.mit.gamma.trace.util.TraceUtil
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.verification.util.TraceBuilder
 import java.util.List
-import java.util.NoSuchElementException
-import java.util.Scanner
 import java.util.Set
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -46,7 +45,12 @@ class TraceBackAnnotator {
 	protected final String XSTS_STATE = "(XstsState"
 	protected final String EXPL_STATE = "(ExplState"
 	
-	protected final Scanner traceScanner
+	protected final String DIRECTIVE = "//@"
+	protected final String SPLIT_DIRECTIVE = DIRECTIVE + "splitted"
+	protected final String NOENV_DIRECTIVE = DIRECTIVE + "noenv" //TODO handle noenv directive
+	
+	//protected final Scanner traceScanner
+	protected final XstsStateSequence cex
 	protected final ThetaQueryGenerator thetaQueryGenerator
 	
 	protected final Package gammaPackage
@@ -54,6 +58,11 @@ class TraceBackAnnotator {
 	protected final Expression schedulingConstraint
 	
 	protected final boolean sortTrace
+	// Directives info
+	protected boolean splitted = false
+	protected String pcVarName = null
+	protected boolean noenv = false
+	protected String transVarName = null
 	// Auxiliary objects
 	protected final extension TraceModelFactory trFact = TraceModelFactory.eINSTANCE
 	protected final extension TraceUtil traceUtil = TraceUtil.INSTANCE
@@ -61,15 +70,23 @@ class TraceBackAnnotator {
 	protected final extension GammaEcoreUtil gammaEcoreUtil = GammaEcoreUtil.INSTANCE
 	protected final Logger logger = Logger.getLogger("GammaLogger")
 	
-	new(Package gammaPackage, Scanner traceScanner) {
-		this(gammaPackage, traceScanner, true)
+	new(Package gammaPackage, XstsStateSequence cex) {
+		this(gammaPackage, cex, true)
 	}
 	
-	new(Package gammaPackage, Scanner traceScanner, boolean sortTrace) {
+	new(Package gammaPackage, XstsStateSequence cex, boolean sortTrace) {
+		this(gammaPackage, cex, sortTrace, null)
+	}
+	
+	new(Package gammaPackage, XstsStateSequence cex, List<String> directives) {
+		this(gammaPackage, cex, true, directives)
+	}
+	
+	new(Package gammaPackage, XstsStateSequence cex, boolean sortTrace, List<String> directives) {
 		this.gammaPackage = gammaPackage
 		this.component = gammaPackage.components.head
 		this.thetaQueryGenerator = new ThetaQueryGenerator(gammaPackage)
-		this.traceScanner = traceScanner
+		this.cex = cex
 		this.sortTrace = sortTrace
 		val schedulingConstraintAnnotation = gammaPackage.annotations
 			.filter(SchedulingConstraintAnnotation).head
@@ -78,6 +95,23 @@ class TraceBackAnnotator {
 		}
 		else {
 			this.schedulingConstraint = null
+		}
+		// Directives
+		for (directive : directives) {
+			val split = directive.split(" ")
+			switch (directive) {
+				case directive.startsWith(SPLIT_DIRECTIVE): {
+					splitted = true
+					pcVarName = split.get(1)
+				}
+				case directive.startsWith(NOENV_DIRECTIVE): {
+					noenv = true
+					transVarName = split.get(1)
+				}
+				default: {
+					logger.log(Level.WARNING, "Unhandled directive: " + directive)
+				}
+			}
 		}
 	}
 	
@@ -103,68 +137,57 @@ class TraceBackAnnotator {
 		val activatedStates = newHashSet
 		// Parsing
 		var state = BackAnnotatorState.INIT
-		try {
-			while (traceScanner.hasNext) {
-				var line = traceScanner.nextLine.trim // Trimming leading white spaces
-				switch (line) {
-					case line.startsWith(XSTS_TRACE): {
-						// Skipping the first state
-						var countedExplicitState = 0
-						while (countedExplicitState < 2) {
-							line = traceScanner.nextLine.trim
-							if (line.startsWith(EXPL_STATE)) {
-								countedExplicitState++
-							}
-						}
-						// Needed to create a new step for reset if there are multiple in the trace
-						if (trace.steps.size > 1) {
-							if (!trace.steps.contains(step)) {
-								trace.steps += step
-							}
-							step = createStep
-							trace.steps += step
-						}
-						// Adding reset
-						step.actions += createReset
-						line = traceScanner.nextLine.trim
-						state = BackAnnotatorState.STATE_CHECK
+		
+		// Skipping the first state
+		var states = cex.states.subList(1, cex.states.length)
+		// Removing unreal states
+		if (splitted) {
+			states = states.filter[s |
+				s.state.valuations.filter[v |
+					v.name.equals(pcVarName) && !v.value.equals("0")
+				].size == 0
+			].toList
+		}
+		if (noenv) {
+			states = states.filter[s |
+				!s.annotations.contains("last_env")
+			].toList
+		}
+		// Needed to create a new step for reset if there are multiple in the trace
+		if (trace.steps.size > 1) {
+			if (!trace.steps.contains(step)) {
+				trace.steps += step
+			}
+			step = createStep
+			trace.steps += step
+		}
+		// Adding reset
+		step.actions += createReset
+		state = BackAnnotatorState.STATE_CHECK
+		for (xStsState : states) {
+			switch (state) {
+				case STATE_CHECK: {
+					step.checkStates(raisedOutEvents, activatedStates)
+					// Creating a new step
+					step = createStep
+					/// Add static delay every turn
+					if (schedulingConstraint !== null) {
+						step.addTimeElapse(schedulingConstraint)
 					}
-					case line.startsWith(XSTS_STATE): {
-						// Deleting unnecessary in and out events
-						switch (state) {
-							case STATE_CHECK: {
-								step.checkStates(raisedOutEvents, activatedStates)
-								// Creating a new step
-								step = createStep
-								/// Add static delay every turn
-								if (schedulingConstraint !== null) {
-									step.addTimeElapse(schedulingConstraint)
-								}
-								///
-								trace.steps += step
-								// Setting the state
-								state = BackAnnotatorState.ENVIRONMENT_CHECK
-							}
-							case ENVIRONMENT_CHECK: {
-								step.checkInEvents(raisedInEvents)
-								// Add schedule
-								step.addComponentScheduling
-								// Setting the state
-								state = BackAnnotatorState.STATE_CHECK
-							}
-							default:
-								throw new IllegalArgumentException("Not know state: " + state)
-						}
-						// Skipping two lines
-						line = traceScanner.nextLine
-						line = traceScanner.nextLine.trim
-					}
+					///
+					trace.steps += step
 				}
-				// We parse in every turn
-				line = thetaQueryGenerator.unwrapAll(line)
-				val split = line.split(" ", 2) // Only the first " " is checked
-				val id = split.get(0)
-				val value = split.get(1)
+				case ENVIRONMENT_CHECK: {
+					step.checkInEvents(raisedInEvents)
+					// Add schedule
+					step.addComponentScheduling
+				}
+				default:
+					throw new IllegalArgumentException("Not know state: " + state)
+			}
+			for (valuation : xStsState.state.valuations) {
+				val id = valuation.name
+				val value = valuation.value
 				switch (state) {
 					case STATE_CHECK: {
 						val potentialStateString = '''«id» == «value»'''
@@ -251,15 +274,12 @@ class TraceBackAnnotator {
 						throw new IllegalArgumentException("Not known state: " + state)
 				}
 			}
-			// Checking the last state (in events must NOT be deleted here though)
-			step.checkStates(raisedOutEvents, activatedStates)
-			// Sorting if needed
-			if (sortTrace) {
-				trace.sortInstanceStates
-			}
-		} catch (NoSuchElementException e) {
-			// If there are not enough lines, that means there are no environment actions
-			step.actions += createReset
+		}
+		// Checking the last state (in events must NOT be deleted here though)
+		step.checkStates(raisedOutEvents, activatedStates)
+		// Sorting if needed
+		if (sortTrace) {
+			trace.sortInstanceStates
 		}
 		return trace
 	}

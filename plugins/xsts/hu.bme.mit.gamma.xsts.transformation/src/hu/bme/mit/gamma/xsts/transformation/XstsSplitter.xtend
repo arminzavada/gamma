@@ -28,6 +28,7 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
+import java.util.Comparator
 
 class XstsSplitter {
 	static class XstsSlice {
@@ -81,7 +82,10 @@ class XstsSplitter {
  	protected static final ExpressionModelFactory exprFactory = ExpressionModelFactory.eINSTANCE
  	protected static final XstsActionUtil actionUtil = XstsActionUtil.INSTANCE
  	protected static final ExpressionUtil exprUtil = ExpressionUtil.INSTANCE
-		
+	
+	static val PC_NAME_BASE = "__pc"
+	static val TRANS_NAME_BASE = "__trans"
+	
 	var VariableDeclaration _pc = null
 	var VariableDeclaration _trans = null
 	int _id = 0
@@ -313,14 +317,14 @@ class XstsSplitter {
 	
 	def addPcAndTransVars(XSTS xSts) {
 		_pc = exprFactory.createVariableDeclaration => [
-	 		name = "__pc"
+	 		name = PC_NAME_BASE
 	 		type = exprFactory.createIntegerTypeDefinition
 	 		expression = exprFactory.createIntegerLiteralExpression => [
 	 			value = BigInteger.valueOf(0)
 	 		]
 	 	]
 	 	_trans = exprFactory.createVariableDeclaration => [
-	 		name = "__trans"
+	 		name = TRANS_NAME_BASE
 	 		type = exprFactory.createBooleanTypeDefinition
 	 		expression = exprFactory.createFalseExpression
 	 	]
@@ -332,6 +336,19 @@ class XstsSplitter {
 	 		varDecl.name = "_" + varDecl.name
 	 	}
 	 	xSts.variableDeclarations += varDecl
+	 }
+	 
+	 protected def String getUtilGlobalVarName(XSTS xSts, String name) {
+	 	return xSts.variableDeclarations
+	 		.filter[v | v.name.length >= name.length && v.name.equals("_".repeat(v.name.length - name.length) + name)]
+	 		.max(Comparator.comparingInt(v | v.name.length))
+	 		.name
+	 }
+	 def String[] getSplitUtilVarNames(XSTS xSts) {
+	 	return #[
+	 		xSts.getUtilGlobalVarName(PC_NAME_BASE),
+	 		xSts.getUtilGlobalVarName(TRANS_NAME_BASE)
+	 	]
 	 }
 	
 	def init() {

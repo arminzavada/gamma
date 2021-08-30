@@ -11,12 +11,15 @@
 package hu.bme.mit.gamma.theta.verification
 
 import hu.bme.mit.gamma.statechart.interface_.Package
+import hu.bme.mit.gamma.theta.trace.model.XstsStateSequence
 import hu.bme.mit.gamma.util.FileUtil
 import hu.bme.mit.gamma.verification.result.ThreeStateBoolean
 import hu.bme.mit.gamma.verification.util.AbstractVerifier
 import java.io.File
 import java.util.Scanner
 import java.util.logging.Level
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 import static com.google.common.base.Preconditions.checkState
 
@@ -59,7 +62,7 @@ class ThetaVerifier extends AbstractVerifier {
 	override Result verifyQuery(Object traceability, String parameters, File modelFile,
 			File queryFile, boolean log, boolean storeOutput) {
 		var Scanner resultReader = null
-		var Scanner traceFileScanner = null
+		var Scanner modelFileScanner = null
 		try {
 			ENVIRONMENT_VARIABLE_FOR_THETA_JAR.validate
 			// The 'THETA_XSTS_CLI_PATH' environment variable has to be set to the respective file path
@@ -100,16 +103,30 @@ class ThetaVerifier extends AbstractVerifier {
 				return new Result(result, null)
 			}
 			val gammaPackage = traceability as Package
-			traceFileScanner = new Scanner(traceFile)
-			val backAnnotator = new TraceBackAnnotator(gammaPackage, traceFileScanner)
+			// Reading Theta trace
+			val resourceSet = new ResourceSetImpl
+			val resource = resourceSet.getResource(URI.createFileURI(traceFile.path), true)
+			val cex = resource.getContents().get(0) as XstsStateSequence
+			// Reading every directive from the model file - directives should be placed at the beginning of the file
+			val directives = newArrayList;
+			modelFileScanner = new Scanner(modelFile)
+			var directive = true
+			while (modelFileScanner.hasNext && directive) {
+				var xStsLine = modelFileScanner.nextLine.trim
+				if (xStsLine.startsWith("//@"))
+					directives += xStsLine
+				else
+					directive = false
+			}
+			val backAnnotator = new TraceBackAnnotator(gammaPackage, cex, directives)
 			val trace = backAnnotator.execute
 			return new Result(result, trace)
 		} finally {
 			if (resultReader !== null) {
 				resultReader.close
 			}
-			if (traceFileScanner !== null) {
-				traceFileScanner.close
+			if (modelFileScanner !== null) {
+				modelFileScanner.close
 			}
 		}
 	}

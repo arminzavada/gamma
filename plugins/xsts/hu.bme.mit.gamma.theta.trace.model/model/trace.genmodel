@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/hu.bme.mit.gamma.theta.trace.model/src-gen" editDirectory="/hu.bme.mit.gamma.theta.trace.model.edit/src-gen"
+    editorDirectory="/hu.bme.mit.gamma.theta.trace.model.editor/src-gen" modelPluginID="hu.bme.mit.gamma.theta.trace.model"
+    modelName="Trace" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    importerID="org.eclipse.emf.importer.ecore" complianceLevel="5.0" copyrightFields="false"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>trace.ecore</foreignModel>
+  <genPackages prefix="TraceModel" basePackage="hu.bme.mit.gamma.theta.trace" disposableProviderFactory="true"
+      fileExtensions="cex" ecorePackage="trace.ecore#/">
+    <genClasses ecoreClass="trace.ecore#//XstsStateSequence">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trace.ecore#//XstsStateSequence/states"/>
+    </genClasses>
+    <genClasses ecoreClass="trace.ecore#//XstsState">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trace.ecore#//XstsState/state"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trace.ecore#//XstsState/annotations"/>
+    </genClasses>
+    <genClasses ecoreClass="trace.ecore#//ExplState">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trace.ecore#//ExplState/valuations"/>
+    </genClasses>
+    <genClasses ecoreClass="trace.ecore#//VariableValuation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trace.ecore#//VariableValuation/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute trace.ecore#//VariableValuation/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
