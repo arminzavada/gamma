@@ -45,6 +45,7 @@ import hu.bme.mit.gamma.genmodel.model.XSTSReference;
 import hu.bme.mit.gamma.property.model.PropertyPackage;
 import hu.bme.mit.gamma.querygenerator.serializer.PropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.ThetaPropertySerializer;
+import hu.bme.mit.gamma.querygenerator.serializer.ThetaSplittedPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.XstsUppaalPropertySerializer;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReference;
@@ -418,13 +419,14 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 		protected final AnalysisModelPreprocessor modelPreprocessor = AnalysisModelPreprocessor.INSTANCE;
 		protected final ActionSerializer actionSerializer = ActionSerializer.INSTANCE;
+		protected AnalysisSplit split = AnalysisSplit.NONE;
 		
 		public void execute(AnalysisModelTransformation transformation) throws IOException {
 			logger.log(Level.INFO, "Starting XSTS transformation.");
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = transformConstraint(transformation.getConstraint());
-			AnalysisSplit split = transformAnalysisSplit(transformation.getSplit());
+			split = transformAnalysisSplit(transformation.getSplit());
 			String fileName = transformation.getFileName().get(0);
 			// Coverages
 			List<Coverage> coverages = transformation.getCoverages();
@@ -462,7 +464,8 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 		@Override
 		protected PropertySerializer getPropertySerializer() {
-			return ThetaPropertySerializer.INSTANCE;
+			return split == AnalysisSplit.NONE ? ThetaPropertySerializer.INSTANCE
+					: ThetaSplittedPropertySerializer.INSTANCE;
 		}
 
 		@Override

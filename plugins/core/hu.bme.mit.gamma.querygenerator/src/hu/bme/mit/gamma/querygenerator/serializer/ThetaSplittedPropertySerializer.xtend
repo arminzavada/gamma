@@ -1,38 +1,34 @@
 package hu.bme.mit.gamma.querygenerator.serializer
 
 import hu.bme.mit.gamma.property.model.QuantifiedFormula
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
+import hu.bme.mit.gamma.property.model.UnaryOperandPathFormula
 
 class ThetaSplittedPropertySerializer extends ThetaPropertySerializer {
+	// Singleton
+	public static final ThetaSplittedPropertySerializer INSTANCE = new ThetaSplittedPropertySerializer
 	
-	protected String pcVarName
-	protected String transVarName
-	protected String isStable
-	
-	new(String pcVarName) {
-		super()
-		this.pcVarName = pcVarName
-		this.transVarName = null
-		this.isStable = '''«pcVarName» == 0'''
-	}
-	
-	new(String pcVarName, String transVarName) {
-		super()
-		this.pcVarName = pcVarName
-		this.transVarName = transVarName
-		this.isStable = '''«pcVarName» == 0 && «transVarName» == false'''
-	}
+	protected static final String isStable = '''«XstsNamings.PC_VAR_NAME» == 0 && «XstsNamings.TRANS_VAR_NAME» == false'''
 	
 	protected override dispatch String serializeFormula(QuantifiedFormula formula) {
-		val original = super.serializeFormula(formula)
+		val quantifier = formula.quantifier
+		val pathFormula = formula.formula
+		val original = '''«quantifier.transform»«pathFormula.serializeFormula»'''
 		switch (formula.quantifier) {
 			case EXISTS: {
-				return '''(«original») && «isStable»'''
+				return '''«original» && «isStable»'''
 			}
 			case FORALL: {
-				return '''(«original») || !(«isStable»)'''
+				return '''«original» || !(«isStable»)'''
 			}
 			default: 
 				throw new IllegalArgumentException("Not supported quantifier: " + formula.quantifier)
 		}
+	}
+	
+	protected override dispatch String serializeFormula(UnaryOperandPathFormula formula) {
+		val operator = formula.operator
+		val operand = formula.operand
+		return '''«operator.transform» («operand.serializeFormula»)'''
 	}
 }

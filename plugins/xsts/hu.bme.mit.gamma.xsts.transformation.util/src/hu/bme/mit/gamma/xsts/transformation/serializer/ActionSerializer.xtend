@@ -22,6 +22,7 @@ import hu.bme.mit.gamma.xsts.model.VariableDeclarationAction
 import hu.bme.mit.gamma.xsts.model.XSTS
 
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class ActionSerializer {
 	// Singleton
@@ -37,7 +38,7 @@ class ActionSerializer {
 	
 	def String serializeXsts(XSTS xSts, String[] directives) '''
 		«IF directives !== null»«FOR directive : directives»
-		//@«directive»
+		«XstsNamings.DIRECTIVE»«directive»
 		«ENDFOR»«ENDIF»
 		«xSts.serializeDeclarations(false)»
 		

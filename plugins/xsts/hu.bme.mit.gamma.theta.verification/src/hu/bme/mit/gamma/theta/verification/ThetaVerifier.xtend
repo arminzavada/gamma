@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 import static com.google.common.base.Preconditions.checkState
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class ThetaVerifier extends AbstractVerifier {
 	
@@ -113,8 +114,8 @@ class ThetaVerifier extends AbstractVerifier {
 			var directive = true
 			while (modelFileScanner.hasNext && directive) {
 				var xStsLine = modelFileScanner.nextLine.trim
-				if (xStsLine.startsWith("//@"))
-					directives += xStsLine
+				if (xStsLine.startsWith(XstsNamings.DIRECTIVE))
+					directives += xStsLine.substring(XstsNamings.DIRECTIVE.length)
 				else
 					directive = false
 			}

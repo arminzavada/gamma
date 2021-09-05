@@ -38,16 +38,13 @@ import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.trace.derivedfeatures.TraceModelDerivedFeatures.*
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class TraceBackAnnotator {
 	
 	protected final String XSTS_TRACE = "(XstsStateSequence"
 	protected final String XSTS_STATE = "(XstsState"
 	protected final String EXPL_STATE = "(ExplState"
-	
-	protected final String DIRECTIVE = "//@"
-	protected final String SPLIT_DIRECTIVE = DIRECTIVE + "splitted"
-	protected final String NOENV_DIRECTIVE = DIRECTIVE + "noenv" //TODO handle noenv directive
 	
 	//protected final Scanner traceScanner
 	protected final XstsStateSequence cex
@@ -60,9 +57,7 @@ class TraceBackAnnotator {
 	protected final boolean sortTrace
 	// Directives info
 	protected boolean splitted = false
-	protected String pcVarName = null
 	protected boolean noenv = false
-	protected String transVarName = null
 	// Auxiliary objects
 	protected final extension TraceModelFactory trFact = TraceModelFactory.eINSTANCE
 	protected final extension TraceUtil traceUtil = TraceUtil.INSTANCE
@@ -98,15 +93,12 @@ class TraceBackAnnotator {
 		}
 		// Directives
 		for (directive : directives) {
-			val split = directive.split(" ")
 			switch (directive) {
-				case directive.startsWith(SPLIT_DIRECTIVE): {
+				case directive.startsWith(XstsNamings.SPLIT_DIRECTIVE): {
 					splitted = true
-					pcVarName = split.get(1)
 				}
-				case directive.startsWith(NOENV_DIRECTIVE): {
+				case directive.startsWith(XstsNamings.NOENV_DIRECTIVE): {
 					noenv = true
-					transVarName = split.get(1)
 				}
 				default: {
 					logger.log(Level.WARNING, "Unhandled directive: " + directive)
@@ -144,7 +136,7 @@ class TraceBackAnnotator {
 		if (splitted) {
 			states = states.filter[s |
 				s.state.valuations.filter[v |
-					v.name.equals(pcVarName) && !v.value.equals("0")
+					v.name.equals(XstsNamings.PC_VAR_NAME) && !v.value.equals("0")
 				].size == 0
 			].toList
 		}

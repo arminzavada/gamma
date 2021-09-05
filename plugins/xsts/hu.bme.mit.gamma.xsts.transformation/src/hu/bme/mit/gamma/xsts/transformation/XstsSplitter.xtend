@@ -21,6 +21,7 @@ import hu.bme.mit.gamma.xsts.model.VariableDeclarationAction
 import hu.bme.mit.gamma.xsts.model.XSTS
 import hu.bme.mit.gamma.xsts.model.XSTSModelFactory
 import hu.bme.mit.gamma.xsts.model.XTransition
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 import hu.bme.mit.gamma.xsts.util.XstsActionUtil
 import java.math.BigInteger
 import java.util.Collection
@@ -28,7 +29,6 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
-import java.util.Comparator
 
 class XstsSplitter {
 	static class XstsSlice {
@@ -82,9 +82,6 @@ class XstsSplitter {
  	protected static final ExpressionModelFactory exprFactory = ExpressionModelFactory.eINSTANCE
  	protected static final XstsActionUtil actionUtil = XstsActionUtil.INSTANCE
  	protected static final ExpressionUtil exprUtil = ExpressionUtil.INSTANCE
-	
-	static val PC_NAME_BASE = "__pc"
-	static val TRANS_NAME_BASE = "__trans"
 	
 	var VariableDeclaration _pc = null
 	var VariableDeclaration _trans = null
@@ -317,14 +314,14 @@ class XstsSplitter {
 	
 	def addPcAndTransVars(XSTS xSts) {
 		_pc = exprFactory.createVariableDeclaration => [
-	 		name = PC_NAME_BASE
+	 		name = XstsNamings.PC_VAR_NAME
 	 		type = exprFactory.createIntegerTypeDefinition
 	 		expression = exprFactory.createIntegerLiteralExpression => [
 	 			value = BigInteger.valueOf(0)
 	 		]
 	 	]
 	 	_trans = exprFactory.createVariableDeclaration => [
-	 		name = TRANS_NAME_BASE
+	 		name = XstsNamings.TRANS_VAR_NAME
 	 		type = exprFactory.createBooleanTypeDefinition
 	 		expression = exprFactory.createFalseExpression
 	 	]
@@ -332,23 +329,13 @@ class XstsSplitter {
 	 	xSts.addUtilGlobalVar(_trans)
 	}
 	def addUtilGlobalVar(XSTS xSts, VariableDeclaration varDecl) {
-	 	while (xSts.hasGlobalVarWithName(varDecl.name)) {
-	 		varDecl.name = "_" + varDecl.name
-	 	}
+		/* TODO Handle possible name collision
+		 * 		With the existing transformation conventions no name collision should occur
+		 * 		but later renaming the existing variable can be necessary
+		 */
+		if (xSts.hasGlobalVarWithName(varDecl.name))
+			throw new IllegalStateException("Global variable already exists with name " + varDecl.name)
 	 	xSts.variableDeclarations += varDecl
-	 }
-	 
-	 protected def String getUtilGlobalVarName(XSTS xSts, String name) {
-	 	return xSts.variableDeclarations
-	 		.filter[v | v.name.length >= name.length && v.name.equals("_".repeat(v.name.length - name.length) + name)]
-	 		.max(Comparator.comparingInt(v | v.name.length))
-	 		.name
-	 }
-	 def String[] getSplitUtilVarNames(XSTS xSts) {
-	 	return #[
-	 		xSts.getUtilGlobalVarName(PC_NAME_BASE),
-	 		xSts.getUtilGlobalVarName(TRANS_NAME_BASE)
-	 	]
 	 }
 	
 	def init() {

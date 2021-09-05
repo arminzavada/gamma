@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -35,6 +36,7 @@ import hu.bme.mit.gamma.property.model.PropertyPackage;
 import hu.bme.mit.gamma.property.model.StateFormula;
 import hu.bme.mit.gamma.querygenerator.serializer.PropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.ThetaPropertySerializer;
+import hu.bme.mit.gamma.querygenerator.serializer.ThetaSplittedPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.XstsUppaalPropertySerializer;
 import hu.bme.mit.gamma.theta.verification.ThetaVerification;
@@ -46,6 +48,7 @@ import hu.bme.mit.gamma.uppaal.verification.UppaalVerification;
 import hu.bme.mit.gamma.uppaal.verification.XstsUppaalVerification;
 import hu.bme.mit.gamma.verification.util.AbstractVerification;
 import hu.bme.mit.gamma.verification.util.AbstractVerifier.Result;
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings;
 
 public class VerificationHandler extends TaskHandler {
 
@@ -64,6 +67,8 @@ public class VerificationHandler extends TaskHandler {
 		setVerification(verification);
 		Set<AnalysisLanguage> languagesSet = new HashSet<AnalysisLanguage>(verification.getLanguages());
 		checkArgument(languagesSet.size() == 1);
+		String filePath = verification.getFileName().get(0);
+		File modelFile = new File(filePath);
 		AbstractVerification verificationTask = null;
 		PropertySerializer propertySerializer = null;
 		for (AnalysisLanguage analysisLanguage : languagesSet) {
@@ -73,8 +78,17 @@ public class VerificationHandler extends TaskHandler {
 					propertySerializer = UppaalPropertySerializer.INSTANCE;
 					break;
 				case THETA:
+					boolean splitted = false;
+					try (Scanner modelFileScanner = new Scanner(modelFile)) {
+						boolean directive = true;
+						while (modelFileScanner.hasNext() && directive && !splitted) {
+							String xStsLine = modelFileScanner.nextLine().trim();
+							directive = xStsLine.startsWith(XstsNamings.DIRECTIVE);
+							splitted = xStsLine.equals(XstsNamings.DIRECTIVE + XstsNamings.SPLIT_DIRECTIVE);
+						}
+					}
 					verificationTask = ThetaVerification.INSTANCE;
-					propertySerializer = ThetaPropertySerializer.INSTANCE;
+					propertySerializer = splitted ? ThetaSplittedPropertySerializer.INSTANCE : ThetaPropertySerializer.INSTANCE;
 					break;
 				case XSTS_UPPAAL:
 					verificationTask = XstsUppaalVerification.INSTANCE;
@@ -84,8 +98,6 @@ public class VerificationHandler extends TaskHandler {
 					throw new IllegalArgumentException("Currently only UPPAAL and Theta are supported.");
 			}
 		}
-		String filePath = verification.getFileName().get(0);
-		File modelFile = new File(filePath);
 		boolean isOptimize = verification.isOptimize();
 		String packageName = verification.getPackageName().get(0);
 		
