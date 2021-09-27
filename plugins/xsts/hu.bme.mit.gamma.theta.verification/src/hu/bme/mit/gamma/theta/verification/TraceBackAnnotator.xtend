@@ -42,11 +42,6 @@ import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class TraceBackAnnotator {
 	
-	protected final String XSTS_TRACE = "(XstsStateSequence"
-	protected final String XSTS_STATE = "(XstsState"
-	protected final String EXPL_STATE = "(ExplState"
-	
-	//protected final Scanner traceScanner
 	protected final XstsStateSequence cex
 	protected final ThetaQueryGenerator thetaQueryGenerator
 	
