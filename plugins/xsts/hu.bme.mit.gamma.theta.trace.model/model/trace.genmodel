@@ -8,6 +8,9 @@
   <foreignModel>trace.ecore</foreignModel>
   <genPackages prefix="TraceModel" basePackage="hu.bme.mit.gamma.theta.trace" disposableProviderFactory="true"
       fileExtensions="cex" ecorePackage="trace.ecore#/">
+    <genClasses ecoreClass="trace.ecore#//XstsTrace">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trace.ecore#//XstsTrace/sequences"/>
+    </genClasses>
     <genClasses ecoreClass="trace.ecore#//XstsStateSequence">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference trace.ecore#//XstsStateSequence/states"/>
     </genClasses>
