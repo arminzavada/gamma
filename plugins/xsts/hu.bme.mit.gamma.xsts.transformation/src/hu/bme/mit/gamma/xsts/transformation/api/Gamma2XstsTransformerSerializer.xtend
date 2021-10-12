@@ -11,26 +11,24 @@
 package hu.bme.mit.gamma.xsts.transformation.api
 
 import hu.bme.mit.gamma.expression.model.Expression
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.TransitionMerging
 import hu.bme.mit.gamma.property.model.PropertyPackage
 import hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures
 import hu.bme.mit.gamma.statechart.interface_.Component
-import hu.bme.mit.gamma.transformation.util.AnalysisModelPreprocessor
 import hu.bme.mit.gamma.transformation.util.GammaFileNamer
 import hu.bme.mit.gamma.transformation.util.ModelSlicerModelAnnotatorPropertyGenerator
+import hu.bme.mit.gamma.transformation.util.annotations.AnnotatablePreprocessableElements
 import hu.bme.mit.gamma.transformation.util.annotations.DataflowCoverageCriterion
 import hu.bme.mit.gamma.transformation.util.annotations.InteractionCoverageCriterion
-import hu.bme.mit.gamma.transformation.util.annotations.ModelAnnotatorPropertyGenerator.ComponentInstancePortReferences
-import hu.bme.mit.gamma.transformation.util.annotations.ModelAnnotatorPropertyGenerator.ComponentInstancePortStateTransitionReferences
-import hu.bme.mit.gamma.transformation.util.annotations.ModelAnnotatorPropertyGenerator.ComponentInstanceReferences
-import hu.bme.mit.gamma.transformation.util.annotations.ModelAnnotatorPropertyGenerator.ComponentInstanceVariableReferences
+import hu.bme.mit.gamma.transformation.util.preprocessor.AnalysisModelPreprocessor
 import hu.bme.mit.gamma.util.FileUtil
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer
-import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
+import hu.bme.mit.gamma.xsts.transformation.InitialStateSetting
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
-import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 import java.io.File
 import java.util.List
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
 
 class Gamma2XstsTransformerSerializer {
 	
@@ -39,19 +37,17 @@ class Gamma2XstsTransformerSerializer {
 	protected final String targetFolderUri
 	protected final String fileName
 	protected final Integer schedulingConstraint
+	// Configuration
+	protected final boolean optimize
+	protected final TransitionMerging transitionMerging
 	protected final AnalysisSplit split
 	// Slicing
-	protected final PropertyPackage propertyPackage
+	protected final PropertyPackage slicingProperties
 	// Annotation
-	protected final ComponentInstanceReferences testedComponentsForStates
-	protected final ComponentInstanceReferences testedComponentsForTransitions
-	protected final ComponentInstanceReferences testedComponentsForTransitionPairs
-	protected final ComponentInstancePortReferences testedComponentsForOutEvents
-	protected final ComponentInstancePortStateTransitionReferences testedInteractions
-	protected final InteractionCoverageCriterion senderCoverageCriterion
-	protected final InteractionCoverageCriterion receiverCoverageCriterion
-	protected final ComponentInstanceVariableReferences dataflowTestedVariables
-	protected final DataflowCoverageCriterion dataflowCoverageCriterion
+	protected final AnnotatablePreprocessableElements annotatableElements
+	// Initial state
+	protected final PropertyPackage initialState
+	protected final InitialStateSetting initialStateSetting
 	
 	protected final AnalysisModelPreprocessor preprocessor = AnalysisModelPreprocessor.INSTANCE
 	protected final extension GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE
@@ -71,74 +67,64 @@ class Gamma2XstsTransformerSerializer {
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint) {
-		this(component, arguments, targetFolderUri, fileName, schedulingConstraint, AnalysisSplit.NONE,
-			null, null, null, null, null, null,InteractionCoverageCriterion.EVERY_INTERACTION,
-			InteractionCoverageCriterion.EVERY_INTERACTION,
-			null, DataflowCoverageCriterion.ALL_USE)
+		this(component, arguments, targetFolderUri, fileName, schedulingConstraint,
+			true, TransitionMerging.HIERARCHICAL, AnalysisSplit.NONE,
+			null, new AnnotatablePreprocessableElements(null, null, null, null, null,
+				InteractionCoverageCriterion.EVERY_INTERACTION, InteractionCoverageCriterion.EVERY_INTERACTION,
+				null, DataflowCoverageCriterion.ALL_USE,
+				null, DataflowCoverageCriterion.ALL_USE),
+			null, null)
 	}
 	
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint,
+			boolean optimize,
+			TransitionMerging transitionMerging,
 			AnalysisSplit split,
-			PropertyPackage propertyPackage,
-			ComponentInstanceReferences testedComponentsForStates,
-			ComponentInstanceReferences testedComponentsForTransitions,
-			ComponentInstanceReferences testedComponentsForTransitionPairs,
-			ComponentInstancePortReferences testedComponentsForOutEvents,
-			ComponentInstancePortStateTransitionReferences testedInteractions,
-			InteractionCoverageCriterion senderCoverageCriterion,
-			InteractionCoverageCriterion receiverCoverageCriterion,
-			ComponentInstanceVariableReferences dataflowTestedVariables,
-			DataflowCoverageCriterion dataflowCoverageCriterion) {
+			PropertyPackage slicingProperties,
+			AnnotatablePreprocessableElements annotatableElements,
+			PropertyPackage initialState, InitialStateSetting initialStateSetting) {
 		this.component = component
 		this.arguments = arguments
 		this.targetFolderUri = targetFolderUri
 		this.fileName = fileName
 		this.schedulingConstraint = schedulingConstraint
+		//
+		this.optimize = optimize
+		this.transitionMerging = transitionMerging
 		this.split = split
 		//
-		this.propertyPackage = propertyPackage
+		this.slicingProperties = slicingProperties
 		//
-		this.testedComponentsForStates = testedComponentsForStates
-		this.testedComponentsForTransitions = testedComponentsForTransitions
-		this.testedComponentsForTransitionPairs = testedComponentsForTransitionPairs
-		this.testedComponentsForOutEvents = testedComponentsForOutEvents
-		this.testedInteractions = testedInteractions
-		this.senderCoverageCriterion = senderCoverageCriterion
-		this.receiverCoverageCriterion = receiverCoverageCriterion
-		this.dataflowTestedVariables = dataflowTestedVariables
-		this.dataflowCoverageCriterion = dataflowCoverageCriterion
+		this.annotatableElements = annotatableElements
+		//
+		this.initialState = initialState
+		this.initialStateSetting = initialStateSetting
 	}
 	
 	def void execute() {
 		val gammaPackage = StatechartModelDerivedFeatures.getContainingPackage(component)
 		// Preprocessing
-		val newTopComponent = preprocessor.preprocess(gammaPackage, arguments, targetFolderUri, fileName)
+		val newTopComponent = preprocessor.preprocess(gammaPackage, arguments, targetFolderUri, fileName, optimize)
 		val newGammaPackage = StatechartModelDerivedFeatures.getContainingPackage(newTopComponent)
 		// Slicing and Property generation
 		val slicerAnnotatorAndPropertyGenerator = new ModelSlicerModelAnnotatorPropertyGenerator(
 				newTopComponent,
-				propertyPackage,
-				testedComponentsForStates, testedComponentsForTransitions,
-				testedComponentsForTransitionPairs, testedComponentsForOutEvents,
-				testedInteractions, senderCoverageCriterion, receiverCoverageCriterion,
-				dataflowTestedVariables, dataflowCoverageCriterion,
+				slicingProperties,
+				annotatableElements,
 				targetFolderUri, fileName)
 		slicerAnnotatorAndPropertyGenerator.execute
-		val gammaToXstsTransformer = new GammaToXstsTransformer(schedulingConstraint, true, true, split)
+		val gammaToXSTSTransformer = new GammaToXstsTransformer(
+			schedulingConstraint, true, true,
+			transitionMerging, split, initialState, initialStateSetting)
 		// Normal transformation
-		val xSts = gammaToXstsTransformer.execute(newGammaPackage)
+		val xSts = gammaToXSTSTransformer.execute(newGammaPackage)
 		// EMF
 		xSts.normalSave(targetFolderUri, fileName.emfXStsFileName)
 		// String
 		val xStsFile = new File(targetFolderUri + File.separator + fileName.xtextXStsFileName)
-		var directives = newArrayList
-		if (split != AnalysisSplit.NONE) {
-			directives += XstsNamings.SPLIT_DIRECTIVE
-			directives += XstsNamings.NOENV_DIRECTIVE
-		}
-		val xStsString = xSts.serializeXsts(directives)
+		val xStsString = xSts.serializeXsts
 		xStsFile.saveString(xStsString)
 	}
 	

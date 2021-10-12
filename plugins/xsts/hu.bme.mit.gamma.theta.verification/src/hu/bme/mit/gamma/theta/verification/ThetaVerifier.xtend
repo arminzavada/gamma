@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 import static com.google.common.base.Preconditions.checkState
 import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 import hu.bme.mit.gamma.theta.trace.model.XstsTrace
+import java.util.List
 
 class ThetaVerifier extends AbstractVerifier {
 	
@@ -34,8 +35,7 @@ class ThetaVerifier extends AbstractVerifier {
 	final String SAFE = "SafetyResult Safe"
 	final String UNSAFE = "SafetyResult Unsafe"
 	
-	override Result verifyQuery(Object traceability, String parameters, File modelFile,
-			String query, boolean log, boolean storeOutput) {
+	override Result verifyQuery(Object traceability, String parameters, File modelFile, String query) {
 		var Result result = null
 		for (singleQuery : query.split(System.lineSeparator).reject[it.nullOrEmpty]) {
 			// Supporting multiple queries in separate files
@@ -45,8 +45,7 @@ class ThetaVerifier extends AbstractVerifier {
 					«parsedQuery»
 				}
 			'''
-			val newResult = super.verifyQuery(traceability, parameters,
-					modelFile, wrappedQuery, log, storeOutput)
+			val newResult = super.verifyQuery(traceability, parameters, modelFile, wrappedQuery)
 			val oldTrace = result?.trace
 			val newTrace = newResult?.trace
 			if (oldTrace === null) {
@@ -60,8 +59,7 @@ class ThetaVerifier extends AbstractVerifier {
 		return result
 	}
 	
-	override Result verifyQuery(Object traceability, String parameters, File modelFile,
-			File queryFile, boolean log, boolean storeOutput) {
+	override Result verifyQuery(Object traceability, String parameters, File modelFile, File queryFile) {
 		var Scanner resultReader = null
 		var Scanner modelFileScanner = null
 		try {
@@ -82,9 +80,7 @@ class ThetaVerifier extends AbstractVerifier {
 			while (resultReader.hasNext) {
 				// (SafetyResult Safe) or (SafetyResult Unsafe)
 				line = resultReader.nextLine
-				if (log) {
-					logger.log(Level.INFO, line)
-				}
+				logger.log(Level.INFO, line)
 			}
 			// Variable 'line' contains the last line of the output - the result
 			if (line.contains(SAFE)) {
@@ -119,8 +115,7 @@ class ThetaVerifier extends AbstractVerifier {
 				else
 					directive = false
 			}
-			val backAnnotator = new TraceBackAnnotator(gammaPackage, cex, directives)
-			val trace = backAnnotator.execute
+			val trace = gammaPackage.backAnnotate(cex, directives)
 			return new Result(result, trace)
 		} finally {
 			if (resultReader !== null) {
@@ -132,13 +127,23 @@ class ThetaVerifier extends AbstractVerifier {
 		}
 	}
 	
+	protected def backAnnotate(Package gammaPackage, XstsTrace cex, List<String> directives) {
+		// Must be synchronized due to the non-thread-safe VIATRA engine
+		synchronized (TraceBackAnnotator.getEngineSynchronizationObject) {
+			val backAnnotator = new TraceBackAnnotator(gammaPackage, cex, directives)
+			
+			return backAnnotator.execute
+		}
+	}
+	
 	override getTemporaryQueryFilename(File modelFile) {
 		return "." + modelFile.extensionlessName + ".prop"
 	}
 	
 	def getTraceFile(File modelFile) {
 		// Thread.currentThread.name is needed to prevent race conditions
-		return modelFile.parent + File.separator + modelFile.extensionlessName + "-" + Thread.currentThread.name + ".cex";
+		return modelFile.parent + File.separator + modelFile.extensionlessName.toHiddenFileName +
+			"-" + Thread.currentThread.name + ".cex";
 	}
 	
 }

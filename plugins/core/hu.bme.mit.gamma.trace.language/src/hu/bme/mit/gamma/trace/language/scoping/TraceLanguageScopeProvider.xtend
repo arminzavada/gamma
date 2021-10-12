@@ -10,12 +10,10 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.trace.language.scoping
 
-import hu.bme.mit.gamma.expression.model.EnumerationLiteralExpression
-import hu.bme.mit.gamma.expression.model.EnumerationTypeDefinition
 import hu.bme.mit.gamma.expression.model.ExpressionModelPackage
 import hu.bme.mit.gamma.expression.model.VariableDeclaration
 import hu.bme.mit.gamma.statechart.composite.AsynchronousCompositeComponent
-import hu.bme.mit.gamma.statechart.interface_.Port
+import hu.bme.mit.gamma.statechart.composite.CompositeModelPackage
 import hu.bme.mit.gamma.statechart.statechart.State
 import hu.bme.mit.gamma.statechart.statechart.StatechartModelPackage
 import hu.bme.mit.gamma.trace.model.ExecutionTrace
@@ -29,21 +27,15 @@ import java.util.HashSet
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EReference
 import org.eclipse.xtext.EcoreUtil2
+import org.eclipse.xtext.scoping.IScope
 import org.eclipse.xtext.scoping.Scopes
 
-import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 
-/**
- * This class contains custom scoping description.
- * 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#scoping
- * on how and when to use it.
- */
 class TraceLanguageScopeProvider extends AbstractTraceLanguageScopeProvider {
 
 	new() {
-		super.util = TraceUtil.INSTANCE;
+		super.util = TraceUtil.INSTANCE
 	}
 
 	override getScope(EObject context, EReference reference) {
@@ -54,10 +46,9 @@ class TraceLanguageScopeProvider extends AbstractTraceLanguageScopeProvider {
 			}
 		}
 		if (context instanceof RaiseEventAct && reference == StatechartModelPackage.Literals.RAISE_EVENT_ACTION__PORT) {
-			val executionTrace = EcoreUtil2.getRootContainer(context, true) as ExecutionTrace
+			val executionTrace = ecoreUtil.getContainerOfType(context, ExecutionTrace)
 			val component = executionTrace.component
-			val ports = new HashSet<Port>(component.allPorts)
-			return Scopes.scopeFor(ports)
+			return Scopes.scopeFor(component.allPorts)
 		}
 		if (context instanceof RaiseEventAct && reference == StatechartModelPackage.Literals.RAISE_EVENT_ACTION__EVENT) {
 			val raiseEventAct = context as RaiseEventAct
@@ -65,7 +56,7 @@ class TraceLanguageScopeProvider extends AbstractTraceLanguageScopeProvider {
 				val port = raiseEventAct.port
 				try {
 					val events = port.allEvents
-					return Scopes.scopeFor(events);
+					return Scopes.scopeFor(events)
 				} catch (NullPointerException e) {
 					// For some reason dirty editor errors emerge
 					return super.getScope(context, reference)
@@ -74,25 +65,25 @@ class TraceLanguageScopeProvider extends AbstractTraceLanguageScopeProvider {
 		}	
 		if (context instanceof InstanceSchedule &&
 				reference == TraceModelPackage.Literals.INSTANCE_SCHEDULE__SCHEDULED_INSTANCE) {
-			val executionTrace = EcoreUtil2.getRootContainer(context, true) as ExecutionTrace
+			val executionTrace = ecoreUtil.getContainerOfType(context, ExecutionTrace)
 			val component = executionTrace.component
 			if (component instanceof AsynchronousCompositeComponent) {
 				val instances = component.allAsynchronousSimpleInstances
 				return Scopes.scopeFor(instances)
 			}
 		}
-		if (reference == TraceModelPackage.Literals.INSTANCE_STATE__INSTANCE) {
-			val executionTrace = EcoreUtil2.getRootContainer(context, true) as ExecutionTrace
+		if (reference == CompositeModelPackage.Literals.COMPONENT_INSTANCE_REFERENCE__COMPONENT_INSTANCE) {
+			val executionTrace = ecoreUtil.getContainerOfType(context, ExecutionTrace)
 			val component = executionTrace.component
-			val simpleSyncInstances = component.allSimpleInstances
-			return Scopes.scopeFor(simpleSyncInstances)	
+			val instances = component.allInstances // Both atomic and chain references are supported
+			return Scopes.scopeFor(instances)
 		}
 		if (context instanceof InstanceStateConfiguration &&
 				reference == TraceModelPackage.Literals.INSTANCE_STATE_CONFIGURATION__STATE) {
 			val instanceState = context as InstanceStateConfiguration
 			val instance = instanceState.instance
-			val instanceType = instance.type
-			val executionTrace = EcoreUtil2.getRootContainer(context, true) as ExecutionTrace
+			val instanceType = instance.lastInstance.derivedType
+			val executionTrace = ecoreUtil.getContainerOfType(context, ExecutionTrace)
 			val states = new HashSet<State>
 			if (instanceType === null) {
 				val component = executionTrace.component
@@ -110,18 +101,12 @@ class TraceLanguageScopeProvider extends AbstractTraceLanguageScopeProvider {
 				reference == ExpressionModelPackage.Literals.DIRECT_REFERENCE_EXPRESSION__DECLARATION) {
 			val instanceVariableState = context as InstanceVariableState
 			val instance = instanceVariableState.instance
-			val instanceType = instance.type
+			val instanceType = instance.lastInstance.derivedType
 			if (instanceType === null) {
-				return Scopes.scopeFor(#[])
+				return IScope.NULLSCOPE
 			}
 			val variables = EcoreUtil2.getAllContentsOfType(instanceType, VariableDeclaration)
 			return Scopes.scopeFor(variables)
-		}
-		if (context instanceof EnumerationLiteralExpression) {
-			val typeDeclarations = util.getTypeDeclarations(context)
-			val enumTypes = typeDeclarations.map[it.typeDefinition].filter(EnumerationTypeDefinition)
-			val literals = enumTypes.map[it.literals].flatten
-			return Scopes.scopeFor(literals)
 		}
 		super.getScope(context, reference)
 	}

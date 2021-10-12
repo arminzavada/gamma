@@ -11,6 +11,7 @@
 package hu.bme.mit.gamma.util
 
 import java.io.File
+import java.util.Collection
 import java.util.Collections
 import java.util.List
 import org.eclipse.core.resources.ResourcesPlugin
@@ -67,8 +68,28 @@ class GammaEcoreUtil {
 		EcoreUtil.delete(object)
 	}
 	
+	def void deleteAll(Collection<? extends EObject> objects) {
+		EcoreUtil.deleteAll(objects, true)
+	}
+	
 	def void remove(EObject object) {
 		EcoreUtil.remove(object)
+	}
+	
+	def <T extends EObject> removeContainmentChains(
+			Collection<? extends T> removableElements, Class<? extends T> clazz) {
+		val queue = newLinkedList
+		queue += removableElements
+		while (!queue.empty) {
+			val removableElement = queue.poll
+			val container = removableElement.eContainer
+			removableElement.remove
+			if (clazz.isInstance(container)) {
+				if (container.eContents.empty) {
+					queue += container as T
+				}
+			}
+		}
 	}
 	
 	def void changeAndDelete(EObject newObject, EObject oldObject, EObject container) {
@@ -143,6 +164,10 @@ class GammaEcoreUtil {
 		return allContainers
 	}
 	
+	def <T extends EObject> List<T> getAllContainersOfType(EObject object, Class<T> type) {
+		return object.allContainers.filter(type).toList
+	}
+	
 	def <T extends EObject> T getSelfOrContainerOfType(EObject object, Class<T> type) {
 		if (type.isInstance(object)) {
 			return object as T
@@ -163,6 +188,15 @@ class GammaEcoreUtil {
 			return container as T
 		}
 		return container.getContainerOfType(type)
+	}
+	
+	def <T extends EObject> T getSelfOrLastContainerOfType(T object, Class<T> type) {
+		val container = object.eContainer
+		if (!type.isInstance(container)) {
+			return object
+		}
+		val validTypeContainer = container as T
+		return validTypeContainer.getSelfOrLastContainerOfType(type)
 	}
 	
 	def <T extends EObject> List<T> getContentsOfType(EObject object, Class<T> type) {
@@ -189,13 +223,30 @@ class GammaEcoreUtil {
 		return contents
 	}
 	
-	def contains(EObject potentialContainer, EObject object) {
-		val containers = object.allContainers
-		return containers.contains(potentialContainer)
+	def boolean containsTransitively(EObject potentialContainer, EObject object) {
+		if (potentialContainer === null || object === null) {
+			return false
+		}
+		val container = object.eContainer
+		if (potentialContainer === container) {
+			return true
+		}
+		return potentialContainer.containsTransitively(container)
+	}
+	
+	def selfOrContainsTransitively(EObject potentialContainer, EObject object) {
+		return potentialContainer === object || potentialContainer.containsTransitively(object)
+	}
+	
+	def containsOneOtherTransitively(EObject lhs, EObject rhs) {
+		return lhs.containsTransitively(rhs) || rhs.containsTransitively(lhs)
+	}
+	
+	def EObject normalLoad(URI uri) {
+		return uri.normalLoad(new ResourceSetImpl)
 	}
 
-	def EObject normalLoad(URI uri) {
-		val resourceSet = new ResourceSetImpl
+	def EObject normalLoad(URI uri, ResourceSet resourceSet) {
 		val resource = resourceSet.getResource(uri, true)
 		return resource.getContents().get(0)
 	}
@@ -203,9 +254,17 @@ class GammaEcoreUtil {
 	def EObject normalLoad(File file) {
 		return normalLoad(file.parent, file.name)
 	}
+	
+	def EObject normalLoad(File file, ResourceSet resourceSet) {
+		return normalLoad(file.parent, file.name, resourceSet)
+	}
 
 	def EObject normalLoad(String parentFolder, String fileName) {
-		return normalLoad(URI.createFileURI(parentFolder + File.separator + fileName))
+		return URI.createFileURI(parentFolder + File.separator + fileName).normalLoad
+	}
+	
+	def EObject normalLoad(String parentFolder, String fileName, ResourceSet resourceSet) {
+		return URI.createFileURI(parentFolder + File.separator + fileName).normalLoad(resourceSet)
 	}
 
 	def Resource normalSave(ResourceSet resourceSet, EObject rootElem, URI uri) {
@@ -230,6 +289,10 @@ class GammaEcoreUtil {
 
 	def void save(EObject rootElem) {
 		val resource = rootElem.eResource
+		resource.save
+	}
+	
+	def void save(Resource resource) {
 		checkState(resource !== null)
 		resource.save(Collections.EMPTY_MAP)
 	}
@@ -260,7 +323,7 @@ class GammaEcoreUtil {
 		}
 		return true
 	}
-
+	
 	def boolean helperEquals(EObject lhs, EObject rhs) {
 		val helper = new EqualityHelper
 		return helper.equals(lhs, rhs)
@@ -276,9 +339,15 @@ class GammaEcoreUtil {
 		}
 		return list
 	}
-
+	
 	def <T extends EObject> T clone(T object) {
 		return object.clone(true, true /* This parameter sets reference copying */)
+	}
+	
+	def <T extends EObject> cloneAndChange(T oldObject, EObject container) {
+		val newObject = oldObject.clone
+		newObject.change(oldObject, container)
+		return newObject
 	}
 
 	@SuppressWarnings("unchecked")
@@ -316,15 +385,28 @@ class GammaEcoreUtil {
 		return new File(URI.decode(location))
 	}
 	
+	def hasPlatformUri(Resource resource) {
+		return resource.URI.isPlatform
+	}
+	
+	def getPlatformUri(String path) {
+		val file = new File(path)
+		return file.platformUri
+	}
+	
+	def getPlatformUri(File file) {
+		val projectFile = file.parentFile.projectFile
+		val location = file.toString.substring(projectFile.parent.length)
+		return URI.createPlatformResourceURI(location, true)
+	}
+	
 	def getPlatformUri(Resource resource) {
 		val uri = resource.URI
 		if (uri.isPlatform) {
 			return uri
 		}
 		val resourceFile = resource.file
-		val projectFile = resourceFile.parentFile.projectFile
-		val location = resourceFile.toString.substring(projectFile.parent.length)
-		return URI.createPlatformResourceURI(location, true)
+		return resourceFile.platformUri
 	}
 	
 	def getAbsoluteUri(Resource resource) {
@@ -334,6 +416,17 @@ class GammaEcoreUtil {
 		}
 		val resourceFile = resource.file
 		return URI.createFileURI(resourceFile.toString)
+	}
+	
+	def matchUri(String changableAbsoluteUri, Resource resource) {
+		return changableAbsoluteUri.matchUri(resource.URI)
+	}
+	
+	def matchUri(String changableAbsoluteUri, URI pivot) {
+		if (pivot.isPlatform) {
+			return changableAbsoluteUri.platformUri
+		}
+		return URI.createFileURI(changableAbsoluteUri)
 	}
 	
 	def File getProjectFile(File file) {
@@ -349,6 +442,16 @@ class GammaEcoreUtil {
 		val container = object.eContainer
 		val list = container.eGet(containingFeature) as List<EObject>
 		return list.indexOf(object)
+	}
+	
+	def isLast(EObject object) {
+		val containingFeature = object.eContainingFeature
+		val container = object.eContainer
+		val get = container.eGet(containingFeature)
+		if (get instanceof List) {
+			return get.last == object
+		}
+		return true
 	}
 	
 }
