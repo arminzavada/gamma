@@ -51,8 +51,9 @@ public class ExpressionEvaluator {
 	public static final ExpressionEvaluator INSTANCE = new ExpressionEvaluator();
 	protected ExpressionEvaluator() {}
 	//
-	
-	private static final ExpressionModelFactory factory = ExpressionModelFactory.eINSTANCE;
+
+	protected final ExpressionUtil expressionUtil = ExpressionUtil.INSTANCE;
+	protected final ExpressionModelFactory factory = ExpressionModelFactory.eINSTANCE;
 	
 	public int evaluate(Expression expression) {
 		try {
@@ -176,12 +177,13 @@ public class ExpressionEvaluator {
 		}
 		if (expression instanceof EqualityExpression) {
 			final EqualityExpression equalityExpression = (EqualityExpression) expression;
-			return evaluateBoolean(equalityExpression.getLeftOperand()) == evaluateBoolean(
+			// Evaluate to handle integer operands
+			return evaluate(equalityExpression.getLeftOperand()) == evaluate(
 					equalityExpression.getRightOperand());
 		}
 		if (expression instanceof InequalityExpression) {
 			final InequalityExpression inequalityExpression = (InequalityExpression) expression;
-			return evaluateBoolean(inequalityExpression.getLeftOperand()) != evaluateBoolean(
+			return evaluate(inequalityExpression.getLeftOperand()) != evaluate(
 					inequalityExpression.getRightOperand());
 		}
 		if (expression instanceof DirectReferenceExpression) {
@@ -235,9 +237,8 @@ public class ExpressionEvaluator {
 	}
 	
 	public Expression of(EnumerationTypeDefinition type, int value) {
-		EnumerationLiteralExpression enumerationLiteralExpression = factory.createEnumerationLiteralExpression();
-		enumerationLiteralExpression.setReference(type.getLiterals().get(value));
-		return enumerationLiteralExpression;
+		EnumerationLiteralDefinition literal = type.getLiterals().get(value);
+		return expressionUtil.createEnumerationLiteralExpression(literal);
 	}
 	
 }

@@ -17,6 +17,8 @@ import hu.bme.mit.gamma.statechart.lowlevel.model.Region
 import hu.bme.mit.gamma.statechart.lowlevel.model.State
 import hu.bme.mit.gamma.statechart.lowlevel.model.Transition
 import hu.bme.mit.gamma.xsts.model.Action
+import hu.bme.mit.gamma.xsts.model.CompositeAction
+import hu.bme.mit.gamma.xsts.model.IfAction
 import hu.bme.mit.gamma.xsts.model.NonDeterministicAction
 import hu.bme.mit.gamma.xsts.model.ParallelAction
 import hu.bme.mit.gamma.xsts.model.SequentialAction
@@ -31,7 +33,7 @@ import static extension hu.bme.mit.gamma.statechart.lowlevel.derivedfeatures.Low
 class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTransitionTransformer {
 	
 	new(ViatraQueryEngine engine, Trace trace) {
-		super(engine, trace)
+		this(engine, trace, null)
 	}
 	
 	new(ViatraQueryEngine engine, Trace trace, RegionActivator regionActivator) {
@@ -68,7 +70,7 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 			it.actions.add(0, lowlevelIncomingTransition.connectChoiceBackward) // Needed as transformForward does not do this
 			it.actions.add(0, xStsPreconditionAction)
 		]
-		val xStsChoiceAction = xStsAction.actions.last as NonDeterministicAction
+		val xStsChoiceAction = xStsAction.actions.last as CompositeAction // If or NonDet
 		val xStsComplexTransition = xStsAction.createXStsTransition
 		trace.put(lowlevelFirstChoiceState, xStsComplexTransition, xStsPrecondition, xStsChoiceAction)
 		return xStsComplexTransition
@@ -96,7 +98,8 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 		checkArgument(lowlevelSource instanceof State && lowlevelTarget instanceof ForkState)
 		val lowlevelTransitionAction = lowlevelTransition.action
 		return createSequentialAction => [
-			it.actions += lowlevelTransition.createRecursiveXStsTransitionExitActions(false /* So source ancestors are not exited multiple times */)
+			it.actions += lowlevelTransition
+				.createRecursiveXStsTransitionExitActions(false /* So source ancestors are not exited multiple times */)
 			if (lowlevelTransitionAction !== null) {
 				it.actions += lowlevelTransitionAction.transformAction
 			}
@@ -146,31 +149,57 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 	def dispatch SequentialAction transformForward(ChoiceState lowlevelChoiceState) {
 		val lowlevelIncomingTransitions = lowlevelChoiceState.incomingTransitions
 		checkArgument(lowlevelIncomingTransitions.size == 1)
+		
 		val lowlevelOutgoingTransitions = lowlevelChoiceState.outgoingTransitions
+				.sortingAccordingToPriority
+		val arePrioritiesUnique = lowlevelOutgoingTransitions.arePrioritiesUnique
 		checkArgument(lowlevelOutgoingTransitions.size >= 1)
+		
 		// Note: precondition is easy now, as currently incoming actions are NOT supported
 		// Precondition (contains this source precondition and all upcoming ones as well)
-		val xStsChoicePostcondition = createNonDeterministicAction // Will contain the branches
+		val xStsChoicePostcondition = (arePrioritiesUnique) ?
+				createIfAction : createNonDeterministicAction // Will contain the branches
 		val xStsChoiceAction = createSequentialAction => [
 			// A precondition CANNOT be put here, it is taken care of by the previous postcondition
 			// No backward: it would lead to infinite recursion, just checking if it the source is a state
 			it.actions += xStsChoicePostcondition
 		]
+		
 		// Postcondition
 		for (lowlevelOutgoingTransition : lowlevelOutgoingTransitions) {
-			val lowlevelGuard = lowlevelOutgoingTransition.guard
-			val lowlevelTargetGuard = (lowlevelGuard !== null) ?
-				lowlevelGuard.transformExpression : // Here is the precondition
-				createTrueExpression // No guard, it can always fire
+			// Simple guard, can be null
+			var xStsGuard = lowlevelOutgoingTransition.getGuardExpression(trace.getChoiceGuards) // Precondition
+			if (xStsGuard === null) {
+				xStsGuard = createTrueExpression // E.g., else/default branches
+			}
 			val lowlevelTargetNode = lowlevelOutgoingTransition.target
-			xStsChoicePostcondition.extendChoiceWithBranch(lowlevelTargetGuard,
-				lowlevelChoiceState.createRecursiveXStsForwardNodeConnection(lowlevelOutgoingTransition, lowlevelTargetNode)
-			)
-		}	
+			val xStsNextAction = lowlevelChoiceState.createRecursiveXStsForwardNodeConnection(
+					lowlevelOutgoingTransition, lowlevelTargetNode)
+			
+			if (arePrioritiesUnique) {
+				val xStsIfAction = xStsChoicePostcondition as IfAction
+				xStsIfAction.append(xStsGuard, xStsNextAction)
+			}
+			else {
+				val xStsNonDeterministicAction = xStsChoicePostcondition as NonDeterministicAction
+				
+				// Priority: must NOT be extracted to the very beginning if we want to follow UML semantics - hence the lack of caching
+				val lowlevelHigherPriorityTransitions = lowlevelOutgoingTransition.higherPriorityTransitions
+				val xStsPriorityExpressions = lowlevelHigherPriorityTransitions
+						.map[it.getGuardExpression(trace.getChoiceGuards)].filterNull
+				val xStsPriorityExpression = xStsPriorityExpressions.connectViaNegations
+				
+				val finalXStsGuard = xStsGuard.wrapIntoMultiaryExpression(xStsPriorityExpression, createAndExpression)
+						.unwrapIfPossible
+				
+				xStsNonDeterministicAction.extendChoiceWithBranch(finalXStsGuard, xStsNextAction)
+			}
+		}
+		
 		return xStsChoiceAction
 	}
 	
-	// Note that  merges and joins cannot be after choices and forks
+	// Note that  merges and joins cannot be placed after choices and forks
 	//
 	
 	// Connecting complex transitions forward through nodes
@@ -182,7 +211,8 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 			lowlevelTransition.source == lowlevelPseudoState && lowlevelTransition.target == lowlevelTarget)
 		val lowlevelTransitionAction = lowlevelTransition.action
 		return createSequentialAction => [
-			it.actions += lowlevelTransition.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality
+			it.actions += lowlevelTransition
+				.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality
 			if (lowlevelTransitionAction !== null) {
 				it.actions += lowlevelTransitionAction.transformAction
 			}
@@ -198,11 +228,13 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 		val lowlevelTransitionAction = lowlevelTransition.action
 		return lowlevelTarget.transformForward => [
 			// Needed if the transition from the junction is to higher
-			it.actions.addAll(0, lowlevelTransition.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality)
+			it.actions.addAll(0, lowlevelTransition
+				.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality)
 			if (lowlevelTransitionAction !== null) {
 				it.actions.add(0, lowlevelTransitionAction.transformAction)
 			}
-			it.actions.addAll(0, lowlevelTransition.createRecursiveXStsOrthogonalRegionAndTransitionParentEntryActionsWithOrthogonality)
+			it.actions.addAll(0, lowlevelTransition
+				.createRecursiveXStsOrthogonalRegionAndTransitionParentEntryActionsWithOrthogonality)
 		]
 	}
 	
@@ -211,7 +243,8 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 		checkArgument(lowlevelTransition.source == lowlevelChoice && lowlevelTransition.target == lowlevelTarget)
 		val lowlevelTransitionAction = lowlevelTransition.action
 		return createSequentialAction => [
-			it.actions += lowlevelTransition.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality
+			it.actions += lowlevelTransition
+				.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality
 			if (lowlevelTransitionAction !== null) {
 				it.actions += lowlevelTransitionAction.transformAction
 			}
@@ -239,11 +272,13 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 			lowlevelTransition.target == lowlevelTarget && lowlevelTarget.incomingTransitions.size == 1)
 		val lowlevelTransitionAction = lowlevelTransition.action
 		return lowlevelTarget.transformForward => [
-			it.actions.addAll(0, lowlevelTransition.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality)
+			it.actions.addAll(0, lowlevelTransition
+				.createRecursiveXStsOrthogonalRegionAndTransitionParentExitActionsWithOrthogonality)
 			if (lowlevelTransitionAction !== null) {
 				it.actions.add(0, lowlevelTransitionAction.transformAction)
 			}
-			it.actions.addAll(0, lowlevelTransition.createRecursiveXStsOrthogonalRegionAndTransitionParentEntryActionsWithOrthogonality)
+			it.actions.addAll(0, lowlevelTransition
+				.createRecursiveXStsOrthogonalRegionAndTransitionParentEntryActionsWithOrthogonality)
 		]
 	}
 		
@@ -284,7 +319,7 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 	}
 	
 	protected def Set<Region> getRecursiveLowlevelActivatedRegions(Transition lowlevelTransition) {
-		val lowlevelTargetAncestor = lowlevelTransition.targetAncestor  // Checking activated parent regions until this state
+		val lowlevelTargetAncestor = lowlevelTransition.targetAncestor // Checking activated parent regions until this state
 		val activatedLowlevelRegions = newHashSet
 		val lowlevelSource = lowlevelTransition.source
 		val lowlevelTarget = lowlevelTransition.target
@@ -308,13 +343,11 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 				// All branches are targeted to the same region
 				activatedLowlevelRegions += lowlevelParentRegion
 			}
-			else if (lowlevelOutgoingTransitions.map[it.target]
-					.forall[it instanceof ForkState]) {
+			else if (lowlevelOutgoingTransitions.map[it.target].forall[it instanceof ForkState]) {
 				for (outgoingLowlevelTransition : lowlevelOutgoingTransitions) {
 					activatedLowlevelRegions += outgoingLowlevelTransition.getRecursiveLowlevelActivatedRegions
 				}
 			}
-			
 		}
 		return activatedLowlevelRegions
 	}
@@ -328,14 +361,14 @@ class TerminalTransitionToXTransitionTransformer extends LowlevelTransitionToXTr
 					// Region activations
 					it.actions += lowlevelSubregion.createRecursiveXStsRegionAndSubregionActivatingAction
 					// State entries
-					for (lowlevelSubstate : lowlevelSubregion.stateNodes.filter(State)) {
+					for (lowlevelSubstate : lowlevelSubregion.states) {
 						it.actions += lowlevelSubstate.createRecursiveXStsStateAndSubstateEntryActions
 					}
 				]
 			}
 			else {
 				// Recursion
-				for (lowlevelCompositeSubstate : lowlevelSubregion.stateNodes.filter(State).filter[it.composite]) {
+				for (lowlevelCompositeSubstate : lowlevelSubregion.states.filter[it.composite]) {
 					xStsRegionActivatingActions += lowlevelCompositeSubstate.createXStsUnenteredRegionEntryAction(enteredRegions)
 				}
 			}

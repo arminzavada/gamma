@@ -17,6 +17,7 @@ import java.util.ArrayList
 import java.util.Collections
 import java.util.Map
 import java.util.Scanner
+import org.eclipse.core.resources.IResource
 
 class FileUtil {
 	// Singleton
@@ -56,8 +57,16 @@ class FileUtil {
 		return new File(sourceFolder + File.separator + packageName.toPath + File.separator + className + ".java")
 	}
 	
+	def getFile(String fileUri) {
+		return new File(fileUri)
+	}
+	
+	def getFileName(String fileUri) {
+		return fileUri.file.name
+	} 
+	
 	def getExtensionlessName(File file) {
-		return file.getName.extensionlessName
+		return file.name.extensionlessName
 	}
 	
 	def getExtensionlessName(String fileName) {
@@ -68,12 +77,20 @@ class FileUtil {
 		return fileName.substring(0, lastIndex)
 	}
 	
+	def getExtension(File file) {
+		return file.name.extension
+	}
+	
 	def getExtension(String fileName) {
 		val lastIndex = fileName.lastIndexOf(".")
 		if (lastIndex <= 0) { // <= 0 so hidden files are handled
 			return ""
 		}
 		return fileName.substring(lastIndex + 1)
+	}
+	
+	def isHiddenFile(File file) {
+		return file.name.hiddenFile
 	}
 	
 	def isHiddenFile(String fileName) {
@@ -84,11 +101,31 @@ class FileUtil {
 		return "." + fileName
 	}
 	
+	def toUnhiddenFileName(String fileName) {
+		if (fileName.startsWith(".")) {
+			return fileName.substring(1)
+		}
+		return fileName
+	}
+	
 	def changeExtension(String fileName, String newExtension) {
 		return fileName.extensionlessName + "." + newExtension
 	}
 	
+	def getParent(String fileUri) {
+		val file = new File(fileUri)
+		return file.parent
+	}
+	
 	def File exploreRelativeFile(File anchor, String relativePath) {
+		//
+		val relativePathTestFile = new File(relativePath);
+		if (relativePathTestFile.exists && relativePathTestFile.isAbsolute) {
+			// This is actually an incorrect call, as the String is not
+			// a relative path to the anchor, but we handle it anyway
+			return relativePathTestFile
+		}
+		// The string is actually a relative path
 		val path = anchor.toString + File.separator + relativePath
 		val file = new File(path)
 		if (file.exists) {
@@ -107,6 +144,19 @@ class FileUtil {
 		}
 	}
 	
+	def toFile(IResource resource) {
+		return resource.fullPath.toFile
+	}
+	
+	def void forceDelete(File file) {
+		if (file.isDirectory) {
+			for (subfile : file.listFiles) {
+				subfile.forceDelete
+			}
+		}
+		file.delete
+	}
+	
     /**
      * Returns the next valid name for the file that is suffixed by indices.
      */
@@ -115,7 +165,8 @@ class FileUtil {
     	folder.mkdirs();
     	// Searching the trace folder for highest id
     	for (File file: folder.listFiles()) {
-    		if (file.getName().matches(fileName + "[0-9]+\\..*")) {
+    		if (file.getName().matches(fileName + "[0-9]+\\." + fileExtension)) {
+    			// File extension needed to distinguish .get and .json
     			val id = file.getName().substring(fileName.length(), file.getName().length() - ("." + fileExtension).length());
     			usedIds.add(Integer.parseInt(id));
     		}

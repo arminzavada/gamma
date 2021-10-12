@@ -42,15 +42,23 @@ import hu.bme.mit.gamma.statechart.lowlevel.model.Region
 import hu.bme.mit.gamma.statechart.lowlevel.model.State
 import hu.bme.mit.gamma.statechart.lowlevel.model.Transition
 import hu.bme.mit.gamma.util.GammaEcoreUtil
+import hu.bme.mit.gamma.xsts.model.CompositeAction
 import hu.bme.mit.gamma.xsts.model.NonDeterministicAction
 import hu.bme.mit.gamma.xsts.model.ParallelAction
 import hu.bme.mit.gamma.xsts.model.XSTS
 import hu.bme.mit.gamma.xsts.model.XTransition
+import hu.bme.mit.gamma.xsts.util.XstsActionUtil
+import java.util.Collection
+import java.util.List
+import java.util.Map
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
 import org.eclipse.viatra.query.runtime.emf.EMFScope
 
 import static com.google.common.base.Preconditions.checkArgument
 import static com.google.common.base.Preconditions.checkState
+
+import static extension java.lang.Math.abs
 
 package class Trace {
 	// Trace model
@@ -58,9 +66,16 @@ package class Trace {
 	// Tracing engine
 	protected final ViatraQueryEngine tracingEngine
 	// Trace model factory
+	protected final extension XstsActionUtil xStsActionUtil = XstsActionUtil.INSTANCE
 	protected final extension TraceabilityFactory traceabilityFactory = TraceabilityFactory.eINSTANCE
 	// Auxiliary
 	protected final extension GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE
+	// Maps for caching transitions
+	protected final List<Expression> primaryIsActiveExpressions = newArrayList // Source state and its parent states - only ponated
+	protected final Map<Transition, List<Expression>> isActiveExpressions = newHashMap  // Source state and its parent states - also negated due to priority
+	protected final Map<Transition, List<Expression>> guards = newHashMap // Guars of transitions leaving states - also negated due to priority
+	protected final Map<Transition, List<Expression>> choiceGuards = newHashMap // Guards of transitions leaving choices - also negated due to priority
+	protected final Map<State, List<Expression>> stateReferenceExpressions = newHashMap
 	
 	new(Package _package, XSTS xSts) {
 		this.trace = createL2STrace => [
@@ -68,6 +83,64 @@ package class Trace {
 			it.XSts = xSts
 		]
 		this.tracingEngine = ViatraQueryEngine.on(new EMFScope(trace))
+	}
+	
+	// Transition caching
+	
+	def getPrimaryIsActiveExpressions() {
+		return primaryIsActiveExpressions // No guards, only state configurations
+	}
+	
+	def getIsActiveExpressions() {
+		return isActiveExpressions // Complete enabledness
+	}
+	
+	def getGuards() {
+		return guards // Does not contain choice guards
+	}
+	
+	def getChoiceGuards() {
+		return choiceGuards
+	}
+	
+	def getStateReferenceExpressions() {
+		return stateReferenceExpressions
+	}
+	
+	def <T> void add(Map<T, List<Expression>> map,
+			T object, Expression expression) {
+		if (!map.containsKey(object)) {
+			map += object -> newArrayList
+		}
+		val list = map.get(object)
+		list += expression
+	}
+	
+	def void keepExpressionsTransitivelyContainedBy(Map<?, List<Expression>> map,
+			Collection<Expression> expressions) {
+		for (list : map.values) {
+			list.removeIf[
+				val elem = it
+				!expressions.exists[it.selfOrContainsTransitively(elem)]
+			]
+		}
+	}
+	
+	def extractExpressions(Map<? extends EObject, List<Expression>> expressions) {
+		return expressions.extractExpressions(false)
+	}
+	
+	def extractExpressions(Map<? extends EObject, List<Expression>> expressions,
+			boolean onlyIfSizeIsGreaterThanOne) {
+		val xStsVariableDeclarationActions = newArrayList
+		for (key : expressions.keySet) {
+			val xStsExpressions = expressions.get(key)
+			if (!onlyIfSizeIsGreaterThanOne || xStsExpressions.size > 1) {
+				val name = '''_«xStsExpressions.hashCode.abs»'''
+				xStsVariableDeclarationActions += name.extractExpressions(xStsExpressions)
+			}
+		}
+		return xStsVariableDeclarationActions
 	}
 	
 	// Statechart - xSTS	
@@ -299,7 +372,6 @@ package class Trace {
 		return matches.head
 	}
 	
-	
 	def getXStsPrecondition(XTransition xStsTransition) {
 		checkArgument(xStsTransition !== null)
 		var matches = SimpleTransitionTrace.Matcher.on(tracingEngine).getAllValuesOfxStsPrecondition(null, xStsTransition)
@@ -352,7 +424,8 @@ package class Trace {
 	}
 	
 	// Choice transition - xTransition
-	def put(ChoiceState lowlevelChoiceState, XTransition xStsTransition, Expression xStsPrecondition, NonDeterministicAction xStsChoiceAction) {
+	def put(ChoiceState lowlevelChoiceState, XTransition xStsTransition, Expression xStsPrecondition,
+			CompositeAction xStsChoiceAction /* If or NonDet */) {
 		checkArgument(lowlevelChoiceState !== null)
 		checkArgument(xStsTransition !== null)
 		checkArgument(xStsChoiceAction !== null)

@@ -1,3 +1,13 @@
+/********************************************************************************
+ * Copyright (c) 2018-2021 Contributors to the Gamma project
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * SPDX-License-Identifier: EPL-1.0
+ ********************************************************************************/
 package hu.bme.mit.gamma.transformation.util.reducer
 
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory
@@ -73,9 +83,8 @@ class CoveredPropertyReducer {
 		return unnecessaryFormulas
 	}
 	
-	
 	protected def dispatch evaluate(ComponentInstanceEventParameterReference expression, Step step) {
-		val topComponentPort = expression.port.connectedTopComponentPort
+		val topComponentPort = expression.port.boundTopComponentPort
 		val event = expression.event
 		val parameter = expression.parameter
 		val parameterIndex = parameter.index
@@ -92,7 +101,7 @@ class CoveredPropertyReducer {
 	}
 	
 	protected def dispatch evaluate(ComponentInstanceEventReference expression, Step step) {
-		val topComponentPort = expression.port.connectedTopComponentPort
+		val topComponentPort = expression.port.boundTopComponentPort
 		val event = expression.event
 		
 		for (raiseEventAct : step.outEvents) {
@@ -110,7 +119,7 @@ class CoveredPropertyReducer {
 		val state = expression.state
 		
 		for (stateConfiguration : step.instanceStateConfigurations) {
-			val stateInstance = stateConfiguration.instance
+			val stateInstance = stateConfiguration.instance.lastInstance // Only one expected
 			val stateVariable = stateConfiguration.state
 			if (instanceHandler.contains(instance, stateInstance) && state.helperEquals(stateVariable)) {
 				return createTrueExpression
@@ -124,7 +133,7 @@ class CoveredPropertyReducer {
 		val variable = expression.variable
 		
 		for (variableState : step.instanceVariableStates) {
-			val stateInstance = variableState.instance
+			val stateInstance = variableState.instance.lastInstance // Only one expected
 			val stateVariable = variableState.declaration
 			if (instanceHandler.contains(instance, stateInstance) && variable.helperEquals(stateVariable)) {
 				val value = variableState.value

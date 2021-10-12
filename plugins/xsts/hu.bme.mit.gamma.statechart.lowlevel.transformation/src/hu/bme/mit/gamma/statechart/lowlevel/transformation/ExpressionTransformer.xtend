@@ -61,6 +61,10 @@ class ExpressionTransformer {
 	
 	protected int currentRecursionDepth // For lambdas
 	
+	new() {
+		this(new Trace) // For ad-hoc expression transformations
+	}
+	
 	new(Trace trace) {
 		this(trace, true, 10)
 	}
@@ -160,9 +164,7 @@ class ExpressionTransformer {
 		val lowlevelEnumTypeDeclaration = trace.get(gammaEnumTypeDeclaration)
 		val lowlevelEnumTypeDefinition = lowlevelEnumTypeDeclaration.type as EnumerationTypeDefinition
 		return #[
-			createEnumerationLiteralExpression => [
-				it.reference = lowlevelEnumTypeDefinition.literals.get(index)
-			]
+			lowlevelEnumTypeDefinition.literals.get(index).createEnumerationLiteralExpression
 		]
 	}
 	

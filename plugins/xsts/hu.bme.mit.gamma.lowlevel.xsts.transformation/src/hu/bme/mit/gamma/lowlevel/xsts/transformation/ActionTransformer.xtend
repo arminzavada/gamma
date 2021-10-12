@@ -10,6 +10,7 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.lowlevel.xsts.transformation
 
+import hu.bme.mit.gamma.action.model.AssertionStatement
 import hu.bme.mit.gamma.action.model.AssignmentStatement
 import hu.bme.mit.gamma.action.model.Block
 import hu.bme.mit.gamma.action.model.Branch
@@ -66,6 +67,14 @@ class ActionTransformer {
 		return createEmptyAction
 	}
 	
+	def dispatch Action transformAction(AssertionStatement action) {
+		return createEmptyAction
+		// Theta does not support assertions yet
+//		return createAssertAction => [
+//			it.assertion = action.assertion.transformExpression
+//		]
+	}
+	
 	def dispatch Action transformAction(VariableDeclarationStatement action) {
 		val lowlevelVariable = action.variableDeclaration
 		val xStsVariable = lowlevelVariable.transformVariableDeclarationAndInitialExpression
@@ -101,7 +110,7 @@ class ActionTransformer {
 		val guards = branches.key
 		val actions = branches.value
 		
-		return createIfElseAction(guards, actions)
+		return createIfAction(guards, actions)
 	}
 	
 	def dispatch Action transformAction(SwitchStatement action) {

@@ -17,6 +17,7 @@ import hu.bme.mit.gamma.xsts.model.AssignmentAction
 import hu.bme.mit.gamma.xsts.model.AssumeAction
 import hu.bme.mit.gamma.xsts.model.CompositeAction
 import hu.bme.mit.gamma.xsts.model.EmptyAction
+import hu.bme.mit.gamma.xsts.model.IfAction
 import hu.bme.mit.gamma.xsts.model.LoopAction
 import hu.bme.mit.gamma.xsts.model.NonDeterministicAction
 import hu.bme.mit.gamma.xsts.model.SequentialAction
@@ -60,6 +61,20 @@ class CommonizedVariableActionSerializer extends ActionSerializer {
 		'''
 	}
 	
+	def dispatch CharSequence serialize(IfAction action) {
+		val _else = action.^else
+		return '''
+			if («action.condition.serialize») {
+				«action.then.serialize»
+			}
+			«IF _else !== null && !(_else instanceof EmptyAction)»
+				else {
+					«_else.serialize»
+				}
+			«ENDIF»
+		'''
+	}
+	
 	def dispatch CharSequence serialize(NonDeterministicAction action) '''
 		«FOR xStsSubaction : action.actions.filter[!it.unnecessaryAction] SEPARATOR ' else ' »
 			if («xStsSubaction.condition.serialize») {
@@ -91,9 +106,10 @@ class CommonizedVariableActionSerializer extends ActionSerializer {
 	
 	def dispatch CharSequence serialize(VariableDeclarationAction action) {
 		val variable = action.variableDeclaration
-		val intialValue = variable.expression
+		val intialValue = (variable.expression !== null) ?
+			variable.expression : variable.type.initialValueOfType
 		return '''
-			«variable.type.serialize» «variable.name»«IF intialValue !== null» = «intialValue.serialize»«ENDIF»;
+			«variable.type.serialize» «variable.name» = «intialValue.serialize»;
 		'''
 	}
 	
