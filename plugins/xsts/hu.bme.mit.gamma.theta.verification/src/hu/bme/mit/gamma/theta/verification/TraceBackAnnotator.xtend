@@ -20,7 +20,6 @@ import hu.bme.mit.gamma.statechart.interface_.Package
 import hu.bme.mit.gamma.statechart.interface_.Port
 import hu.bme.mit.gamma.statechart.interface_.SchedulingConstraintAnnotation
 import hu.bme.mit.gamma.statechart.statechart.State
-import hu.bme.mit.gamma.theta.trace.model.XstsStateSequence
 import hu.bme.mit.gamma.trace.model.ExecutionTrace
 import hu.bme.mit.gamma.trace.model.RaiseEventAct
 import hu.bme.mit.gamma.trace.model.Step
@@ -39,10 +38,12 @@ import static com.google.common.base.Preconditions.checkState
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.trace.derivedfeatures.TraceModelDerivedFeatures.*
 import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
+import hu.bme.mit.gamma.theta.trace.model.XstsTrace
+import hu.bme.mit.gamma.theta.trace.model.XstsState
 
 class TraceBackAnnotator {
 	
-	protected final XstsStateSequence cex
+	protected final XstsTrace cex
 	protected final ThetaQueryGenerator thetaQueryGenerator
 	
 	protected final Package gammaPackage
@@ -60,19 +61,19 @@ class TraceBackAnnotator {
 	protected final extension GammaEcoreUtil gammaEcoreUtil = GammaEcoreUtil.INSTANCE
 	protected final Logger logger = Logger.getLogger("GammaLogger")
 	
-	new(Package gammaPackage, XstsStateSequence cex) {
+	new(Package gammaPackage, XstsTrace cex) {
 		this(gammaPackage, cex, true)
 	}
 	
-	new(Package gammaPackage, XstsStateSequence cex, boolean sortTrace) {
+	new(Package gammaPackage, XstsTrace cex, boolean sortTrace) {
 		this(gammaPackage, cex, sortTrace, null)
 	}
 	
-	new(Package gammaPackage, XstsStateSequence cex, List<String> directives) {
+	new(Package gammaPackage, XstsTrace cex, List<String> directives) {
 		this(gammaPackage, cex, true, directives)
 	}
 	
-	new(Package gammaPackage, XstsStateSequence cex, boolean sortTrace, List<String> directives) {
+	new(Package gammaPackage, XstsTrace cex, boolean sortTrace, List<String> directives) {
 		this.gammaPackage = gammaPackage
 		this.component = gammaPackage.components.head
 		this.thetaQueryGenerator = new ThetaQueryGenerator(gammaPackage)
@@ -116,158 +117,168 @@ class TraceBackAnnotator {
 				topComponentArguments.size + " - " + component.parameterDeclarations.size)
 		logger.log(Level.INFO, "The number of top component arguments is " + topComponentArguments.size)
 		trace.arguments += topComponentArguments.map[it.clone]
-		var step = createStep
-		trace.steps += step
+		var Step step// = createStep
+		//trace.steps += step
 		// Sets for raised in and out events and activated states
 		val raisedOutEvents = newHashSet
 		val raisedInEvents = newHashSet
 		val activatedStates = newHashSet
 		// Parsing
-		var state = BackAnnotatorState.INIT
+		var BackAnnotatorState backAnnotatorState
 		
-		// Skipping the first state
-		var states = cex.states.subList(1, cex.states.length)
-		// Removing unreal states
-		if (splitted) {
-			states = states.filter[s |
-				s.state.valuations.filter[v |
-					v.name.equals(XstsNamings.PC_VAR_NAME) && !v.value.equals("0")
-				].size == 0
-			].toList
-		}
-		if (noenv) {
-			states = states.filter[s |
-				!s.annotations.contains("last_env")
-			].toList
-		}
-		// Needed to create a new step for reset if there are multiple in the trace
-		if (trace.steps.size > 1) {
-			if (!trace.steps.contains(step)) {
-				trace.steps += step
-			}
+		for (sequence : cex.sequences) {
+			System.out.println(">>>XstsStateSequence")
+			// Skipping the first state
+			var states = sequence.states.subList(1, sequence.states.length)
+			// Removing unreal states
+			states.removeUnrealStates
+			
+			// Frist step
+			// Creating a new step
 			step = createStep
 			trace.steps += step
-		}
-		// Adding reset
-		step.actions += createReset
-		state = BackAnnotatorState.STATE_CHECK
-		for (xStsState : states) {
-			switch (state) {
-				case STATE_CHECK: {
-					step.checkStates(raisedOutEvents, activatedStates)
-					// Creating a new step
+			step.actions += createReset
+			System.out.println("* Reset added")
+			
+			// Parsing
+			backAnnotatorState = BackAnnotatorState.STATE_CHECK
+			for (xStsState : states) {
+				System.out.println(backAnnotatorState.name)
+				if (backAnnotatorState == BackAnnotatorState.ENVIRONMENT_CHECK) {
+					// Creating a new step (every Gamma step is built from two XstsStates (last_env, last_internal)
 					step = createStep
-					/// Add static delay every turn
+					trace.steps += step
+					// Add static delay every turn
 					if (schedulingConstraint !== null) {
 						step.addTimeElapse(schedulingConstraint)
 					}
-					///
-					trace.steps += step
 				}
-				case ENVIRONMENT_CHECK: {
-					step.checkInEvents(raisedInEvents)
-					// Add schedule
-					step.addComponentScheduling
-				}
-				default:
-					throw new IllegalArgumentException("Not know state: " + state)
-			}
-			for (valuation : xStsState.state.valuations) {
-				val id = valuation.name
-				val value = valuation.value
-				switch (state) {
-					case STATE_CHECK: {
-						val potentialStateString = '''«id» == «value»'''
-						if (thetaQueryGenerator.isSourceState(potentialStateString)) {
-							val instanceState = thetaQueryGenerator.getSourceState(potentialStateString)
-							val controlState = instanceState.key
-							val instance = instanceState.value
-							step.addInstanceState(instance, controlState)
-							activatedStates += controlState
-						}
-						else if (thetaQueryGenerator.isSourceVariable(id)) {
-							val instanceVariable = thetaQueryGenerator.getSourceVariable(id)
-							val instance = instanceVariable.value
-							val variable = instanceVariable.key
-							// Getting fields and indexes regardless of primitive or complex types
-							// In the case of primitive types, these hierarchies will be empty
-							val field = thetaQueryGenerator.getSourceVariableFieldHierarchy(id)
-							val indexPairs = value.parseArray
-							//
-							for (indexPair : indexPairs) {
-								val index = indexPair.key
-								val parsedValue = indexPair.value
-								step.addInstanceVariableState(instance, variable, field, index, parsedValue)
+				///
+				for (valuation : xStsState.state.valuations) {
+					val id = valuation.name
+					val value = valuation.value
+					System.out.println('''(«id» «value»)''')
+					switch (backAnnotatorState) {
+						case STATE_CHECK: {
+							val potentialStateString = '''«id» == «value»'''
+							if (thetaQueryGenerator.isSourceState(potentialStateString)) {
+//								System.out.println('''* «id» is source state''')
+								val instanceState = thetaQueryGenerator.getSourceState(potentialStateString)
+								val controlState = instanceState.key
+								val instance = instanceState.value
+								step.addInstanceState(instance, controlState)
+								activatedStates += controlState
 							}
-						}
-						else if (thetaQueryGenerator.isSourceOutEvent(id)) {
-							val systemOutEvent = thetaQueryGenerator.getSourceOutEvent(id)
-							if (value.equals("true")) {
+							else if (thetaQueryGenerator.isSourceVariable(id)) {
+//								System.out.println('''* «id» is source var''')
+								val instanceVariable = thetaQueryGenerator.getSourceVariable(id)
+								val instance = instanceVariable.value
+								val variable = instanceVariable.key
+								// Getting fields and indexes regardless of primitive or complex types
+								// In the case of primitive types, these hierarchies will be empty
+								val field = thetaQueryGenerator.getSourceVariableFieldHierarchy(id)
+								val indexPairs = value.parseArray
+								//
+								for (indexPair : indexPairs) {
+									val index = indexPair.key
+									val parsedValue = indexPair.value
+									step.addInstanceVariableState(instance, variable, field, index, parsedValue)
+								}
+							}
+							else if (thetaQueryGenerator.isSourceOutEvent(id)) {
+								System.out.println('''* «id» is out event''')
+								val systemOutEvent = thetaQueryGenerator.getSourceOutEvent(id)
+								if (value.equals("true")) {
+									System.out.println('''** «id» out event value is true''')
+									val event = systemOutEvent.get(0) as Event
+									val port = systemOutEvent.get(1) as Port
+									val systemPort = port.connectedTopComponentPort // Back-tracking to the system port
+									step.addOutEvent(systemPort, event)
+									// Denoting that this event has been actually
+									raisedOutEvents += new Pair(systemPort, event)
+								}
+							}
+							else if (thetaQueryGenerator.isSourceOutEventParamater(id)) {
+//								System.out.println('''* «id» is out event param''')
+								val systemOutEvent = thetaQueryGenerator.getSourceOutEventParamater(id)
 								val event = systemOutEvent.get(0) as Event
 								val port = systemOutEvent.get(1) as Port
 								val systemPort = port.connectedTopComponentPort // Back-tracking to the system port
-								step.addOutEvent(systemPort, event)
-								// Denoting that this event has been actually
-								raisedOutEvents += new Pair(systemPort, event)
+								val parameter = systemOutEvent.get(2) as ParameterDeclaration
+								// Getting fields and indexes regardless of primitive or complex types
+								val field = thetaQueryGenerator.getSourceOutEventParamaterFieldHierarchy(id)
+								val indexPairs = value.parseArray
+								//
+								for (indexPair : indexPairs) {
+									val index = indexPair.key
+									val parsedValue = indexPair.value
+									step.addOutEventWithStringParameter(systemPort, event, parameter, field, index, parsedValue)
+								}
 							}
 						}
-						else if (thetaQueryGenerator.isSourceOutEventParamater(id)) {
-							val systemOutEvent = thetaQueryGenerator.getSourceOutEventParamater(id)
-							val event = systemOutEvent.get(0) as Event
-							val port = systemOutEvent.get(1) as Port
-							val systemPort = port.connectedTopComponentPort // Back-tracking to the system port
-							val parameter = systemOutEvent.get(2) as ParameterDeclaration
-							// Getting fields and indexes regardless of primitive or complex types
-							val field = thetaQueryGenerator.getSourceOutEventParamaterFieldHierarchy(id)
-							val indexPairs = value.parseArray
-							//
-							for (indexPair : indexPairs) {
-								val index = indexPair.key
-								val parsedValue = indexPair.value
-								step.addOutEventWithStringParameter(systemPort, event, parameter, field, index, parsedValue)
+						case ENVIRONMENT_CHECK: {
+							if (thetaQueryGenerator.isSourceInEvent(id)) {
+								System.out.println('''* «id» is source event''')
+								val systemInEvent = thetaQueryGenerator.getSourceInEvent(id)
+								if (value.equals("true")) {
+									System.out.println('''** «id» source event value is true''')
+									val event = systemInEvent.get(0) as Event
+									val port = systemInEvent.get(1) as Port
+									val systemPort = port.connectedTopComponentPort // Back-tracking to the system port
+									step.addInEvent(systemPort, event)
+									// Denoting that this event has been actually
+									raisedInEvents += new Pair(systemPort, event)
+								}
 							}
-						}
-					}
-					case ENVIRONMENT_CHECK: {
-						if (thetaQueryGenerator.isSourceInEvent(id)) {
-							val systemInEvent = thetaQueryGenerator.getSourceInEvent(id)
-							if (value.equals("true")) {
+							else if (thetaQueryGenerator.isSourceInEventParamater(id)) {
+//								System.out.println('''* «id» is source event param''')
+								val systemInEvent = thetaQueryGenerator.getSourceInEventParamater(id)
 								val event = systemInEvent.get(0) as Event
 								val port = systemInEvent.get(1) as Port
 								val systemPort = port.connectedTopComponentPort // Back-tracking to the system port
-								step.addInEvent(systemPort, event)
-								// Denoting that this event has been actually
-								raisedInEvents += new Pair(systemPort, event)
+								val parameter = systemInEvent.get(2) as ParameterDeclaration
+								// Getting fields and indexes regardless of primitive or complex types
+								val field = thetaQueryGenerator.getSourceInEventParamaterFieldHierarchy(id)
+								val indexPairs = value.parseArray
+								//
+								for (indexPair : indexPairs) {
+									val index = indexPair.key
+									val parsedValue = indexPair.value
+									step.addInEventWithParameter(systemPort, event, parameter, field, index, parsedValue)
+								}
 							}
 						}
-						else if (thetaQueryGenerator.isSourceInEventParamater(id)) {
-							val systemInEvent = thetaQueryGenerator.getSourceInEventParamater(id)
-							val event = systemInEvent.get(0) as Event
-							val port = systemInEvent.get(1) as Port
-							val systemPort = port.connectedTopComponentPort // Back-tracking to the system port
-							val parameter = systemInEvent.get(2) as ParameterDeclaration
-							// Getting fields and indexes regardless of primitive or complex types
-							val field = thetaQueryGenerator.getSourceInEventParamaterFieldHierarchy(id)
-							val indexPairs = value.parseArray
-							//
-							for (indexPair : indexPairs) {
-								val index = indexPair.key
-								val parsedValue = indexPair.value
-								step.addInEventWithParameter(systemPort, event, parameter, field, index, parsedValue)
-							}
-						}
+						default:
+							throw new IllegalArgumentException("Not known state: " + backAnnotatorState)
+					}
+				}
+				// Post-process
+				switch (backAnnotatorState) {
+					case STATE_CHECK: {
+						step.checkStates(raisedOutEvents, activatedStates)
+						// Setting the state
+						backAnnotatorState = BackAnnotatorState.ENVIRONMENT_CHECK
+					}
+					case ENVIRONMENT_CHECK: {
+						step.checkInEvents(raisedInEvents)
+						// Add schedule
+						step.addComponentScheduling
+						// Setting the state
+						backAnnotatorState = BackAnnotatorState.STATE_CHECK
+						System.out.println()
 					}
 					default:
-						throw new IllegalArgumentException("Not known state: " + state)
+						throw new IllegalArgumentException("Not know state: " + backAnnotatorState)
 				}
 			}
 		}
 		// Checking the last state (in events must NOT be deleted here though)
-		step.checkStates(raisedOutEvents, activatedStates)
+		//step.checkStates(raisedOutEvents, activatedStates) //???
 		// Sorting if needed
 		if (sortTrace) {
 			trace.sortInstanceStates
 		}
+		System.out.println("***END***")
 		return trace
 	}
 	
@@ -355,6 +366,21 @@ class TraceBackAnnotator {
 		return value.startsWith("(array ")
 	}
 	
-	enum BackAnnotatorState {INIT, STATE_CHECK, ENVIRONMENT_CHECK}
+	protected def void removeUnrealStates(List<XstsState> states) {
+		if (splitted) {
+			states.removeIf[s |
+				s.state.valuations.filter[v |
+					v.name.equals(XstsNamings.PC_VAR_NAME) && !v.value.equals("0")
+				].size > 0
+			]
+		}
+		if (noenv) {
+			states.removeIf[s |
+				s.annotations.contains("last_env")
+			]
+		}
+	}
+	
+	enum BackAnnotatorState {STATE_CHECK, ENVIRONMENT_CHECK}
 	
 }

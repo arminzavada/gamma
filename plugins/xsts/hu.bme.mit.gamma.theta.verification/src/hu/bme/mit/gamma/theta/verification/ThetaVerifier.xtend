@@ -11,7 +11,6 @@
 package hu.bme.mit.gamma.theta.verification
 
 import hu.bme.mit.gamma.statechart.interface_.Package
-import hu.bme.mit.gamma.theta.trace.model.XstsStateSequence
 import hu.bme.mit.gamma.util.FileUtil
 import hu.bme.mit.gamma.verification.result.ThreeStateBoolean
 import hu.bme.mit.gamma.verification.util.AbstractVerifier
@@ -23,6 +22,7 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 import static com.google.common.base.Preconditions.checkState
 import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
+import hu.bme.mit.gamma.theta.trace.model.XstsTrace
 
 class ThetaVerifier extends AbstractVerifier {
 	
@@ -107,7 +107,7 @@ class ThetaVerifier extends AbstractVerifier {
 			// Reading Theta trace
 			val resourceSet = new ResourceSetImpl
 			val resource = resourceSet.getResource(URI.createFileURI(traceFile.path), true)
-			val cex = resource.getContents().get(0) as XstsStateSequence
+			val cex = resource.getContents().get(0) as XstsTrace
 			// Reading every directive from the model file - directives should be placed at the beginning of the file
 			val directives = newArrayList;
 			modelFileScanner = new Scanner(modelFile)
