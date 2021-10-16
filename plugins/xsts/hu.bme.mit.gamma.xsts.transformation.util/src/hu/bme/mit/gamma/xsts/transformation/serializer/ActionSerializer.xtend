@@ -25,7 +25,6 @@ import hu.bme.mit.gamma.xsts.model.XSTS
 
 import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
-import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class ActionSerializer {
 	// Singleton
@@ -34,15 +33,10 @@ class ActionSerializer {
 	// Auxiliary objects
 	protected final extension DeclarationSerializer declarationSerializer = DeclarationSerializer.INSTANCE
 	protected final extension ExpressionSerializer expressionSerializer = ExpressionSerializer.INSTANCE
-	
-	def String serializeXsts(XSTS xSts) {
-		serializeXsts(xSts, null)
-	}
-	
-	def String serializeXsts(XSTS xSts, String[] directives) '''
-		«IF directives !== null»«FOR directive : directives»
-		«XstsNamings.DIRECTIVE»«directive»
-		«ENDFOR»«ENDIF»
+	protected final extension AnnotationSerializer annotationSerializer = AnnotationSerializer.INSTANCE
+		
+	def String serializeXsts(XSTS xSts) '''
+		«xSts.serializeAnnotations»
 		«xSts.serializeDeclarations(false)»
 		
 		trans «FOR transition : xSts.transitions SEPARATOR " or "»{

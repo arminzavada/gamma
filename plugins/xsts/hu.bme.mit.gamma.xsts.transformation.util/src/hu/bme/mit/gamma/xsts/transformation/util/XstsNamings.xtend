@@ -13,8 +13,4 @@ class XstsNamings {
 	// Split
 	public static val String PC_VAR_NAME = "__pc"
 	public static val String TRANS_VAR_NAME = "__trans"
-	
-	public static val String DIRECTIVE = "//@"
-	public static val String SPLIT_DIRECTIVE = "splitted"
-	public static val String NOENV_DIRECTIVE = "noenv"
 }

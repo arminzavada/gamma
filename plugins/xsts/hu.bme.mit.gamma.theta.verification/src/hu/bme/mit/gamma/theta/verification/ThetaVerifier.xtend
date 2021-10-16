@@ -17,18 +17,19 @@ import hu.bme.mit.gamma.verification.util.AbstractVerifier
 import java.io.File
 import java.util.Scanner
 import java.util.logging.Level
-import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 import static com.google.common.base.Preconditions.checkState
-import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 import hu.bme.mit.gamma.theta.trace.model.XstsTrace
 import java.util.List
+import hu.bme.mit.gamma.util.GammaEcoreUtil
+import hu.bme.mit.gamma.xsts.model.XSTS
+import hu.bme.mit.gamma.xsts.model.XstsAnnotation
 
 class ThetaVerifier extends AbstractVerifier {
 	
 	protected final extension ThetaQueryAdapter thetaQueryAdapter = ThetaQueryAdapter.INSTANCE
 	protected final extension ThetaValidator thetaValidator = ThetaValidator.INSTANCE
+	protected final extension GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE
 	
 	final String ENVIRONMENT_VARIABLE_FOR_THETA_JAR = "THETA_XSTS_CLI_PATH"
 	
@@ -61,7 +62,6 @@ class ThetaVerifier extends AbstractVerifier {
 	
 	override Result verifyQuery(Object traceability, String parameters, File modelFile, File queryFile) {
 		var Scanner resultReader = null
-		var Scanner modelFileScanner = null
 		try {
 			ENVIRONMENT_VARIABLE_FOR_THETA_JAR.validate
 			// The 'THETA_XSTS_CLI_PATH' environment variable has to be set to the respective file path
@@ -101,36 +101,23 @@ class ThetaVerifier extends AbstractVerifier {
 			}
 			val gammaPackage = traceability as Package
 			// Reading Theta trace
-			val resourceSet = new ResourceSetImpl
-			val resource = resourceSet.getResource(URI.createFileURI(traceFile.path), true)
-			val cex = resource.getContents().get(0) as XstsTrace
-			// Reading every directive from the model file - directives should be placed at the beginning of the file
-			val directives = newArrayList;
-			modelFileScanner = new Scanner(modelFile)
-			var directive = true
-			while (modelFileScanner.hasNext && directive) {
-				var xStsLine = modelFileScanner.nextLine.trim
-				if (xStsLine.startsWith(XstsNamings.DIRECTIVE))
-					directives += xStsLine.substring(XstsNamings.DIRECTIVE.length)
-				else
-					directive = false
-			}
-			val trace = gammaPackage.backAnnotate(cex, directives)
+			val cex = ecoreUtil.normalLoad(traceFile) as XstsTrace
+			// Reading XSTS model
+			val gstsFile = new File(modelFile.path.replaceAll("xsts$", "gsts"));
+			val xSts = ecoreUtil.normalLoad(gstsFile) as XSTS
+			val trace = gammaPackage.backAnnotate(cex, xSts.annotations)
 			return new Result(result, trace)
 		} finally {
 			if (resultReader !== null) {
 				resultReader.close
 			}
-			if (modelFileScanner !== null) {
-				modelFileScanner.close
-			}
 		}
 	}
 	
-	protected def backAnnotate(Package gammaPackage, XstsTrace cex, List<String> directives) {
+	protected def backAnnotate(Package gammaPackage, XstsTrace cex, List<XstsAnnotation> annotations) {
 		// Must be synchronized due to the non-thread-safe VIATRA engine
 		synchronized (TraceBackAnnotator.getEngineSynchronizationObject) {
-			val backAnnotator = new TraceBackAnnotator(gammaPackage, cex, directives)
+			val backAnnotator = new TraceBackAnnotator(gammaPackage, cex, annotations)
 			
 			return backAnnotator.execute
 		}

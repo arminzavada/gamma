@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -61,10 +60,13 @@ import hu.bme.mit.gamma.ui.taskhandler.VerificationHandler.ExecutionTraceSeriali
 import hu.bme.mit.gamma.uppaal.verification.UppaalVerification;
 import hu.bme.mit.gamma.uppaal.verification.XstsUppaalVerification;
 import hu.bme.mit.gamma.util.FileUtil;
+import hu.bme.mit.gamma.util.GammaEcoreUtil;
 import hu.bme.mit.gamma.verification.result.ThreeStateBoolean;
 import hu.bme.mit.gamma.verification.util.AbstractVerification;
 import hu.bme.mit.gamma.verification.util.AbstractVerifier.Result;
-import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings;
+import hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures;
+import hu.bme.mit.gamma.xsts.model.SplittedAnnotation;
+import hu.bme.mit.gamma.xsts.model.XSTS;
 
 public class VerificationHandler extends TaskHandler {
 
@@ -77,6 +79,7 @@ public class VerificationHandler extends TaskHandler {
 	protected TraceUtil traceUtil = TraceUtil.INSTANCE;
 	protected StatechartEcoreUtil statechartEcoreUtil = StatechartEcoreUtil.INSTANCE;
 	protected ExecutionTraceSerializer serializer = ExecutionTraceSerializer.INSTANCE;
+	protected GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE;
 	
 	public VerificationHandler(IFile file) {
 		super(file);
@@ -90,6 +93,7 @@ public class VerificationHandler extends TaskHandler {
 		Set<AnalysisLanguage> languagesSet = new HashSet<AnalysisLanguage>(verification.getAnalysisLanguages());
 		checkArgument(languagesSet.size() == 1);
 		String filePath = verification.getFileName().get(0);
+		File gstsFile = new File(filePath.replaceAll("xsts$", "gsts"));
 		File modelFile = new File(filePath);
 		
 		boolean distinguishStringFormulas = false;
@@ -103,15 +107,8 @@ public class VerificationHandler extends TaskHandler {
 					propertySerializer = UppaalPropertySerializer.INSTANCE;
 					break;
 				case THETA:
-					boolean splitted = false;
-					try (Scanner modelFileScanner = new Scanner(modelFile)) {
-						boolean directive = true;
-						while (modelFileScanner.hasNext() && directive && !splitted) {
-							String xStsLine = modelFileScanner.nextLine().trim();
-							directive = xStsLine.startsWith(XstsNamings.DIRECTIVE);
-							splitted = xStsLine.equals(XstsNamings.DIRECTIVE + XstsNamings.SPLIT_DIRECTIVE);
-						}
-					}
+					XSTS xSts = ((XSTS) ecoreUtil.normalLoad(gstsFile));
+					boolean splitted = XstsDerivedFeatures.hasAnnotation(xSts, SplittedAnnotation.class);
 					verificationTask = ThetaVerification.INSTANCE;
 					propertySerializer = splitted ? ThetaSplittedPropertySerializer.INSTANCE : ThetaPropertySerializer.INSTANCE;
 					propertySerializer = ThetaPropertySerializer.INSTANCE;

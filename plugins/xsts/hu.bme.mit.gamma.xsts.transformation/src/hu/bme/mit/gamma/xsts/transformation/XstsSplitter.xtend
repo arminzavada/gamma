@@ -112,18 +112,22 @@ class XstsSplitter {
  	val Map<VariableDeclaration, Set<XstsSlice>> varUseSlices = newHashMap
 	
 	def XSTS split(XSTS input) {
+		// Clone
  		val result = ecoreUtil.clone(input)
+	 	// Add util vars
 	 	result.addPcAndTransVars
-	 	
+	 	// Add annotations
+	 	result.annotations += xstsFactory.createSplittedAnnotation
+		result.annotations += xstsFactory.createNoEnvAnnotation
+	 	// Split
 	 	result.splitTransSet(result.transitions, true)
-	 	
 	 	// Transform env into trans
 	 	result.splitTransSet(#[xstsFactory.createXTransition => [
 	 		action = XstsDerivedFeatures.getEnvironmentalAction(result)
 	 	]], false)
 	 	result.inEventTransition.action = xstsFactory.createEmptyAction
 	 	result.outEventTransition.action = xstsFactory.createEmptyAction
-	 	
+	 	//
 	 	return result
 	 }
 	 

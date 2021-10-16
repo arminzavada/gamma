@@ -36,9 +36,12 @@ import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.trace.derivedfeatures.TraceModelDerivedFeatures.*
-import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 import hu.bme.mit.gamma.theta.trace.model.XstsTrace
 import hu.bme.mit.gamma.theta.trace.model.XstsState
+import hu.bme.mit.gamma.xsts.model.XstsAnnotation
+import hu.bme.mit.gamma.xsts.model.SplittedAnnotation
+import hu.bme.mit.gamma.xsts.model.NoEnvAnnotation
+import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class TraceBackAnnotator {
 	
@@ -69,11 +72,11 @@ class TraceBackAnnotator {
 		this(gammaPackage, cex, sortTrace, null)
 	}
 	
-	new(Package gammaPackage, XstsTrace cex, List<String> directives) {
-		this(gammaPackage, cex, true, directives)
+	new(Package gammaPackage, XstsTrace cex, List<XstsAnnotation> annotations) {
+		this(gammaPackage, cex, true, annotations)
 	}
 	
-	new(Package gammaPackage, XstsTrace cex, boolean sortTrace, List<String> directives) {
+	new(Package gammaPackage, XstsTrace cex, boolean sortTrace, List<XstsAnnotation> annotations) {
 		this.gammaPackage = gammaPackage
 		this.component = gammaPackage.firstComponent
 		this.thetaQueryGenerator = new ThetaQueryGenerator(component)
@@ -87,20 +90,9 @@ class TraceBackAnnotator {
 		else {
 			this.schedulingConstraint = null
 		}
-		// Directives
-		for (directive : directives) {
-			switch (directive) {
-				case directive.startsWith(XstsNamings.SPLIT_DIRECTIVE): {
-					splitted = true
-				}
-				case directive.startsWith(XstsNamings.NOENV_DIRECTIVE): {
-					noenv = true
-				}
-				default: {
-					logger.log(Level.WARNING, "Unhandled directive: " + directive)
-				}
-			}
-		}
+		// Annotations
+		splitted = annotations.containsAnnotation(SplittedAnnotation)
+		noenv = annotations.containsAnnotation(NoEnvAnnotation)
 	}
 	
 	def ExecutionTrace execute() {
@@ -416,6 +408,10 @@ class TraceBackAnnotator {
 				s.annotations.contains("last_env")
 			]
 		}
+	}
+	
+	def boolean containsAnnotation(List<XstsAnnotation> annotations, Class<? extends XstsAnnotation> type) {
+		return annotations.stream.anyMatch(a | type.isInstance(a))
 	}
 	
 	enum BackAnnotatorState {STATE_CHECK, ENVIRONMENT_CHECK}

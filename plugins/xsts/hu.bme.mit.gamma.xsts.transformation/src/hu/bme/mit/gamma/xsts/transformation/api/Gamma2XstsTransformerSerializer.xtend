@@ -24,12 +24,11 @@ import hu.bme.mit.gamma.transformation.util.preprocessor.AnalysisModelPreprocess
 import hu.bme.mit.gamma.util.FileUtil
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
 import hu.bme.mit.gamma.xsts.transformation.InitialStateSetting
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 import java.io.File
 import java.util.List
-import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
-import hu.bme.mit.gamma.xsts.transformation.util.XstsNamings
 
 class Gamma2XstsTransformerSerializer {
 	
@@ -125,12 +124,7 @@ class Gamma2XstsTransformerSerializer {
 		xSts.normalSave(targetFolderUri, fileName.emfXStsFileName)
 		// String
 		val xStsFile = new File(targetFolderUri + File.separator + fileName.xtextXStsFileName)
-		var directives = newArrayList
-		if (split != AnalysisSplit.NONE) {
-			directives += XstsNamings.SPLIT_DIRECTIVE
-			directives += XstsNamings.NOENV_DIRECTIVE
-		}
-		val xStsString = xSts.serializeXsts(directives)
+		val xStsString = xSts.serializeXsts
 		xStsFile.saveString(xStsString)
 	}
 	
