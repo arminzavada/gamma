@@ -152,7 +152,6 @@ class TraceBackAnnotator {
 				for (valuation : xStsState.state.valuations) {
 					val id = valuation.name
 					val value = valuation.value
-					System.out.println('''(«id» «value»)''')
 					switch (backAnnotatorState) {
 						case STATE_CHECK: {
 							val potentialStateString = '''«id» == «value»'''
@@ -302,7 +301,6 @@ class TraceBackAnnotator {
 						step.addComponentScheduling
 						// Setting the state
 						backAnnotatorState = BackAnnotatorState.STATE_CHECK
-						System.out.println()
 					}
 					default:
 						throw new IllegalArgumentException("Not know state: " + backAnnotatorState)

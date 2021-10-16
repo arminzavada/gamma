@@ -29,6 +29,9 @@ import java.util.List
 import java.util.Map
 import java.util.Set
 import java.util.stream.Collectors
+import hu.bme.mit.gamma.xsts.model.IfAction
+import hu.bme.mit.gamma.xsts.model.EmptyAction
+import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 
 class XstsSplitter {
 	static class XstsSlice {
@@ -182,6 +185,8 @@ class XstsSplitter {
 	 }
 	 
 	 def dispatch List<XstsSlice> slice(SequentialAction seq, boolean trans, int beginId, int endId) {
+	 	println("---seq:")
+	 	seq.print
 	 	val List<XstsSlice> slices = newArrayList
 	 	var XstsSlice slice = null
 	 	var int sliceBeginId = beginId
@@ -216,21 +221,48 @@ class XstsSplitter {
  				sliceBeginId = sliceEndId
 	 		}
  		}
+ 		println("***slices:")
+	 	slices.print
  		return slices
 	 }
 	 
 	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, boolean trans, int beginId, int endId) {
 	 	val List<XstsSlice> slices = newArrayList
 	 	for (subaction : choice.actions) {
-	 		val subslices = subaction.slice(trans, beginId, endId)
-	 		if (subslices === null)
-	 			slices += new XstsSlice(trans, subaction, beginId, endId)
-	 		else
-	 			slices += subslices
+	 		slices += subaction.sliceOrWrapToSingleSlice(trans, beginId, endId)
 	 	}
 	 	registerCompositeActionRelations(choice, slices, endId)
 	 	return slices
 	 }
+	 
+	 def dispatch List<XstsSlice> slice(IfAction ifAction, boolean trans, int beginId, int endId) {
+	 	println("---ifAction:")
+	 	ifAction.print
+	 	val List<XstsSlice> slices = newArrayList
+	 	val thenId = nextId()
+	 	val elseExists = ifAction.^else !== null && !(ifAction.^else instanceof EmptyAction)
+	 	val elseId = elseExists ? nextId() : endId
+	 	// Condition
+	 	val conditionSlice = new XstsSlice(trans, beginId)
+	 	slices += conditionSlice
+	 	conditionSlice.add(createAssignment(_pc, exprFactory.createIfThenElseExpression => [
+	 		it.condition = ifAction.condition
+	 		it.then = createIntegerLiteralExpr(thenId)
+	 		it.^else = createIntegerLiteralExpr(elseId) 
+	 	]))
+	 	// Then
+	 	slices += ifAction.then.sliceOrWrapToSingleSlice(trans, thenId, endId)
+	 	// Else
+	 	if (elseExists) {
+	 		slices += ifAction.^else.sliceOrWrapToSingleSlice(trans, elseId, endId)
+	 	}
+	 	//
+	 	registerCompositeActionRelations(ifAction, slices, endId)
+	 	println("***slices:")
+	 	slices.print
+	 	return slices
+	 }
+	 
 	 //TODO Support ort and par
 	 def dispatch List<XstsSlice> slice(OrthogonalAction ort, boolean trans, int beginId, int endId) {
 	 	throw new IllegalArgumentException("ort is currently not supported")
@@ -240,7 +272,31 @@ class XstsSplitter {
 	 	throw new IllegalArgumentException("par is currently not supported")
 	 }
 	 
+	 //TODO temp
+	 def void print(Action action) {
+	 	print(ActionSerializer.INSTANCE.serialize(action))
+	 }
+	 def void print(XstsSlice slice) {
+	 	println("*Slice:")
+	 	for (a : slice.actions)
+	 		a.print
+	 }
+	 def void print(List<XstsSlice> slices) {
+	 	for (s : slices)
+	 		s.print
+	 }
+	 
 	 // Util
+	 def List<XstsSlice> sliceOrWrapToSingleSlice(Action action, boolean trans, int beginId, int endId) {
+	 	val List<XstsSlice> slices = newArrayList
+	 	val subslices = action.slice(trans, beginId, endId)
+	 	if (subslices === null)
+	 		slices += new XstsSlice(trans, action, beginId, endId)
+ 		else
+ 			slices += subslices
+		return slices
+	 }
+	 
 	 def void registerCompositeActionRelations(CompositeAction action, List<XstsSlice> slices, int endId) {
 	 	compositeActionEndSlices += (action -> slices.getEndSlices(endId))
 	 	for (slice : slices) {
