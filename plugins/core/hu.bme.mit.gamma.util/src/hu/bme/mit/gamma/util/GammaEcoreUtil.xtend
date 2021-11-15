@@ -13,6 +13,7 @@ package hu.bme.mit.gamma.util
 import java.io.File
 import java.util.Collection
 import java.util.Collections
+import java.util.Comparator
 import java.util.List
 import org.eclipse.core.resources.ResourcesPlugin
 import org.eclipse.core.runtime.Path
@@ -242,6 +243,29 @@ class GammaEcoreUtil {
 		return lhs.containsTransitively(rhs) || rhs.containsTransitively(lhs)
 	}
 	
+	def <T extends EObject> boolean containsTypes(EObject container,
+			Iterable<? extends Class<T>> types) {
+		for (content : container.eContents) {
+			if (content.isOrContainsTypes(types)) {
+				return true
+			}
+		}
+		return false
+	}
+	
+	def <T extends EObject> boolean isOrContainsTypes(EObject container,
+			Iterable<? extends Class<T>> types) {
+		return types.exists[it.isInstance(container)] || container.containsTypes(types)
+	}
+	
+	def <T extends EObject> boolean containsType(EObject container, Class<T> type) {
+		return container.containsTypes(#[type])
+	}
+	
+	def <T extends EObject> boolean isOrContainsType(EObject container, Class<T> type) {
+		return container.isOrContainsTypes(#[type])
+	}
+	
 	def EObject normalLoad(URI uri) {
 		return uri.normalLoad(new ResourceSetImpl)
 	}
@@ -327,6 +351,17 @@ class GammaEcoreUtil {
 	def boolean helperEquals(EObject lhs, EObject rhs) {
 		val helper = new EqualityHelper
 		return helper.equals(lhs, rhs)
+	}
+	
+	def boolean allHelperEquals(List<? extends EObject> objects) {
+		for (var i = 0; i < objects.size - 1; i++) {
+			val lhs = objects.get(i)
+			val rhs = objects.get(i + 1)
+			if (!lhs.helperEquals(rhs)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	def <T extends EObject> List<T> clone(List<T> objects) {
@@ -452,6 +487,28 @@ class GammaEcoreUtil {
 			return get.last == object
 		}
 		return true
+	}
+	
+	def <T extends EObject> List<T> sortAccordingToReferences(List<T> list) {
+		val array = newArrayList
+		array += list
+		array.sort(
+			new Comparator<T>() {
+				override compare(T lhs, T rhs) {
+					val lhsReferences = lhs.eCrossReferences
+					val rhsReferences = rhs.eCrossReferences
+					// We do not handle circular references
+					if (lhsReferences.contains(rhs)) {
+						return 1
+					}
+					if (rhsReferences.contains(lhs)) {
+						return -1
+					}
+					return 0
+				}
+			}
+		)
+		return array
 	}
 	
 }
