@@ -3,9 +3,9 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="http://www.mit.bme.hu/gamma/property/Model" nsPrefix="hu.bme.mit.gamma.property">
   <eClassifiers xsi:type="ecore:EClass" name="PropertyPackage">
     <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
-        eType="ecore:EClass ../../hu.bme.mit.gamma.statechart.model/model/interface.ecore#//Package"/>
+        eType="ecore:EClass ../../hu.bme.mit.gamma.composite.model/model/interface.ecore#//Package"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="component" lowerBound="1"
-        eType="ecore:EClass ../../hu.bme.mit.gamma.statechart.model/model/interface.ecore#//Component"/>
+        eType="ecore:EClass ../../hu.bme.mit.gamma.composite.model/model/interface.ecore#//Component"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="formulas" upperBound="-1"
         eType="#//CommentableStateFormula" containment="true"/>
   </eClassifiers>

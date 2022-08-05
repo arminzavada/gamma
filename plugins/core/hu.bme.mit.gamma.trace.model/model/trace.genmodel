@@ -5,7 +5,7 @@
     modelName="Trace" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
     editPluginID="hu.bme.mit.gamma.trace.model.edit" editorPluginID="hu.bme.mit.gamma.trace.model.editor"
-    usedGenPackages="../../hu.bme.mit.gamma.action.model/model/action.genmodel#//model ../../hu.bme.mit.gamma.expression.model/model/expression.genmodel#//model ../../hu.bme.mit.gamma.statechart.model/model/statechart.genmodel#//composite ../../hu.bme.mit.gamma.statechart.model/model/statechart.genmodel#//interface ../../hu.bme.mit.gamma.statechart.model/model/statechart.genmodel#//statechart"
+    usedGenPackages="../../hu.bme.mit.gamma.action.model/model/action.genmodel#//model ../../hu.bme.mit.gamma.expression.model/model/expression.genmodel#//model ../../hu.bme.mit.gamma.statechart.model/model/statechart.genmodel#//statechart ../../hu.bme.mit.gamma.composite.model/model/composite.genmodel#//interface ../../hu.bme.mit.gamma.composite.model/model/composite.genmodel#//composite"
     operationReflection="true" importOrganizing="true">
   <foreignModel>trace.ecore</foreignModel>
   <genPackages prefix="TraceModel" basePackage="hu.bme.mit.gamma.trace" disposableProviderFactory="true"

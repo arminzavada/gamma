@@ -9,25 +9,8 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated statechart -->
       <package
-            uri="http://www.mit.bme.hu/gamma/statechart/Model/Composite"
-            class="hu.bme.mit.gamma.statechart.composite.CompositeModelPackage"
-            genModel="model/statechart.genmodel"/>
-   </extension>
-
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated statechart -->
-      <package
             uri="http://www.mit.bme.hu/gamma/statechart/Model/Contract"
             class="hu.bme.mit.gamma.statechart.contract.ContractModelPackage"
-            genModel="model/statechart.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <!-- @generated statechart -->
-      <package
-            uri="http://www.mit.bme.hu/gamma/statechart/Model/Interface"
-            class="hu.bme.mit.gamma.statechart.interface_.InterfaceModelPackage"
             genModel="model/statechart.genmodel"/>
    </extension>
 

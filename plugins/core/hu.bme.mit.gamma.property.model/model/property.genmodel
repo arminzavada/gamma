@@ -5,7 +5,7 @@
     editDirectory="/hu.bme.mit.gamma.property.model.edit/src-gen" editorDirectory="/hu.bme.mit.gamma.property.model.editor/src-gen"
     modelPluginID="hu.bme.mit.gamma.property.model" modelName="Property" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     codeFormatting="true" importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0"
-    copyrightFields="false" usedGenPackages="../../hu.bme.mit.gamma.expression.model/model/expression.genmodel#//model ../../hu.bme.mit.gamma.statechart.model/model/statechart.genmodel#//interface"
+    copyrightFields="false" usedGenPackages="../../hu.bme.mit.gamma.composite.model/model/composite.genmodel#//interface ../../hu.bme.mit.gamma.expression.model/model/expression.genmodel#//model"
     operationReflection="true" importOrganizing="true">
   <foreignModel>property.ecore</foreignModel>
   <testsDirectory xsi:nil="true"/>

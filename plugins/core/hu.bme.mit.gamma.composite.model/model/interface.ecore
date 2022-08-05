@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="interface" nsURI="http://www.mit.bme.hu/gamma/statechart/Model/Interface"
-    nsPrefix="hu.bme.mit.gamma.statechart.interface">
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="interface" nsURI="http://www.mit.bme.hu/gamma/composite/Model/Interface"
+    nsPrefix="hu.bme.mit.gamma.composite.interface">
   <eClassifiers xsi:type="ecore:EClass" name="Interface" eSuperTypes="../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//NamedElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="parents" upperBound="-1"
         eType="#//Interface"/>
