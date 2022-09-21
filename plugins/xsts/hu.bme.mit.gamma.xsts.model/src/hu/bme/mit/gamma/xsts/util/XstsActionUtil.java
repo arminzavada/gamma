@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2020 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,10 +10,12 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.xsts.util;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.eclipse.emf.ecore.EObject;
@@ -48,6 +50,7 @@ import hu.bme.mit.gamma.xsts.model.AssignmentAction;
 import hu.bme.mit.gamma.xsts.model.AssumeAction;
 import hu.bme.mit.gamma.xsts.model.CompositeAction;
 import hu.bme.mit.gamma.xsts.model.EmptyAction;
+import hu.bme.mit.gamma.xsts.model.GroupAnnotation;
 import hu.bme.mit.gamma.xsts.model.HavocAction;
 import hu.bme.mit.gamma.xsts.model.IfAction;
 import hu.bme.mit.gamma.xsts.model.LoopAction;
@@ -56,6 +59,7 @@ import hu.bme.mit.gamma.xsts.model.NonDeterministicAction;
 import hu.bme.mit.gamma.xsts.model.ParallelAction;
 import hu.bme.mit.gamma.xsts.model.SequentialAction;
 import hu.bme.mit.gamma.xsts.model.VariableDeclarationAction;
+import hu.bme.mit.gamma.xsts.model.VariableGroup;
 import hu.bme.mit.gamma.xsts.model.XSTS;
 import hu.bme.mit.gamma.xsts.model.XSTSModelFactory;
 import hu.bme.mit.gamma.xsts.model.XTransition;
@@ -106,11 +110,37 @@ public class XstsActionUtil extends ExpressionUtil {
 	public void merge(XSTS pivot, XSTS mergable) {
 		pivot.getTypeDeclarations().addAll(mergable.getTypeDeclarations());
 		pivot.getPublicTypeDeclarations().addAll(mergable.getPublicTypeDeclarations());
-		pivot.getVariableGroups().addAll(mergable.getVariableGroups());
 		pivot.getVariableDeclarations().addAll(mergable.getVariableDeclarations());
 		pivot.getConstraints().addAll(mergable.getConstraints());
+		mergeVariableGroups(pivot, mergable);
 	}
 	
+	public void mergeVariableGroups(XSTS pivot, XSTS mergable) {
+		List<VariableGroup> variableGroups = pivot.getVariableGroups();
+		variableGroups.addAll(
+				mergable.getVariableGroups());
+		List<VariableGroup> deletableGroups = new ArrayList<VariableGroup>();
+		
+		int size = variableGroups.size();
+		for (int i = 0; i < size - 1; ++i) {
+			VariableGroup lhs = variableGroups.get(i);
+			GroupAnnotation lhsAnnotation = lhs.getAnnotation();
+			for (int j = i + 1; j < size; ++j) {
+				VariableGroup rhs = variableGroups.get(j);
+				GroupAnnotation rhsAnnotation = rhs.getAnnotation();
+				if (ecoreUtil.helperEquals(lhsAnnotation, rhsAnnotation)) {
+					lhs.getVariables().addAll(
+							rhs.getVariables());
+					deletableGroups.add(rhs);
+				}
+			}
+		}
+		
+		for (VariableGroup variableGroup : deletableGroups) {
+			ecoreUtil.delete(variableGroup);
+		}
+	}
+
 	public void changeTransitions(XSTS xSts, XTransition newAction) {
 		changeTransitions(xSts, Collections.singletonList(newAction));
 	}
@@ -156,8 +186,10 @@ public class XstsActionUtil extends ExpressionUtil {
 	}
 	
 	public void appendToAction(Action pivot, Collection<? extends Action> actions) {
+		Action actualPivot = pivot;
 		for (Action action : actions) {
-			appendToAction(pivot, action);
+			appendToAction(actualPivot, action);
+			actualPivot = action;
 		}
 	}
 	
@@ -200,7 +232,8 @@ public class XstsActionUtil extends ExpressionUtil {
 		// Note that 'a := b' like assignments (a and b are array variables) are supported in UPPAAL 
 		if (rhs instanceof ArrayLiteralExpression) {
 			ArrayLiteralExpression literal = (ArrayLiteralExpression) rhs;
-			List<Expression> operands = literal.getOperands();
+			List<Expression> operands = new ArrayList<Expression>(
+					literal.getOperands()); // To prevent messing up containment and indexing
 			int size = operands.size();
 			for (int i = 0; i < size; i++) {
 				ArrayAccessExpression newLhs = expressionFactory.createArrayAccessExpression();
@@ -255,10 +288,22 @@ public class XstsActionUtil extends ExpressionUtil {
 				.collect(Collectors.toList());
 	}
 	
+	public List<AbstractAssignmentAction> getAssignments(VariableDeclaration variable, XSTS xSts) {
+		List<AbstractAssignmentAction> assignments = ecoreUtil.getAllContentsOfType(
+				xSts, AbstractAssignmentAction.class);
+		return getAssignments(variable, assignments);
+	}
+	
 	public List<AbstractAssignmentAction> getAssignments(Collection<VariableDeclaration> variables,
 			Collection<AbstractAssignmentAction> assignments) {
 		return assignments.stream().filter(it -> variables.contains(getDeclaration(it.getLhs())))
 				.collect(Collectors.toList());
+	}
+	
+	public List<AbstractAssignmentAction> getAssignments(Collection<VariableDeclaration> variables,	XSTS xSts) {
+		List<AbstractAssignmentAction> assignments = ecoreUtil.getAllContentsOfType(
+				xSts, AbstractAssignmentAction.class);
+		return getAssignments(variables, assignments);
 	}
 	
 	public VariableDeclarationAction extractExpressions(
@@ -341,6 +386,14 @@ public class XstsActionUtil extends ExpressionUtil {
 		HavocAction havocAction = xStsFactory.createHavocAction();
 		havocAction.setLhs(createReferenceExpression(variable));
 		return havocAction;
+	}
+	
+	public Entry<VariableDeclarationAction, HavocAction> createHavocedVariableDeclarationAction(
+			Type type, String name) {
+		VariableDeclarationAction variableDeclarationAction = createVariableDeclarationAction(type, name);
+		VariableDeclaration variableDeclaration = variableDeclarationAction.getVariableDeclaration();
+		HavocAction havocAction = createHavocAction(variableDeclaration);
+		return new SimpleEntry<VariableDeclarationAction, HavocAction>(variableDeclarationAction, havocAction);
 	}
 	
 	public AssignmentAction increment(VariableDeclaration variable) {
@@ -619,6 +672,21 @@ public class XstsActionUtil extends ExpressionUtil {
 	}
 	
 	public NonDeterministicAction createChoiceActionWithExclusiveBranches(
+			List<? extends Action> actions) {
+		NonDeterministicAction choiceAction = xStsFactory.createNonDeterministicAction();
+		for (int i = 0; i < actions.size(); i++) {
+			Action action = actions.get(i);
+			if (i == 0) {
+				choiceAction.getActions().add(action);
+			}
+			else {
+				extendChoiceWithDefaultBranch(choiceAction, action);
+			}
+		}
+		return choiceAction;
+	}
+	
+	public NonDeterministicAction createChoiceActionWithExclusiveBranches(
 			List<Expression> conditions, List<Action> actions) {
 		int conditionsSize = conditions.size();
 		if (conditionsSize != actions.size() && conditionsSize + 1 != actions.size()) {
@@ -680,37 +748,83 @@ public class XstsActionUtil extends ExpressionUtil {
 		return actions;
 	}
 	
-	public void extendChoiceWithDefaultBranch(NonDeterministicAction switchAction, Action action) {
-		if (switchAction.getActions().isEmpty()) {
-			return;
-		}
-		NotExpression negatedCondition = expressionFactory.createNotExpression();
-		OrExpression orExpression = expressionFactory.createOrExpression();
-		List<SequentialAction> sequentialActions = switchAction.getActions().stream()
-				.filter(it -> it instanceof SequentialAction)
-				.map(it -> (SequentialAction) it)
-				.collect(Collectors.toList());
-		List<Expression> conditions = sequentialActions.stream()
-				.filter(it -> it.getActions().get(0) instanceof AssumeAction)
-				.map(it -> ((AssumeAction) it.getActions().get(0)).getAssumption())
-				.collect(Collectors.toList());
-		// Collecting atomic assumptions too
-		switchAction.getActions().stream()
-			.filter(it -> it instanceof AssumeAction)
-			.map(it -> ((AssumeAction) it).getAssumption())
-			.forEach(it -> conditions.add(it));
-		if (conditions.isEmpty()) {
-			return;
-		}
-		for (Expression condition : conditions) {
-			orExpression.getOperands().add(ecoreUtil.clone(condition));
-		}
-		negatedCondition.setOperand(unwrapIfPossible(orExpression));
+	public Entry<Action, NonDeterministicAction> createChoiceActionForRandomValues(
+			String name, int lowerBound, int upperBound) {
+		// Inclusive-exclusive
+		List<Action> actions = new ArrayList<Action>();
 		
-		extendChoiceWithBranch(switchAction, negatedCondition, action);
+		Entry<VariableDeclarationAction, HavocAction> havocedVariableDeclarationActions =
+				createHavocedVariableDeclarationAction(factory.createIntegerTypeDefinition(), name);
+		VariableDeclarationAction variableDeclarationAction = havocedVariableDeclarationActions.getKey();
+		VariableDeclaration randomVariable = variableDeclarationAction.getVariableDeclaration();
+		HavocAction havocAction = havocedVariableDeclarationActions.getValue();
+		
+		actions.add(variableDeclarationAction);
+		actions.add(havocAction);
+		
+		// Branches
+		List<AssumeAction> assumeActions = new ArrayList<AssumeAction>();
+		for (int i = lowerBound; i < upperBound /* exclusive */; i++) {
+			EqualityExpression equalityExpression = createEqualityExpression(
+					randomVariable, toIntegerLiteral(i));
+			AssumeAction assumeAction = createAssumeAction(equalityExpression);
+			assumeActions.add(assumeAction);
+		}
+		NonDeterministicAction choiceAction = createChoiceAction(assumeActions);
+		actions.add(choiceAction);
+		
+		SequentialAction sequentialAction = createSequentialAction(actions);
+		
+		return new SimpleEntry<Action, NonDeterministicAction>(sequentialAction, choiceAction);
+	}
+	
+	public void extendChoiceWithDefaultBranch(NonDeterministicAction choiceAction) {
+		extendChoiceWithDefaultBranch(choiceAction, xStsFactory.createEmptyAction());
+	}
+	
+	public void extendChoiceWithDefaultBranch(NonDeterministicAction choiceAction, Action action) {
+		Expression defaultCondition = createDefaultCondition(choiceAction);
+		if (defaultCondition != null) {
+			extendChoiceWithBranch(choiceAction, defaultCondition, action);
+		}
+	}
+	
+	public Expression createDefaultCondition(NonDeterministicAction choiceAction) {
+		List<Action> branches = choiceAction.getActions();
+		return createDefaultCondition(branches);
+	}
+	
+	public Expression createDefaultCondition(Collection<? extends Action> branches) {
+		if (branches.isEmpty()) {
+			return null;
+		}
+		
+		List<Expression> conditions = new ArrayList<Expression>();
+		for (Action branch : branches) {
+			Expression condition = getPrecondition(branch); // Crucial - precondition is already cloned
+			conditions.add(condition);
+		}
+		if (conditions.isEmpty()) {
+			return null;
+		}
+		
+		return createDefaultExpression(conditions);
 	}
 	
 	//
+	
+	public boolean hasDefaultBranch(NonDeterministicAction choice) {
+		List<Action> branches = new ArrayList<Action>(choice.getActions());
+		int lastIndex = branches.size() - 1;
+		
+		Action lastBranch = branches.get(lastIndex);
+		branches.remove(lastIndex);
+		
+		Expression defaultCondition = createDefaultCondition(branches);
+		Expression lastCondition = getPrecondition(lastBranch);
+		
+		return ecoreUtil.helperEquals(defaultCondition, lastCondition);
+	}
 	
 	public Expression getPrecondition(Action action) {
 		if (action instanceof AssumeAction) {
@@ -773,6 +887,11 @@ public class XstsActionUtil extends ExpressionUtil {
 	
 	// Message queue - array handling
 	
+	public Expression isEmpty(VariableDeclaration sizeVariable) {
+		return createLessEqualExpression(
+				createReferenceExpression(sizeVariable), toIntegerLiteral(0));
+	}
+	
 	public VariableDeclarationAction createVariableDeclarationActionForArray(
 			VariableDeclaration queue, String name) {
 		TypeDefinition typeDefinition = ExpressionModelDerivedFeatures.getTypeDefinition(queue);
@@ -794,9 +913,12 @@ public class XstsActionUtil extends ExpressionUtil {
 			ArrayLiteralExpression arrayLiteral = factory.createArrayLiteralExpression();
 			for (int i = 1; i < size; i++) {
 				ArrayAccessExpression accessExpression = factory.createArrayAccessExpression();
-				accessExpression.setOperand(createReferenceExpression(queue));
-				accessExpression.setIndex(toIntegerLiteral(i));
-				arrayLiteral.getOperands().add(accessExpression);
+				accessExpression.setOperand(
+						createReferenceExpression(queue));
+				accessExpression.setIndex(
+						toIntegerLiteral(i));
+				arrayLiteral.getOperands()
+						.add(accessExpression);
 			}
 			// Shifting a default value at the end
 			// Would not be necessary in Theta (but it is in UPPAAL) due to the default branch
@@ -853,8 +975,10 @@ public class XstsActionUtil extends ExpressionUtil {
 		int queueSize = queues.size();
 		for (int i = 0; i < queueSize; i++) {
 			VariableDeclaration queue = queues.get(i);
+			Expression clonedIndex = ecoreUtil.clone(index);
 			Expression element = elements.get(i);
-			block.getActions().add(add(queue, index, element));
+			block.getActions().add(
+					add(queue, clonedIndex, element));
 		}
 		return block;
 	}
@@ -878,8 +1002,10 @@ public class XstsActionUtil extends ExpressionUtil {
 	public Action addAllAndIncrement(List<? extends VariableDeclaration> queues,
 			VariableDeclaration sizeVariable, List<? extends Expression> elements) {
 		SequentialAction block = xStsFactory.createSequentialAction();
-		block.getActions().add(addAll(queues, createReferenceExpression(sizeVariable), elements));
-		block.getActions().add(increment(sizeVariable));
+		block.getActions().add(
+				addAll(queues, createReferenceExpression(sizeVariable), elements));
+		block.getActions().add(
+				increment(sizeVariable));
 		return block;
 	}
 	

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2020 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -19,17 +19,11 @@ import java.util.Scanner
 import java.util.logging.Level
 
 import static com.google.common.base.Preconditions.checkState
-import hu.bme.mit.gamma.theta.trace.model.XstsTrace
-import java.util.List
-import hu.bme.mit.gamma.util.GammaEcoreUtil
-import hu.bme.mit.gamma.xsts.model.XSTS
-import hu.bme.mit.gamma.xsts.model.XstsAnnotation
 
 class ThetaVerifier extends AbstractVerifier {
 	
 	protected final extension ThetaQueryAdapter thetaQueryAdapter = ThetaQueryAdapter.INSTANCE
 	protected final extension ThetaValidator thetaValidator = ThetaValidator.INSTANCE
-	protected final extension GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE
 	
 	final String ENVIRONMENT_VARIABLE_FOR_THETA_JAR = "THETA_XSTS_CLI_PATH"
 	
@@ -62,6 +56,7 @@ class ThetaVerifier extends AbstractVerifier {
 	
 	override Result verifyQuery(Object traceability, String parameters, File modelFile, File queryFile) {
 		var Scanner resultReader = null
+		var Scanner traceFileScanner = null
 		try {
 			ENVIRONMENT_VARIABLE_FOR_THETA_JAR.validate
 			// The 'THETA_XSTS_CLI_PATH' environment variable has to be set to the respective file path
@@ -70,10 +65,21 @@ class ThetaVerifier extends AbstractVerifier {
 			val traceFile = new File(modelFile.traceFile)
 			traceFile.delete // So no invalid/old cex is parsed if this actual process does not generate one
 			traceFile.deleteOnExit // So the cex with this random name does not remain on disk
-			val command = '''java -jar «jar.escapePath» «parameters» --model «modelFile.canonicalPath.escapePath» --property «queryFile.canonicalPath.escapePath» --cex «traceFile.canonicalPath.escapePath» --stacktrace'''
+			
+			val splitParameters = parameters.split(" ")
+			val command = newArrayList
+			command += #["java", "-jar", jar]
+			if (!parameters.nullOrEmpty && !splitParameters.empty) {
+				command += splitParameters // Some environments do not accept a space
+				// due to the join(" ") after the non-existing parameter
+			}
+			command +=
+				#["--model", modelFile.canonicalPath, "--property", queryFile.canonicalPath,
+					"--cex", traceFile.canonicalPath, "--stacktrace"]
 			// Executing the command
-			logger.log(Level.INFO, "Executing command: " + command)
+			logger.log(Level.INFO, "Executing command: " + command.join(" "))
 			process = Runtime.getRuntime().exec(command)
+			
 			val outputStream = process.inputStream
 			resultReader = new Scanner(outputStream)
 			var line = ""
@@ -100,25 +106,23 @@ class ThetaVerifier extends AbstractVerifier {
 				return new Result(result, null)
 			}
 			val gammaPackage = traceability as Package
-			// Reading Theta trace
-			val cex = ecoreUtil.normalLoad(traceFile) as XstsTrace
-			// Reading XSTS model
-			val gstsFile = new File(modelFile.path.replaceAll("xsts$", "gsts"));
-			val xSts = ecoreUtil.normalLoad(gstsFile) as XSTS
-			val trace = gammaPackage.backAnnotate(cex, xSts.annotations)
+			traceFileScanner = new Scanner(traceFile)
+			val trace = gammaPackage.backAnnotate(traceFileScanner)
 			return new Result(result, trace)
 		} finally {
 			if (resultReader !== null) {
 				resultReader.close
 			}
+			if (traceFileScanner !== null) {
+				traceFileScanner.close
+			}
 		}
 	}
 	
-	protected def backAnnotate(Package gammaPackage, XstsTrace cex, List<XstsAnnotation> annotations) {
+	protected def backAnnotate(Package gammaPackage, Scanner traceFileScanner) {
 		// Must be synchronized due to the non-thread-safe VIATRA engine
 		synchronized (TraceBackAnnotator.getEngineSynchronizationObject) {
-			val backAnnotator = new TraceBackAnnotator(gammaPackage, cex, annotations)
-			
+			val backAnnotator = new TraceBackAnnotator(gammaPackage, traceFileScanner)
 			return backAnnotator.execute
 		}
 	}
@@ -130,7 +134,7 @@ class ThetaVerifier extends AbstractVerifier {
 	def getTraceFile(File modelFile) {
 		// Thread.currentThread.name is needed to prevent race conditions
 		return modelFile.parent + File.separator + modelFile.extensionlessName.toHiddenFileName +
-			"-" + Thread.currentThread.name + ".cex";
+			"-" + Thread.currentThread.name + ".cex"
 	}
 	
 }
@@ -143,7 +147,7 @@ class ThetaQueryAdapter {
 	final String AG = "A[]"
 	
 	extension FileUtil fileUtil = FileUtil.INSTANCE
-	boolean invert;
+	boolean invert
 	
 	def adaptQuery(File queryFile) {
 		return queryFile.loadString.adaptQuery
@@ -151,11 +155,11 @@ class ThetaQueryAdapter {
 	
 	def adaptQuery(String query) {
 		if (query.startsWith("E<>")) {
-			invert = true;
+			invert = true
 			return "!(" + query.substring(EF.length) + ")"
 		}
 		if (query.startsWith("A[]")) {
-			invert = false;
+			invert = false
 			return query.substring(AG.length)
 		}
 		throw new IllegalArgumentException("Not supported operator: " + query)

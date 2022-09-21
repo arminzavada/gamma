@@ -43,7 +43,6 @@ import hu.bme.mit.gamma.statechart.util.ActionSerializer
 import hu.bme.mit.gamma.statechart.util.ExpressionSerializer
 import org.eclipse.emf.common.util.EList
 
-import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 
 class StatechartToPlantUmlTransformer {
@@ -87,7 +86,7 @@ class StatechartToPlantUmlTransformer {
 		val leftOperand = binaryTrigger.leftOperand
 		val rightOperand = binaryTrigger.rightOperand
 		val type = binaryTrigger.type
-		return '''(«leftOperand.transformTrigger» «type.transformOperator» «rightOperand.transformTrigger»)'''
+		return '''(«leftOperand.transformTrigger» «type.transformOperator»\n«rightOperand.transformTrigger»)'''
 	}
 
 	protected def transformOperator(BinaryType type) {
@@ -359,18 +358,19 @@ class StatechartToPlantUmlTransformer {
 	 * 
 	 */
 	protected def stateSearch(Transition transition) {
+		val source = transition.sourceState
 		val trigger = transition.trigger
 		val guard = transition.guard
 		val effects = transition.effects
 		val target = transition.targetState
 		var arrow = ""
-		if (transition.sourceState instanceof EntryState) {
+		if (source instanceof EntryState || (source.parentRegion.orthogonal && target.state)) {
 			arrow = "->"
 		} else {
 			arrow = "-->"
 		}
 		return '''
-			«transition.sourceText» «arrow» «target.name»«IF !transition.empty» : «ENDIF»«IF trigger !== null»«trigger.transformTrigger»«ENDIF» «IF guard !== null»[«guard.serialize»]«ENDIF»«FOR effect : effects BEFORE ' /\\n' SEPARATOR '\\n'»«effect.transformAction»«ENDFOR»
+			«transition.sourceText» «arrow» «target.name»«IF !transition.empty» : «ENDIF»«IF trigger !== null»«trigger.transformTrigger»«ENDIF» «IF guard !== null»\n[«guard.serialize»]«ENDIF»«FOR effect : effects BEFORE ' /\\n' SEPARATOR '\\n'»«effect.transformAction»«ENDFOR»
 		'''
 	}
 
@@ -392,20 +392,28 @@ class StatechartToPlantUmlTransformer {
 		}
 	}
 
-	protected def listVariablesInNote(StatechartDefinition statechart) '''
-		legend top
-		Variables:
+	protected def listVariablesInNote(StatechartDefinition statechart) {
+		val parameterDeclarations = statechart.parameterDeclarations
+		val variableDeclarations = statechart.variableDeclarations
+		val timeoutDeclarations = statechart.timeoutDeclarations
 		
-		«FOR variable : statechart.variableDeclarations»
-			var «variable.name»: «variable.typeDefinition.serialize»«IF variable.expression !== null» = «variable.expression.serialize»«ENDIF»
-		«ENDFOR»
-		
-		Timeouts:
-		
-		«FOR timeout : statechart.timeoutDeclarations»
-			timeout «timeout.name»
-		«ENDFOR»
-		endlegend
-	'''
+		if (variableDeclarations.empty && timeoutDeclarations.empty && parameterDeclarations.empty) {
+			return ''''''
+		}
+		return '''
+			legend top
+			 	«FOR parameter : parameterDeclarations»
+			 		param «parameter.name»: «parameter.type.serialize»
+				«ENDFOR»
+				«FOR variable : variableDeclarations»
+					var «variable.name»: «variable.type.serialize»«IF variable.expression !== null» = «variable.expression.serialize»«ENDIF»
+				«ENDFOR»
+				«FOR timeout : timeoutDeclarations»
+					timeout «timeout.name»
+				«ENDFOR»
+			endlegend
+		'''
+	
+	}
 
 }

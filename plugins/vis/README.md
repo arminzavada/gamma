@@ -3,9 +3,11 @@
 To use the visualization function, you need to install the following tools:
 
 * Graphviz 2.26.3 - 2.38,
-* PlantUML Eclipse plugin - Version 1.1.25
+* PlantUML Eclipse plugin - Version 1.1.26
 
 ## Graphviz
+
+For the newest PlantUML version, the installation of Graphviz is no longer necessary as PlantUML is released with packed Graphviz binaries. Nevertheless, you can still install Graphviz separately if you want to as follows.
 
 You can download Graphviz from the following site: https://graphviz.gitlab.io/download/.
 

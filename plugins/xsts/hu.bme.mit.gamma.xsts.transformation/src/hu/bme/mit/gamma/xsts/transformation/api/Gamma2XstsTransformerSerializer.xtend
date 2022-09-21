@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2021 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -39,6 +39,7 @@ class Gamma2XstsTransformerSerializer {
 	protected final Integer schedulingConstraint
 	// Configuration
 	protected final boolean optimize
+	protected final boolean optimizeArray
 	protected final TransitionMerging transitionMerging
 	protected final AnalysisSplit split
 	// Slicing
@@ -68,7 +69,7 @@ class Gamma2XstsTransformerSerializer {
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint) {
 		this(component, arguments, targetFolderUri, fileName, schedulingConstraint,
-			true, TransitionMerging.HIERARCHICAL, AnalysisSplit.NONE,
+			true, false, TransitionMerging.HIERARCHICAL, AnalysisSplit.NONE,
 			null, new AnnotatablePreprocessableElements(null, null, null, null, null,
 				InteractionCoverageCriterion.EVERY_INTERACTION, InteractionCoverageCriterion.EVERY_INTERACTION,
 				null, DataflowCoverageCriterion.ALL_USE,
@@ -79,7 +80,7 @@ class Gamma2XstsTransformerSerializer {
 	new(Component component, List<Expression> arguments,
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint,
-			boolean optimize,
+			boolean optimize, boolean optimizeArray,
 			TransitionMerging transitionMerging,
 			AnalysisSplit split,
 			PropertyPackage slicingProperties,
@@ -92,6 +93,7 @@ class Gamma2XstsTransformerSerializer {
 		this.schedulingConstraint = schedulingConstraint
 		//
 		this.optimize = optimize
+		this.optimizeArray = optimizeArray
 		this.transitionMerging = transitionMerging
 		this.split = split
 		//
@@ -106,7 +108,8 @@ class Gamma2XstsTransformerSerializer {
 	def void execute() {
 		val gammaPackage = StatechartModelDerivedFeatures.getContainingPackage(component)
 		// Preprocessing
-		val newTopComponent = preprocessor.preprocess(gammaPackage, arguments, targetFolderUri, fileName, optimize)
+		val newTopComponent = preprocessor.preprocess(gammaPackage,
+				arguments, targetFolderUri, fileName, optimize)
 		val newGammaPackage = StatechartModelDerivedFeatures.getContainingPackage(newTopComponent)
 		// Slicing and Property generation
 		val slicerAnnotatorAndPropertyGenerator = new ModelSlicerModelAnnotatorPropertyGenerator(
@@ -116,8 +119,8 @@ class Gamma2XstsTransformerSerializer {
 				targetFolderUri, fileName)
 		slicerAnnotatorAndPropertyGenerator.execute
 		val gammaToXSTSTransformer = new GammaToXstsTransformer(
-			schedulingConstraint, true, true,
-			transitionMerging, split, initialState, initialStateSetting)
+			schedulingConstraint, true, true, optimizeArray,
+			transitionMerging, initialState, initialStateSetting, split)
 		// Normal transformation
 		val xSts = gammaToXSTSTransformer.execute(newGammaPackage)
 		// EMF

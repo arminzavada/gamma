@@ -17,7 +17,7 @@ import hu.bme.mit.gamma.statechart.contract.StateContractAnnotation
 import hu.bme.mit.gamma.statechart.interface_.Component
 import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory
 import hu.bme.mit.gamma.statechart.interface_.Package
-import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition
+import hu.bme.mit.gamma.statechart.statechart.SynchronousStatechartDefinition
 import hu.bme.mit.gamma.statechart.util.StatechartUtil
 import hu.bme.mit.gamma.transformation.util.GammaFileNamer
 import hu.bme.mit.gamma.transformation.util.reducer.SystemReducer
@@ -59,27 +59,33 @@ class AnalysisModelPreprocessor {
 		val trace = modelUnfolder.unfold
 		var _package = trace.package
 		val component = trace.topComponent
-		
-		// Transforming parameters if there are any
-		component.transformTopComponentParameters(topComponentArguments)
+		checkState(!component.asynchronousStatechart) // ModelUnfolder handles them
 		
 		val name = component.name
 		// If it is an atomic component, we wrap it
-		if (component instanceof StatechartDefinition) {
-			logger.log(Level.INFO, "Wrapping statechart " + name)
-			_package.components.add(0, component.wrapSynchronousComponent)
+		if (component instanceof SynchronousStatechartDefinition) {
+			logger.log(Level.INFO, "Wrapping synchronous statechart " + name)
+			val wrapper = component.wrapSynchronousComponent
+			wrapper.addWrapperComponentAnnotation // Adding wrapper annotation
+			_package.components.add(0, wrapper)
 		}
-		// Check loop support in Theta configurations
 		else if (component instanceof AsynchronousAdapter) {
 			if (!component.simplifiable) {
 				// Queues have to be introduced 
 				logger.log(Level.INFO, "Wrapping adapter " + name)
-				_package.components.add(0, component.wrapAsynchronousComponent)
+				val wrapper = component.wrapAsynchronousComponent
+				wrapper.addWrapperComponentAnnotation // Adding wrapper annotation
+				_package.components.add(0, wrapper)
+				modelUnfolder.renameInstances(wrapper) // Renaming manually due to Scheduled-Adapter extension
 			}
 			else {
 				logger.log(Level.INFO, "Adapter " + name + " does not have to be wrapped")
 			}
 		}
+		
+		// Transforming parameters if there are any - after wrapping!
+		val firstComponent = _package.firstComponent
+		firstComponent.transformTopComponentParameters(topComponentArguments)
 		
 		// Saving the package as VIATRA will NOT return matches if the models are not in the same ResourceSet
 		val flattenedModelUri = URI.createFileURI(targetFolderUri +
@@ -115,7 +121,7 @@ class AnalysisModelPreprocessor {
 			it.arguments += arguments.map[it.clone]
 		]
 		
-		_package.constantDeclarations += parameters.extractParamaters(
+		_package.constantDeclarations += parameters.extractParameters(
 			parameters.map['''__«it.name»__'''], arguments)
 	}
 	

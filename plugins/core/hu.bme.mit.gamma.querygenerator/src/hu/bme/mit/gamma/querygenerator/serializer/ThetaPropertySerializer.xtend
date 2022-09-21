@@ -24,18 +24,18 @@ class ThetaPropertySerializer extends PropertySerializer {
 	// Singleton
 	public static final ThetaPropertySerializer INSTANCE = new ThetaPropertySerializer
 	protected new() {
-		super(new PropertyExpressionSerializer(ThetaReferenceSerializer.INSTANCE))
+		super(new ThetaPropertyExpressionSerializer(ThetaReferenceSerializer.INSTANCE))
 	}
 	//
 	
 	override serialize(StateFormula formula) {
 		// A simple CTL
 		val serializedFormula = formula.serializeFormula
-		checkArgument(formula.isSimpleCTL, serializedFormula)
+		checkArgument(formula.isValidFormula, serializedFormula)
 		return serializedFormula
 	}
 	
-	protected def isSimpleCTL(StateFormula formula) {
+	protected def isValidFormula(StateFormula formula) {
 		if (formula instanceof QuantifiedFormula) {
 			// A or E
 			val quantifier = formula.quantifier

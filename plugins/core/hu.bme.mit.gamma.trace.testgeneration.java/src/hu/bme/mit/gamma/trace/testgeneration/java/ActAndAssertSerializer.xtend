@@ -1,3 +1,13 @@
+/********************************************************************************
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * SPDX-License-Identifier: EPL-1.0
+ ********************************************************************************/
 package hu.bme.mit.gamma.trace.testgeneration.java
 
 import hu.bme.mit.gamma.statechart.interface_.Component
@@ -52,12 +62,16 @@ class ActAndAssertSerializer {
 	protected def dispatch String serializeAssert(RaiseEventAct assert)
 		'''«TEST_INSTANCE_NAME».isRaisedEvent("«assert.port.name»", "«assert.event.name»", new Object[] {«FOR parameter : assert.arguments BEFORE " " SEPARATOR ", " AFTER " "»«parameter.serialize»«ENDFOR»})'''
 
-	protected def dispatch String serializeAssert(InstanceStateConfiguration assert)
-		'''«TEST_INSTANCE_NAME».«util.getFullContainmentHierarchy(assert.instance)».isStateActive("«assert.state.parentRegion.name»", "«assert.state.name»")'''
-
-	protected def dispatch String serializeAssert(InstanceVariableState assert)
-		'''«TEST_INSTANCE_NAME».«util.getFullContainmentHierarchy(assert.instance)».checkVariableValue("«assert.declaration.name»", «assert.value.serialize»)'''
-	
+	protected def dispatch String serializeAssert(InstanceStateConfiguration assert) {
+		val instance = assert.instance
+		val separator = (instance === null) ? '' : '.'
+		'''«TEST_INSTANCE_NAME»«separator»«util.getFullContainmentHierarchy(instance)».isStateActive("«assert.state.parentRegion.name»", "«assert.state.name»")'''
+	}
+	protected def dispatch String serializeAssert(InstanceVariableState assert) {
+		val instance = assert.variableReference.instance
+		val separator = (instance === null) ? '' : '.'
+		'''«TEST_INSTANCE_NAME»«separator»«util.getFullContainmentHierarchy(instance)».checkVariableValue("«assert.variableReference.variableDeclaration.name»", «assert.value.serialize»)'''
+	}
 	// Acts
 	
 	protected def dispatch String serialize(Reset reset) '''
@@ -70,13 +84,12 @@ class ActAndAssertSerializer {
 	'''
 
 	protected def dispatch String serialize(TimeElapse elapse) '''
-		«TIMER_OBJECT_NAME».elapse(«elapse.elapsedTime»);
+		«IF component.timed»«TIMER_OBJECT_NAME».elapse(«elapse.elapsedTime»);«ENDIF»
 	'''
 
-	protected def dispatch serialize(InstanceSchedule schedule) '''
-«««		Theoretically, we do not use such models
-		«TEST_INSTANCE_NAME».«util.getFullContainmentHierarchy(schedule.scheduledInstance)».schedule(null);
-	'''
+	protected def dispatch serialize(InstanceSchedule schedule) {
+		throw new IllegalArgumentException("Not supported act: " + schedule)
+	}
 
 	protected def dispatch String serialize(ComponentSchedule schedule) '''
 «««		Theoretically, only asynchronous adapters and synchronous adapters are used

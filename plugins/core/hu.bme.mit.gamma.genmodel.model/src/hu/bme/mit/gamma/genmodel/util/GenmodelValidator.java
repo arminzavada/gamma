@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2021 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -27,6 +27,7 @@ import org.yakindu.sct.model.sgraph.Scope;
 import org.yakindu.sct.model.sgraph.Statechart;
 import org.yakindu.sct.model.stext.stext.InterfaceScope;
 
+import hu.bme.mit.gamma.expression.model.ArgumentedElement;
 import hu.bme.mit.gamma.expression.model.BooleanTypeDefinition;
 import hu.bme.mit.gamma.expression.model.DecimalTypeDefinition;
 import hu.bme.mit.gamma.expression.model.Declaration;
@@ -37,8 +38,11 @@ import hu.bme.mit.gamma.expression.model.IntegerTypeDefinition;
 import hu.bme.mit.gamma.expression.model.ParameterDeclaration;
 import hu.bme.mit.gamma.expression.model.ReferenceExpression;
 import hu.bme.mit.gamma.expression.model.Type;
+import hu.bme.mit.gamma.expression.model.TypeReference;
 import hu.bme.mit.gamma.expression.util.ExpressionModelValidator;
+import hu.bme.mit.gamma.genmodel.derivedfeatures.GenmodelDerivedFeatures;
 import hu.bme.mit.gamma.genmodel.model.AbstractComplementaryTestGeneration;
+import hu.bme.mit.gamma.genmodel.model.AdaptiveBehaviorConformanceChecking;
 import hu.bme.mit.gamma.genmodel.model.AdaptiveContractTestGeneration;
 import hu.bme.mit.gamma.genmodel.model.AnalysisLanguage;
 import hu.bme.mit.gamma.genmodel.model.AnalysisModelTransformation;
@@ -46,6 +50,7 @@ import hu.bme.mit.gamma.genmodel.model.AsynchronousInstanceConstraint;
 import hu.bme.mit.gamma.genmodel.model.CodeGeneration;
 import hu.bme.mit.gamma.genmodel.model.ComponentReference;
 import hu.bme.mit.gamma.genmodel.model.Constraint;
+import hu.bme.mit.gamma.genmodel.model.ContractAutomatonType;
 import hu.bme.mit.gamma.genmodel.model.Coverage;
 import hu.bme.mit.gamma.genmodel.model.EventMapping;
 import hu.bme.mit.gamma.genmodel.model.EventPriorityTransformation;
@@ -59,6 +64,7 @@ import hu.bme.mit.gamma.genmodel.model.PhaseStatechartGeneration;
 import hu.bme.mit.gamma.genmodel.model.SchedulingConstraint;
 import hu.bme.mit.gamma.genmodel.model.StateCoverage;
 import hu.bme.mit.gamma.genmodel.model.StatechartCompilation;
+import hu.bme.mit.gamma.genmodel.model.StatechartContractGeneration;
 import hu.bme.mit.gamma.genmodel.model.StatechartContractTestGeneration;
 import hu.bme.mit.gamma.genmodel.model.Task;
 import hu.bme.mit.gamma.genmodel.model.TestGeneration;
@@ -67,14 +73,15 @@ import hu.bme.mit.gamma.genmodel.model.TransitionCoverage;
 import hu.bme.mit.gamma.genmodel.model.Verification;
 import hu.bme.mit.gamma.genmodel.model.XstsReference;
 import hu.bme.mit.gamma.genmodel.model.YakinduCompilation;
+import hu.bme.mit.gamma.property.derivedfeatures.PropertyModelDerivedFeatures;
 import hu.bme.mit.gamma.property.model.PropertyPackage;
+import hu.bme.mit.gamma.scenario.model.NegatedModalInteraction;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousAdapter;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousComponent;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousCompositeComponent;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstance;
-import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReference;
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReferenceExpression;
 import hu.bme.mit.gamma.statechart.composite.CompositeModelPackage;
-import hu.bme.mit.gamma.statechart.contract.AdaptiveContractAnnotation;
 import hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures;
 import hu.bme.mit.gamma.statechart.interface_.Component;
 import hu.bme.mit.gamma.statechart.interface_.EventDeclaration;
@@ -83,7 +90,6 @@ import hu.bme.mit.gamma.statechart.interface_.InterfaceModelPackage;
 import hu.bme.mit.gamma.statechart.interface_.Package;
 import hu.bme.mit.gamma.statechart.interface_.RealizationMode;
 import hu.bme.mit.gamma.statechart.interface_.TimeSpecification;
-import hu.bme.mit.gamma.statechart.statechart.StatechartAnnotation;
 import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition;
 import hu.bme.mit.gamma.statechart.util.StatechartUtil;
 import hu.bme.mit.gamma.trace.model.ExecutionTrace;
@@ -187,36 +193,44 @@ public class GenmodelValidator extends ExpressionModelValidator {
 		List<AnalysisLanguage> languages = verification.getAnalysisLanguages();
 		if (languages.size() != 1) {
 			validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
-					"A single formal language must be specified",
+				"A single formal language must be specified",
 					new ReferenceInfo(GenmodelModelPackage.Literals.VERIFICATION__ANALYSIS_LANGUAGES)));
 		}
 		File resourceFile = ecoreUtil.getFile(verification.eResource());
 		List<String> modelFiles = verification.getFileName();
 		if (modelFiles.size() != 1) {
 			validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
-					"A single model file must be specified",
+				"A single model file must be specified",
 					new ReferenceInfo(GenmodelModelPackage.Literals.TASK__FILE_NAME)));
 		}
 		for (String modelFile : modelFiles) {
 			if (!fileUtil.isValidRelativeFile(resourceFile, modelFile)) {
 				int index = modelFiles.indexOf(modelFile);
 				validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
-						"This is not a valid relative path to a model file: " + modelFile,
+					"This is not a valid relative path to a model file: " + modelFile,
 						new ReferenceInfo(GenmodelModelPackage.Literals.TASK__FILE_NAME, index)));
 			}
 		}
 		List<String> queryFiles = verification.getQueryFiles();
 		List<PropertyPackage> propertyPackages = verification.getPropertyPackages();
+		if (verification.isOptimizeModel()) {
+			if (propertyPackages.stream().anyMatch(it ->
+					!PropertyModelDerivedFeatures.isUnfolded(it))) {
+				validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
+					"If optimization is set, then all property packages must refer to unfolded components",
+						new ReferenceInfo(GenmodelModelPackage.Literals.VERIFICATION__OPTIMIZE_MODEL)));
+			}
+		}
 		if (queryFiles.size() + propertyPackages.size() < 1) {
 			validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
-					"At least one query file must be specified",
+				"At least one query file must be specified",
 					new ReferenceInfo(GenmodelModelPackage.Literals.VERIFICATION__QUERY_FILES)));
 		}
 		for (String queryFile : queryFiles) {
 			if (!fileUtil.isValidRelativeFile(resourceFile, queryFile)) {
 				int index = queryFiles.indexOf(queryFile);
 				validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
-						"This is not a valid relative path to a query file: " + queryFile,
+					"This is not a valid relative path to a query file: " + queryFile,
 						new ReferenceInfo(GenmodelModelPackage.Literals.VERIFICATION__QUERY_FILES, index)));
 			}
 		}
@@ -276,7 +290,7 @@ public class GenmodelValidator extends ExpressionModelValidator {
 				return validationResultMessages;
 			}
 			SchedulingConstraint scheduling = ecoreUtil.getContainerOfType(constraint, SchedulingConstraint.class);
-			ComponentInstanceReference instance = constraint.getInstance();
+			ComponentInstanceReferenceExpression instance = constraint.getInstance();
 			if (instance != null) {
 				ComponentInstance lastInstance = StatechartModelDerivedFeatures.getLastInstance(instance);
 				if (!hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.isAsynchronous(lastInstance)) {
@@ -389,11 +403,8 @@ public class GenmodelValidator extends ExpressionModelValidator {
 			Component component = componentReference.getComponent();
 			if (component instanceof StatechartDefinition) {
 				StatechartDefinition statechartDefinition = (StatechartDefinition) component;
-				List<StatechartAnnotation> annotations = statechartDefinition.getAnnotations();
-				for (StatechartAnnotation statechartAnnotation: annotations) {
-					if (statechartAnnotation instanceof AdaptiveContractAnnotation) {
-						return validationResultMessages; // Everything is correct, returning with empty list
-					}
+				if (StatechartModelDerivedFeatures.isAdaptiveContract(statechartDefinition)) {
+					return validationResultMessages; // Everything is correct, returning with empty list
 				}
 			}
 		}
@@ -433,10 +444,19 @@ public class GenmodelValidator extends ExpressionModelValidator {
 					javaUtil.filterIntoList(genmodel.getTasks(), AdaptiveContractTestGeneration.class)) {
 			packageImports.removeAll(getUsedPackages(adaptiveContractTestGenerationTask.getModelTransformation()));
 		}
+		for (AdaptiveBehaviorConformanceChecking adaptiveBehaviorConformanceChecking :
+					javaUtil.filterIntoList(genmodel.getTasks(), AdaptiveBehaviorConformanceChecking.class)) {
+			packageImports.removeAll(getUsedPackages(adaptiveBehaviorConformanceChecking.getModelTransformation()));
+		}
 		for (StatechartContractTestGeneration statechartContractTestGenerationTask :
 			javaUtil.filterIntoList(genmodel.getTasks(), StatechartContractTestGeneration.class)) {
 			packageImports.remove(StatechartModelDerivedFeatures.getContainingPackage(
 					statechartContractTestGenerationTask.getComponentReference()));
+		}
+		for (StatechartContractGeneration statechartContractGenerationTask :
+			javaUtil.filterIntoList(genmodel.getTasks(), StatechartContractGeneration.class)) {
+			packageImports.remove(StatechartModelDerivedFeatures.getContainingPackage(
+					statechartContractGenerationTask.getScenario()));
 		}
 		for (PhaseStatechartGeneration phaseStatechartGenerationTask :
 					javaUtil.filterIntoList(genmodel.getTasks(), PhaseStatechartGeneration.class)) {
@@ -445,9 +465,20 @@ public class GenmodelValidator extends ExpressionModelValidator {
 			packageImports.remove(parentPackage);
 		}
 		for (ReferenceExpression reference : ecoreUtil.getAllContentsOfType(genmodel, ReferenceExpression.class)) {
-			Declaration declaration = expressionUtil.getAccessedDeclaration(reference);
-			ExpressionPackage expressionPackage = ecoreUtil.getContainerOfType(declaration, ExpressionPackage.class);
-			packageImports.remove(expressionPackage);
+			if (reference instanceof ComponentInstanceReferenceExpression) {
+				ComponentInstanceReferenceExpression instanceReference = (ComponentInstanceReferenceExpression) reference;
+				List<ComponentInstance> componentInstanceChain =
+						StatechartModelDerivedFeatures.getComponentInstanceChain(instanceReference);
+				List<Package> packages = componentInstanceChain.stream()
+						.map(it -> StatechartModelDerivedFeatures.getContainingPackage(it))
+						.collect(Collectors.toList());
+				packageImports.removeAll(packages);
+			}
+			else {
+				Declaration declaration = statechartUtil.getAccessedDeclaration(reference);
+				ExpressionPackage expressionPackage = ecoreUtil.getContainerOfType(declaration, ExpressionPackage.class);
+				packageImports.remove(expressionPackage);
+			}
 		}
 		for (Package packageImport : packageImports) {
 			int index = genmodel.getPackageImports().indexOf(packageImport);
@@ -468,10 +499,10 @@ public class GenmodelValidator extends ExpressionModelValidator {
 			packageImports.add(parentPackage);
 		}
 		for (Coverage coverage : analysisModelTransformationTask.getCoverages()) {
-			List<ComponentInstanceReference> allCoverages = new ArrayList<ComponentInstanceReference>();
+			List<ComponentInstanceReferenceExpression> allCoverages = new ArrayList<ComponentInstanceReferenceExpression>();
 			allCoverages.addAll(coverage.getInclude());
 			allCoverages.addAll(coverage.getExclude());
-			for (ComponentInstanceReference instance : allCoverages) {
+			for (ComponentInstanceReferenceExpression instance : allCoverages) {
 				Package instanceParentPackage = StatechartModelDerivedFeatures.getContainingPackage(instance);
 				packageImports.add(instanceParentPackage);
 			}
@@ -514,15 +545,10 @@ public class GenmodelValidator extends ExpressionModelValidator {
 		return validationResultMessages;
 	}
 	
-	public Collection<ValidationResultMessage> checkParameters(ComponentReference componentReference) {
-		Collection<ValidationResultMessage> validationResultMessages = new ArrayList<ValidationResultMessage>();
-		Component type = componentReference.getComponent();
-		if (componentReference.getArguments().size() != type.getParameterDeclarations().size()) {
-			validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
-					"The number of arguments is wrong",
-					new ReferenceInfo(ExpressionModelPackage.Literals.ARGUMENTED_ELEMENT__ARGUMENTS)));
-		}
-		return validationResultMessages;
+	public Collection<ValidationResultMessage> checkArgumentTypes(ArgumentedElement argumentedElement) {
+		List<ParameterDeclaration> parameterDeclarations =
+				GenmodelDerivedFeatures.getParameterDeclarations(argumentedElement);
+		return checkArgumentTypes(argumentedElement, parameterDeclarations);
 	}
 	
 	public Collection<ValidationResultMessage> checkComponentInstanceArguments(
@@ -833,50 +859,54 @@ public class GenmodelValidator extends ExpressionModelValidator {
 	
 	public boolean checkParameters(Event yakinduEvent, hu.bme.mit.gamma.statechart.interface_.Event gEvent) {
 		// event.type is null not void if no explicit type is declared
-		if (yakinduEvent.getType() == null && gEvent.getParameterDeclarations().isEmpty()) {
+		org.yakindu.base.types.Type yakinduType = yakinduEvent.getType();
+		List<ParameterDeclaration> gammaParameters = gEvent.getParameterDeclarations();
+		if (yakinduType == null && gammaParameters.isEmpty()) {
 			return true;
 		}
-		if (!gEvent.getParameterDeclarations().isEmpty()) {
-			Type eventType = gEvent.getParameterDeclarations().get(0).getType();
+		if (!gammaParameters.isEmpty()) {
+			Type eventType = gammaParameters.get(0).getType();
 			if (eventType instanceof IntegerTypeDefinition) {
-				if (yakinduEvent.getType() == null) {
+				if (yakinduType == null) {
 					return false;
 				}
-				return yakinduEvent.getType().getName().equals("integer") ||
-						yakinduEvent.getType().getName().equals("string"); 
+				return yakinduType.getName().equals("integer") ||
+						yakinduType.getName().equals("string"); 
 			}
 			else if (eventType instanceof BooleanTypeDefinition) {
-				if (yakinduEvent.getType() == null) {
+				if (yakinduType == null) {
 					return false;
 				}
-				return yakinduEvent.getType().getName().equals("boolean");
+				return yakinduType.getName().equals("boolean");
 			}
 			else if (eventType instanceof DecimalTypeDefinition) {
-				if (yakinduEvent.getType() == null) {
+				if (yakinduType == null) {
 					return false;
 				}
-				return yakinduEvent.getType().getName().equals("real");
+				return yakinduType.getName().equals("real");
+			}
+			else if (eventType instanceof TypeReference) {
+				return false; // Yakindu does not support composite types
 			}
 			else {
-				throw new IllegalArgumentException("Not known type: " + gEvent.getParameterDeclarations().get(0).getType());
+				throw new IllegalArgumentException("Not known type: " + gammaParameters.get(0).getType());
 			}
-					
 		}
 		return false;
 	}
 	
 	// Duplicated in StatechartModelValidator
-	public Collection<ValidationResultMessage> checkComponentInstanceReferences(ComponentInstanceReference reference) {
+	public Collection<ValidationResultMessage> checkComponentInstanceReferences(ComponentInstanceReferenceExpression reference) {
 		Collection<ValidationResultMessage> validationResultMessages = new ArrayList<ValidationResultMessage>();
 		
 		ComponentInstance instance = reference.getComponentInstance();
-		ComponentInstanceReference child = reference.getChild();
+		ComponentInstanceReferenceExpression child = reference.getChild();
 		if (child != null) {
 			ComponentInstance childInstance = child.getComponentInstance();
 			if (!StatechartModelDerivedFeatures.contains(instance, childInstance)) {
 				validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
 					instance.getName() + " does not contain component instance " + childInstance.getName(),
-						new ReferenceInfo(CompositeModelPackage.Literals.COMPONENT_INSTANCE_REFERENCE__COMPONENT_INSTANCE)));
+						new ReferenceInfo(CompositeModelPackage.Literals.COMPONENT_INSTANCE_REFERENCE_EXPRESSION__COMPONENT_INSTANCE)));
 			}
 		}
 		
@@ -891,7 +921,7 @@ public class GenmodelValidator extends ExpressionModelValidator {
 					if (!containedComponents.contains(instance)) {
 						validationResultMessages.add(new ValidationResultMessage(ValidationResult.ERROR, 
 							"The first component instance must be the component of " + component.getName(),
-								new ReferenceInfo(CompositeModelPackage.Literals.COMPONENT_INSTANCE_REFERENCE__COMPONENT_INSTANCE)));
+								new ReferenceInfo(CompositeModelPackage.Literals.COMPONENT_INSTANCE_REFERENCE_EXPRESSION__COMPONENT_INSTANCE)));
 					}
 				}
 			}
@@ -901,5 +931,22 @@ public class GenmodelValidator extends ExpressionModelValidator {
 		
 		return validationResultMessages;
 	}
-	
+
+	public Collection<ValidationResultMessage> checkNegatedInteractionInTestAutomatonGeneration(
+			StatechartContractGeneration statechartGeneration) {
+		Collection<ValidationResultMessage> validationResultMessages = new ArrayList<ValidationResultMessage>();
+		if (statechartGeneration.getAutomatonType() == ContractAutomatonType.MONITOR) {
+			return validationResultMessages;
+		}
+		List<NegatedModalInteraction> negatedModelinteractions = ecoreUtil
+				.getAllContentsOfType(statechartGeneration.getScenario(), NegatedModalInteraction.class);
+		if (negatedModelinteractions.size() > 0) {
+			validationResultMessages.add(new ValidationResultMessage(ValidationResult.WARNING,
+					"The referenced scenario contains negated interactions, which will not take effect in the generated tests",
+					new ReferenceInfo(GenmodelModelPackage.Literals.STATECHART_CONTRACT_GENERATION__SCENARIO,
+							statechartGeneration)));
+		}
+		return validationResultMessages;
+	}
+
 }

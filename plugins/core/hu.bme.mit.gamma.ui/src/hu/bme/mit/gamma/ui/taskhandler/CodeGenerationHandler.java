@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2019 Contributors to the Gamma project
+ * Copyright (c) 2019-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
-import hu.bme.mit.gamma.codegenerator.java.GlueCodeGenerator;
+import hu.bme.mit.gamma.codegeneration.java.GlueCodeGenerator;
 import hu.bme.mit.gamma.genmodel.model.CodeGeneration;
 import hu.bme.mit.gamma.genmodel.model.ProgrammingLanguage;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstance;
@@ -49,13 +49,13 @@ public class CodeGenerationHandler extends TaskHandler {
 		
 		if (component instanceof StatechartDefinition) {
 			StatechartDefinition statechart = (StatechartDefinition) component;
-			logger.log(Level.INFO, "Starting single statechart code generation...");
+			logger.log(Level.INFO, "Starting single statechart code generation: " + component.getName());
 			CommandHandler singleStatechartCommandHandler = new CommandHandler();
 			singleStatechartCommandHandler.run(statechart, ecoreUtil.getFile(codeGeneration.eResource()).getParent(),
 					targetFolderUri, codeGeneration.getPackageName().get(0));
 		}
 		else {
-			logger.log(Level.INFO, "Starting composite component code generation...");
+			logger.log(Level.INFO, "Starting composite component code generation: " + component.getName());
 			ResourceSet codeGenerationResourceSet = new ResourceSetImpl();
 			codeGenerationResourceSet.getResource(component.eResource().getURI(), true);
 			loadStatechartTraces(codeGenerationResourceSet, component);

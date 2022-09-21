@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2020 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,11 +17,13 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
+import hu.bme.mit.gamma.action.derivedfeatures.ActionModelDerivedFeatures;
 import hu.bme.mit.gamma.action.model.Action;
 import hu.bme.mit.gamma.action.model.ActionModelFactory;
 import hu.bme.mit.gamma.action.model.AssignmentStatement;
 import hu.bme.mit.gamma.action.model.Block;
 import hu.bme.mit.gamma.action.model.Branch;
+import hu.bme.mit.gamma.action.model.EmptyStatement;
 import hu.bme.mit.gamma.action.model.IfStatement;
 import hu.bme.mit.gamma.action.model.SwitchStatement;
 import hu.bme.mit.gamma.action.model.VariableDeclarationStatement;
@@ -56,6 +58,50 @@ public class ActionUtil extends ExpressionUtil {
 			return getDeclaration(lhs);
 		}
 		return (Declaration) ecoreUtil.getSelfOrContainerOfType(context, InitializableElement.class);
+	}
+	
+	//
+	
+	public void removeEmptyStatements(Action action) {
+		if (action == null) {
+			return;
+		}
+		List<EmptyStatement> emptyStatements = ecoreUtil
+				.getSelfAndAllContentsOfType(action, EmptyStatement.class);
+		for (EmptyStatement emptyStatement : emptyStatements) {
+			ecoreUtil.remove(emptyStatement);
+		}
+	}
+	
+	public void removeEffectlessActions(Collection<? extends Action> actions) {
+		List<Action> actionList = new ArrayList<Action>(actions);
+		for (Action action : actionList) {
+			removeEffectlessActions(action);
+		}
+	}
+	
+	public void removeEffectlessActions(Action action) {
+		if (action == null) {
+			return;
+		}
+		if (ActionModelDerivedFeatures.isEffectlessAction(action)) {
+			ecoreUtil.remove(action);
+			return;
+		}
+		
+		boolean needMoreIteration = true;
+		while (needMoreIteration) {
+			needMoreIteration = false;
+			List<Action> actions = ecoreUtil
+					.getSelfAndAllContentsOfType(action, Action.class);
+			
+			for (Action subaction : actions) {
+				if (ActionModelDerivedFeatures.isEffectlessAction(subaction)) {
+					ecoreUtil.remove(subaction);
+					needMoreIteration = true;
+				}
+			}
+		}
 	}
 	
 	//
@@ -119,6 +165,19 @@ public class ActionUtil extends ExpressionUtil {
 	}
 	
 	//
+	
+	public IfStatement createIfStatement(Expression condition, Action then, Action _else) {
+		IfStatement ifStatement = actionFactory.createIfStatement();
+		ifStatement.getConditionals().add(
+			createBranch(condition, then)
+		);
+		if (_else != null) {
+			Branch elseBranch = getOrCreateElseBranch(ifStatement);
+			elseBranch.setAction(_else);
+		}
+		
+		return ifStatement;
+	}
 	
 	public Branch createBranch(Expression expression, Action action) {
 		Branch branch = actionFactory.createBranch();
@@ -244,6 +303,16 @@ public class ActionUtil extends ExpressionUtil {
 			assignments.add(createAssignment(lhs, rhs));
 		}
 		return assignments;
+	}
+	
+	public AssignmentStatement createVariableResetAction(VariableDeclaration variable) {
+		Expression defaultExpression = ExpressionModelDerivedFeatures.getDefaultExpression(variable);
+		return createAssignment(variable, defaultExpression);
+	}
+	
+	public AssignmentStatement createIncrementation(VariableDeclaration variable) {
+		return createAssignment(variable,
+				createIncrementExpression(variable));
 	}
 	
 }

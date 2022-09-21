@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,7 +20,7 @@ import hu.bme.mit.gamma.statechart.composite.BroadcastChannel;
 import hu.bme.mit.gamma.statechart.composite.CascadeCompositeComponent;
 import hu.bme.mit.gamma.statechart.composite.Channel;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstance;
-import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReference;
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReferenceExpression;
 import hu.bme.mit.gamma.statechart.composite.ControlSpecification;
 import hu.bme.mit.gamma.statechart.composite.InstancePortReference;
 import hu.bme.mit.gamma.statechart.composite.MessageQueue;
@@ -38,10 +38,11 @@ import hu.bme.mit.gamma.statechart.interface_.Interface;
 import hu.bme.mit.gamma.statechart.interface_.Package;
 import hu.bme.mit.gamma.statechart.interface_.Port;
 import hu.bme.mit.gamma.statechart.interface_.TimeSpecification;
-import hu.bme.mit.gamma.statechart.phase.MissionPhaseStateDefinition;
+import hu.bme.mit.gamma.statechart.phase.MissionPhaseStateAnnotation;
 import hu.bme.mit.gamma.statechart.phase.VariableBinding;
 import hu.bme.mit.gamma.statechart.statechart.AnyPortEventReference;
 import hu.bme.mit.gamma.statechart.statechart.ChoiceState;
+import hu.bme.mit.gamma.statechart.statechart.ComplexTrigger;
 import hu.bme.mit.gamma.statechart.statechart.EntryState;
 import hu.bme.mit.gamma.statechart.statechart.ForkState;
 import hu.bme.mit.gamma.statechart.statechart.JoinState;
@@ -58,10 +59,6 @@ import hu.bme.mit.gamma.statechart.statechart.TimeoutDeclaration;
 import hu.bme.mit.gamma.statechart.statechart.Transition;
 import hu.bme.mit.gamma.statechart.util.StatechartModelValidator;
 
-/**
- * This class contains custom validation rules. 
- * See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#validation
- */
 public class StatechartLanguageValidator extends AbstractStatechartLanguageValidator {
 
 	protected StatechartModelValidator statechartModelValidator = StatechartModelValidator.INSTANCE;
@@ -92,6 +89,11 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	}
 	
 	@Check
+	public void checComplexTriggers(ComplexTrigger trigger) {
+		handleValidationResultMessage(statechartModelValidator.checkComplexTriggers(trigger));
+	}
+	
+	@Check
 	public void checkUnsupportedVariableTypes(VariableDeclaration variable) {
 		handleValidationResultMessage(statechartModelValidator.checkUnsupportedVariableTypes(variable));
 	}
@@ -113,6 +115,7 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	@Check
 	public void checkInterfaceInheritance(Interface gammaInterface) {
 		handleValidationResultMessage(statechartModelValidator.checkInterfaceInheritance(gammaInterface));
+		handleValidationResultMessage(statechartModelValidator.checkInternalEvents(gammaInterface));
 	}
 	
 	@Check
@@ -140,8 +143,8 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	// Statechart mission phase
 	
 	@Check
-	public void checkStateDefinition(MissionPhaseStateDefinition stateDefinition) {
-		handleValidationResultMessage(statechartModelValidator.checkStateDefinition(stateDefinition));
+	public void checkStateDefinition(MissionPhaseStateAnnotation annotation) {
+		handleValidationResultMessage(statechartModelValidator.checkMissionPhaseStateAnnotation(annotation));
 	}
 	
 	@Check
@@ -287,7 +290,7 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	
 	@Check
 	public void checkTransitionOcclusion(Transition transition) {
-		statechartModelValidator.checkTransitionOcclusion(transition);
+		handleValidationResultMessage(statechartModelValidator.checkTransitionOcclusion(transition));
 	}
 	
 	@Check
@@ -318,8 +321,10 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	}
 	
 	@Check
-	public void checkCircularDependencies(Package statechart) {
-		handleValidationResultMessage(statechartModelValidator.checkCircularDependencies(statechart));
+	public void checkCircularDependencies(Component component) {
+		if (!StatechartModelDerivedFeatures.isStatechart(component)) {
+			handleValidationResultMessage(statechartModelValidator.checkCircularDependencies(component));
+		}
 	}
 	
 	@Check
@@ -460,12 +465,6 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 		handleValidationResultMessage(statechartModelValidator.checkAnyPortControls(adapter));
 	}
 	
-	
-	@Check
-	public void checkMessageRetrievalCount(AsynchronousAdapter adapter) {
-		handleValidationResultMessage(statechartModelValidator.checkMessageRetrievalCount(adapter));
-	}
-	
 	@Check
 	public void checkMessageQueueAnyEventReferences(AnyPortEventReference anyPortEventReference) {
 		handleValidationResultMessage(statechartModelValidator
@@ -488,7 +487,7 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	}
 	
 	@Check
-	public void checkComponentInstanceReferences(ComponentInstanceReference reference) {
+	public void checkComponentInstanceReferences(ComponentInstanceReferenceExpression reference) {
 		handleValidationResultMessage(statechartModelValidator.checkComponentInstanceReferences(reference));
 	}
 	

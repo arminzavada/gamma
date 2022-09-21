@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: hu.bme.mit.gamma.uppaal.transformation.traceability;singleton:=true
-Bundle-Version: 2.5.1.qualifier
+Bundle-Version: 2.7.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: hu.bme.mit.gamma.uppaal.transformation.traceability,
  hu.bme.mit.gamma.uppaal.transformation.traceability.impl,
  hu.bme.mit.gamma.uppaal.transformation.traceability.util

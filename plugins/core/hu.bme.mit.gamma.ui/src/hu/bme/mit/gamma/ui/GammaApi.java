@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2021 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -17,15 +17,19 @@ import java.util.stream.Collectors;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import hu.bme.mit.gamma.genmodel.derivedfeatures.GenmodelDerivedFeatures;
+import hu.bme.mit.gamma.genmodel.model.AdaptiveBehaviorConformanceChecking;
 import hu.bme.mit.gamma.genmodel.model.AdaptiveContractTestGeneration;
 import hu.bme.mit.gamma.genmodel.model.AnalysisModelTransformation;
 import hu.bme.mit.gamma.genmodel.model.CodeGeneration;
@@ -42,11 +46,14 @@ import hu.bme.mit.gamma.genmodel.model.TestGeneration;
 import hu.bme.mit.gamma.genmodel.model.TraceReplayModelGeneration;
 import hu.bme.mit.gamma.genmodel.model.Verification;
 import hu.bme.mit.gamma.genmodel.model.YakinduCompilation;
+import hu.bme.mit.gamma.ui.taskhandler.AdaptiveBehaviorConformanceCheckingHandler;
 import hu.bme.mit.gamma.ui.taskhandler.AdaptiveContractTestGenerationHandler;
+import hu.bme.mit.gamma.ui.taskhandler.AnalysisModelTransformationAndVerificationHandler;
 import hu.bme.mit.gamma.ui.taskhandler.AnalysisModelTransformationHandler;
 import hu.bme.mit.gamma.ui.taskhandler.CodeGenerationHandler;
 import hu.bme.mit.gamma.ui.taskhandler.EventPriorityTransformationHandler;
 import hu.bme.mit.gamma.ui.taskhandler.InterfaceCompilationHandler;
+import hu.bme.mit.gamma.ui.taskhandler.OptimizerAndVerificationHandler;
 import hu.bme.mit.gamma.ui.taskhandler.PhaseGenerationHandler;
 import hu.bme.mit.gamma.ui.taskhandler.SlicingHandler;
 import hu.bme.mit.gamma.ui.taskhandler.StatechartCompilationHandler;
@@ -99,6 +106,10 @@ public class GammaApi {
 			Resource resource = resourceSet.getResource(fileURI, true);
 			// Assume that the resource has a single object as content
 			EObject content = resource.getContents().get(0);
+			// Resolve all is needed if there are proxys referring to different resources:
+			// if we remove containers from the element tree that contain references to other resources
+			// they will be broken - theoretically, this call should not require too much resource
+			EcoreUtil.resolveAll(resourceSet);
 			if (content instanceof GenModel) {
 				GenModel genmodel = (GenModel) content;
 				// WARNING: workspace location and imported project locations are not to be confused
@@ -139,8 +150,16 @@ public class GammaApi {
 							else if (task instanceof AnalysisModelTransformation) {
 								logger.log(Level.INFO, "The analyis transformation has been started");
 								AnalysisModelTransformation analysisModelTransformation = (AnalysisModelTransformation) task;
-								AnalysisModelTransformationHandler handler = new AnalysisModelTransformationHandler(file);
-								handler.execute(analysisModelTransformation);
+								// Maybe different classes should be created for distinction?
+								if (GenmodelDerivedFeatures.isVerifyAnalysisTask(analysisModelTransformation)) {
+									AnalysisModelTransformationAndVerificationHandler handler =
+												new AnalysisModelTransformationAndVerificationHandler(file);
+									handler.execute(analysisModelTransformation);
+								}
+								else {
+									AnalysisModelTransformationHandler handler = new AnalysisModelTransformationHandler(file);
+									handler.execute(analysisModelTransformation);
+								}
 								logger.log(Level.INFO, "The analysis transformation has been finished");
 							}
 							else if (task instanceof TestGeneration) {
@@ -153,8 +172,15 @@ public class GammaApi {
 							else if (task instanceof Verification) {
 								logger.log(Level.INFO, "The verification has been started");
 								Verification verification = (Verification) task;
-								VerificationHandler handler = new VerificationHandler(file);
-								handler.execute(verification);
+								// Maybe different classes should be created for distinction?
+								if (GenmodelDerivedFeatures.isOptimizableVerificationTask(verification)) {
+									OptimizerAndVerificationHandler handler = new OptimizerAndVerificationHandler(file);
+									handler.execute(verification);
+								}
+								else {
+									VerificationHandler handler = new VerificationHandler(file);
+									handler.execute(verification);
+								}
 								logger.log(Level.INFO, "The verification has been finished");
 							}
 							else if (task instanceof Slicing) {
@@ -178,17 +204,25 @@ public class GammaApi {
 								handler.execute(testGeneration);
 								logger.log(Level.INFO, "The adaptive contract test generation has been finished");
 							}
+							else if (task instanceof AdaptiveBehaviorConformanceChecking) {
+								logger.log(Level.INFO, "The adaptive behavior conformance checking has been started");
+								AdaptiveBehaviorConformanceChecking conformanceChecking = (AdaptiveBehaviorConformanceChecking) task;
+								AdaptiveBehaviorConformanceCheckingHandler handler =
+										new AdaptiveBehaviorConformanceCheckingHandler(file);
+								handler.execute(conformanceChecking);
+								logger.log(Level.INFO, "The adaptive behavior conformance checking has been finished");
+							}
 							else if (task instanceof StatechartContractTestGeneration) {
 								StatechartContractTestGeneration testGeneration = (StatechartContractTestGeneration) task; 
 								StatechartContractTestGenerationHandler handler = new StatechartContractTestGenerationHandler(file);
 								handler.execute(testGeneration);
-								logger.log(Level.INFO, "The contract based test generation has been finished.");
+								logger.log(Level.INFO, "The contract-based test generation has been finished");
 							}
 							else if (task instanceof StatechartContractGeneration) {
 								StatechartContractGeneration statechartGeneration = (StatechartContractGeneration) task; 
 								StatechartContractGenerationHandler handler = new StatechartContractGenerationHandler(file);
 								handler.execute(statechartGeneration);
-								logger.log(Level.INFO, "The contract statechart generation has been finished.");
+								logger.log(Level.INFO, "The contract statechart generation has been finished");
 							}
 							else if (task instanceof EventPriorityTransformation) {
 								logger.log(Level.INFO, "The event priority transformation has been started");
@@ -212,6 +246,10 @@ public class GammaApi {
 					// All iteration ended
 					hook.endTaskProcess();
 					//
+					// Refreshing the project
+					logger.log(Level.INFO, "Refreshing project");
+					project.refreshLocal(IResource.DEPTH_INFINITE, new NullProgressMonitor());
+					logger.log(Level.INFO, "Refreshing project has been finished");
 				}
 			}
 			else {
@@ -254,6 +292,7 @@ public class GammaApi {
 				return allTasks.stream()
 						.filter(it -> it instanceof TestGeneration || it instanceof Verification ||
 								it instanceof AdaptiveContractTestGeneration ||
+								it instanceof AdaptiveBehaviorConformanceChecking ||
 								it instanceof TraceReplayModelGeneration ||
 								it instanceof StatechartContractTestGeneration || it instanceof StatechartContractGeneration)
 						.collect(Collectors.toList());

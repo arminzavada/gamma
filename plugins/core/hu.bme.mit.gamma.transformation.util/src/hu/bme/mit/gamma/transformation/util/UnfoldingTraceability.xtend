@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2020 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -10,27 +10,33 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.transformation.util
 
+import hu.bme.mit.gamma.expression.model.EnumerationLiteralDefinition
+import hu.bme.mit.gamma.expression.model.EnumerationTypeDefinition
 import hu.bme.mit.gamma.expression.model.NamedElement
+import hu.bme.mit.gamma.expression.model.TypeDeclaration
 import hu.bme.mit.gamma.expression.model.VariableDeclaration
-import hu.bme.mit.gamma.property.model.ComponentInstancePortReference
-import hu.bme.mit.gamma.property.model.ComponentInstanceStateConfigurationReference
-import hu.bme.mit.gamma.property.model.ComponentInstanceTransitionReference
-import hu.bme.mit.gamma.property.model.ComponentInstanceVariableReference
 import hu.bme.mit.gamma.statechart.composite.ComponentInstance
-import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReference
+import hu.bme.mit.gamma.statechart.composite.ComponentInstancePortReferenceExpression
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReferenceExpression
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceStateReferenceExpression
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceTransitionReferenceExpression
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceVariableReferenceExpression
 import hu.bme.mit.gamma.statechart.composite.SynchronousComponentInstance
 import hu.bme.mit.gamma.statechart.interface_.Component
+import hu.bme.mit.gamma.statechart.interface_.Event
 import hu.bme.mit.gamma.statechart.interface_.Port
 import hu.bme.mit.gamma.statechart.statechart.Region
 import hu.bme.mit.gamma.statechart.statechart.State
 import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition
 import hu.bme.mit.gamma.statechart.statechart.Transition
 import hu.bme.mit.gamma.statechart.statechart.TransitionIdAnnotation
+import hu.bme.mit.gamma.statechart.util.StatechartUtil
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import java.util.Collection
 
 import static com.google.common.base.Preconditions.checkState
 
+import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.transformation.util.Namings.*
 
@@ -40,6 +46,7 @@ class UnfoldingTraceability {
 	protected new() {}
 	//
 	
+	protected final extension StatechartUtil statechartUtil = StatechartUtil.INSTANCE
 	protected final extension GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE
 	
 	// Folded -> unfolded mapping
@@ -47,8 +54,8 @@ class UnfoldingTraceability {
 	// Component instance transition references
 	
 	def getNewIncludedSimpleInstanceTransitions(
-			Collection<ComponentInstanceTransitionReference> includedOriginalReferences,
-			Collection<ComponentInstanceTransitionReference> excludedOriginalReferences,
+			Collection<ComponentInstanceTransitionReferenceExpression> includedOriginalReferences,
+			Collection<ComponentInstanceTransitionReferenceExpression> excludedOriginalReferences,
 			Component newType) {
 		val newTransitions = newArrayList
 		// The semantics is defined here: including has priority over excluding
@@ -58,11 +65,12 @@ class UnfoldingTraceability {
 	}
 	
 	def getNewSimpleInstanceTransitions(
-			Collection<ComponentInstanceTransitionReference> originalReferences, Component newType) {
+			Collection<ComponentInstanceTransitionReferenceExpression> originalReferences,
+			Component newType) {
 		val newTransitions = newArrayList
 		for (originalReference : originalReferences) {
 			val originalInstance = originalReference.instance
-			val originalTransition = originalReference.transition.getSelfOrContainerOfType(Transition)
+			val originalTransition = originalReference.transitionId.getSelfOrContainerOfType(Transition)
 			val newInstance = originalInstance.checkAndGetNewSimpleInstance(newType)
 			val newTransition = newInstance.getNewTransition(originalTransition) 
 			if (newTransition !== null) {
@@ -97,8 +105,8 @@ class UnfoldingTraceability {
 	// Component instance state references
 	
 	def getNewIncludedSimpleInstanceStates(
-			Collection<ComponentInstanceStateConfigurationReference> includedOriginalReferences,
-			Collection<ComponentInstanceStateConfigurationReference> excludedOriginalReferences,
+			Collection<ComponentInstanceStateReferenceExpression> includedOriginalReferences,
+			Collection<ComponentInstanceStateReferenceExpression> excludedOriginalReferences,
 			Component newType) {
 		val newStates = newArrayList
 		// The semantics is defined here: including has priority over excluding
@@ -108,7 +116,8 @@ class UnfoldingTraceability {
 	}
 	
 	def getNewSimpleInstanceStates(
-			Collection<ComponentInstanceStateConfigurationReference> originalReferences, Component newType) {
+			Collection<ComponentInstanceStateReferenceExpression> originalReferences,
+			Component newType) {
 		val newStates = newArrayList
 		for (originalReference : originalReferences) {
 			val originalInstance = originalReference.instance
@@ -154,8 +163,10 @@ class UnfoldingTraceability {
 	
 	// Component instance port references
 	
-	def getNewIncludedSimpleInstancePorts(Collection<ComponentInstancePortReference> includedOriginalReferences,
-			Collection<ComponentInstancePortReference> excludedOriginalReferences, Component newType) {
+	def getNewIncludedSimpleInstancePorts(
+			Collection<ComponentInstancePortReferenceExpression> includedOriginalReferences,
+			Collection<ComponentInstancePortReferenceExpression> excludedOriginalReferences,
+			Component newType) {
 		val newPorts = newArrayList
 		// The semantics is defined here: including has priority over excluding
 		newPorts -= excludedOriginalReferences.getNewSimpleInstancePorts(newType)
@@ -164,7 +175,8 @@ class UnfoldingTraceability {
 	}
 	
 	def getNewSimpleInstancePorts(
-			Collection<ComponentInstancePortReference> originalReferences, Component newType) {
+			Collection<ComponentInstancePortReferenceExpression> originalReferences,
+			Component newType) {
 		val newPorts = newArrayList
 		for (originalReference : originalReferences) {
 			val originalInstance = originalReference.instance
@@ -192,18 +204,19 @@ class UnfoldingTraceability {
 	// Component variable references
 	
 	def getNewSimpleInstanceVariables(
-			Collection<ComponentInstanceVariableReference> originalReferences, Component newType) {
+			Collection<ComponentInstanceVariableReferenceExpression> originalReferences,
+			Component newType) {
 		val newVariables = newArrayList
 		for (originalReference : originalReferences) {
 			val originalInstance = originalReference.instance
-			val originalVariable = originalReference.variable 
+			val originalVariable = originalReference.variableDeclaration 
 			val newVariable = originalInstance.getNewVariable(originalVariable, newType)
 			newVariables += newVariable
 		}
 		return newVariables
 	}
 	
-	def getNewVariable(ComponentInstanceReference originalInstance,
+	def getNewVariable(ComponentInstanceReferenceExpression originalInstance,
 			VariableDeclaration originalVariable, Component newType) {
 		val newInstance = originalInstance.checkAndGetNewSimpleInstance(newType)
 		val newVariable = newInstance.getNewVariable(originalVariable)
@@ -223,8 +236,10 @@ class UnfoldingTraceability {
 	
 	// Component instance references
 	
-	def getNewSimpleInstances(Collection<ComponentInstanceReference> includedOriginalInstances,
-			Collection<ComponentInstanceReference> excludedOriginalInstances, Component newType) {
+	def getNewSimpleInstances(
+			Collection<ComponentInstanceReferenceExpression> includedOriginalInstances,
+			Collection<ComponentInstanceReferenceExpression> excludedOriginalInstances,
+			Component newType) {
 		val newInstances = newArrayList
 		if (includedOriginalInstances.empty) {
 			// If it is empty, it means all simple instances must be covered
@@ -236,7 +251,9 @@ class UnfoldingTraceability {
 		return newInstances
 	}
 	
-	def getNewSimpleInstances(Collection<ComponentInstanceReference> originalInstances, Component newType) {
+	def getNewSimpleInstances(
+			Collection<ComponentInstanceReferenceExpression> originalInstances,
+			Component newType) {
 		val accpedtedNewInstances = newArrayList
 		for (originalInstance : originalInstances) {
 			accpedtedNewInstances += originalInstance.getNewSimpleInstances(newType)
@@ -244,7 +261,7 @@ class UnfoldingTraceability {
 		return accpedtedNewInstances
 	}
 	
-	def getNewSimpleInstances(ComponentInstanceReference originalInstance, Component newType) {
+	def getNewSimpleInstances(ComponentInstanceReferenceExpression originalInstance, Component newType) {
 		val newInstances = newType.allSimpleInstances
 		val acceptedNewInstances = newArrayList
 		// This instance can be a composite instance, thus more than one new instance can be here
@@ -272,7 +289,7 @@ class UnfoldingTraceability {
 		return acceptedNewInstances
 	}
 	
-	def checkAndGetNewSimpleInstance(ComponentInstanceReference originalInstance, Component newType) {
+	def checkAndGetNewSimpleInstance(ComponentInstanceReferenceExpression originalInstance, Component newType) {
 		val newInstances = originalInstance.getNewSimpleInstances(newType)
 		// Only one instance is expected
 		checkState(newInstances.size == 1)
@@ -280,26 +297,33 @@ class UnfoldingTraceability {
 	}
 	
 	
-	def getNewAsynchronousSimpleInstances(ComponentInstanceReference original, Component newType) {
+	def getNewAsynchronousSimpleInstances(ComponentInstanceReferenceExpression original, Component newType) {
 		return newType.allAsynchronousSimpleInstances
 				.filter[original.contains(it)].toList
 	}
 	
-	def contains(ComponentInstanceReference original, ComponentInstance copy) {
+	def contains(ComponentInstanceReferenceExpression original, ComponentInstance copy) {
 		val originalInstances = original.componentInstanceChain
 		 // If the (AA) component is wrapped, the original will not contain the wrapper instance
-		val copyInstances = copy.wraplessComponentInstanceChain
+		val lastOriginalInstance = originalInstances.last
+		if (lastOriginalInstance.unfolded && copy.unfolded) {
+			// We handle if both are already unfolded - incorrect call: original is not actually original
+			return copy.name.startsWith(lastOriginalInstance.name)
+		}
+		// Correct call, original is not unfolded
+		val copyInstances = copy.componentInstanceChain
 		
 		// The naming conventions are clear
-		// Without originalInstances.head.name == copyInstances.head.name ambiguous naming situations could occur
-		// E.g., the FQN of the chain "a -> b" is equal to the name of instance "a_b"
+		// Without originalInstances.head.name == copyInstances.head.name,
+		// ambiguous naming situations could occur, e.g.,
+		// the FQN of the chain "a -> b" is equal to the name of instance "a_b"
 		return originalInstances.head.name == copyInstances.head.name &&
 			copy.name.startsWith(originalInstances.FQN)
 	}
 	
 	// Currently not used- maybe in the future?
 	
-	protected def <T extends NamedElement> getNewObject(ComponentInstanceReference originalInstance,
+	protected def <T extends NamedElement> getNewObject(ComponentInstanceReferenceExpression originalInstance,
 			T originalObject, Component newTopComponent) {
 		val originalFqn = originalObject.FQNUpToComponent
 		val newInstance = originalInstance.checkAndGetNewSimpleInstance(newTopComponent)
@@ -329,11 +353,27 @@ class UnfoldingTraceability {
 		// composite new instances, "newInstance.contains(originalInstance)" has to be introduced
 		checkState(newInstance.isStatechart)
 		
-		val originalInstances = originalType.originalSimpleInstanceReferences
+		val originalSimpleInstances = originalType.originalSimpleInstanceReferences
 		
-		for (originalInstance : originalInstances) {
-			if (originalInstance.contains(newInstance)) {
-				return originalInstance // Only one is expected
+		val needsWrapping = originalType.needsWrapping
+		if (needsWrapping) {
+			for (originalSimpleInstance : originalSimpleInstances.toSet) {
+				originalSimpleInstances -= originalSimpleInstance
+				val wrapperInstance = originalType.instantiateComponent
+				val wrappedOriginalSimpleInstance = originalSimpleInstance.prepend(wrapperInstance)
+				originalSimpleInstances += wrappedOriginalSimpleInstance
+			}
+		}
+		
+		for (originalSimpleInstance : originalSimpleInstances) {
+			// There are some AA and CCC wrappings of statecharts in the unfolding process, which
+			// should be handled by the below method call ("contains" instead of "equals")
+			if (originalSimpleInstance.contains(newInstance)) {
+				 // Only one is expected
+				if (needsWrapping) {
+					return originalSimpleInstance.getChild // Removing wrapper instance
+				}
+				return originalSimpleInstance
 			}
 		}
 		throw new IllegalStateException("Not found original instance for " + newInstance)
@@ -341,7 +381,7 @@ class UnfoldingTraceability {
 	
 	// getOriginal.. methods
 	
-	def getOriginalPort(ComponentInstanceReference originalInstance, Port newPort) {
+	def getOriginalPort(ComponentInstanceReferenceExpression originalInstance, Port newPort) {
 		val statechartInstance = originalInstance.lastInstance
 		return statechartInstance.getOriginalPort(newPort)
 	}
@@ -352,42 +392,85 @@ class UnfoldingTraceability {
 	}
 	
 	def getOriginalPort(Component originalComponent, Port newPort) {
-		for (port : originalComponent.allPorts) {
-			if (port.nameEquals(newPort)) {
-				return port // Port names must be unique
+		for (originalPort : originalComponent.allPorts) {
+			if (originalPort.nameEquals(newPort)) {
+				return originalPort // Port names must be unique
 			}
 		}
 		throw new IllegalArgumentException("Not found port: " + newPort)
 	}
 	
-	def getOriginalState(ComponentInstanceReference originalInstance, State newState) {
+	def getOriginalEvent(Component originalComponent, Event newEvent) {
+		for (originalEvent : originalComponent.allPorts
+				.map[it.allEvents].flatten ) {
+			if (originalEvent.containingInterface.nameEquals(newEvent.containingInterface) &&
+					originalEvent.nameEquals(newEvent)) {
+				return originalEvent
+			}
+		}
+		throw new IllegalArgumentException("Not found event: " + newEvent)
+	}
+	
+	def getOriginalState(ComponentInstanceReferenceExpression originalInstance, State newState) {
 		val statechartInstance = originalInstance.lastInstance
 		return statechartInstance.getOriginalState(newState)
 	}
 	
 	def getOriginalState(ComponentInstance originalInstance, State newState) {
 		val originalType = originalInstance.getStatechart
-		for (state : originalType.allStates) {
-			if (state.equal(newState)) {
-				return state
+		for (originalState : originalType.allStates) {
+			if (originalState.equal(newState)) {
+				return originalState
 			}
 		}
 		throw new IllegalArgumentException("Not found state: " + newState)
 	}
 	
-	def getOriginalVariable(ComponentInstanceReference originalInstance, VariableDeclaration newVariable) {
+	def getOriginalVariable(ComponentInstanceReferenceExpression originalInstance, VariableDeclaration newVariable) {
 		val statechartInstance = originalInstance.lastInstance
 		return statechartInstance.getOriginalVariable(newVariable)
 	}
 	
 	def getOriginalVariable(ComponentInstance originalInstance, VariableDeclaration newVariable) {
 		val originalType = originalInstance.getStatechart
-		for (variable : originalType.variableDeclarations) {
-			if (variable.nameEquals(newVariable)) {
-				return variable // Variable names must be unique
+		for (originalVariable : originalType.variableDeclarations) {
+			if (originalVariable.nameEquals(newVariable)) {
+				return originalVariable // Variable names must be unique
 			}
 		}
 		throw new IllegalArgumentException("Not found variable: " + newVariable)
+	}
+	
+	def getOriginalTypeDeclaration(Component originalComponent, TypeDeclaration newTypeDeclaration) {
+		val originalTypeDeclarations = originalComponent.originalTypeDeclarations
+		for (originalTypeDeclaration : originalTypeDeclarations) {
+			if (originalTypeDeclaration.nameEquals(newTypeDeclaration)) {
+				return originalTypeDeclaration // Type declaration names must be unique
+			}
+		}
+		throw new IllegalArgumentException("Not found type declaration: " + newTypeDeclaration)
+	}
+	
+	def getOriginalEnumLiteral(Component originalComponent, EnumerationLiteralDefinition newEnumLiteral) {
+		val originalEnumLiterals = originalComponent.originalTypeDeclarations
+				.map[it.type].filter(EnumerationTypeDefinition)
+				.map[it.literals].flatten
+				.toSet
+		for (originalEnumLiteral : originalEnumLiterals) {
+			if (originalEnumLiteral.typeDeclaration.nameEquals(newEnumLiteral.typeDeclaration) &&
+					originalEnumLiteral.nameEquals(newEnumLiteral)) {
+				return originalEnumLiteral
+			}
+		}
+		throw new IllegalArgumentException("Not found enum literal: " + newEnumLiteral)
+	}
+	
+	//
+	
+	protected def getOriginalTypeDeclarations(Component originalComponent) {
+		return originalComponent.containingPackage
+				.selfAndAllImports.map[it.typeDeclarations].flatten
+				.toSet
 	}
 	
 }

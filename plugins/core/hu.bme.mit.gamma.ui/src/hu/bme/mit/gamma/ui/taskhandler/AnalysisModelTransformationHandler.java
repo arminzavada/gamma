@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2020 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -50,7 +50,7 @@ import hu.bme.mit.gamma.querygenerator.serializer.ThetaPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.ThetaSplittedPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.XstsUppaalPropertySerializer;
-import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReference;
+import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReferenceExpression;
 import hu.bme.mit.gamma.statechart.interface_.Component;
 import hu.bme.mit.gamma.statechart.interface_.TimeSpecification;
 import hu.bme.mit.gamma.statechart.util.StatechartUtil;
@@ -117,7 +117,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 					transformer = new Gamma2XstsUppaalTransformer();
 					break;
 				default:
-					throw new IllegalArgumentException("Only UPPAAL and Theta are supported.");
+					throw new IllegalArgumentException("Only UPPAAL and Theta are supported");
 			}
 			transformer.execute(transformation);
 		}
@@ -133,6 +133,19 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		checkArgument(analysisModelTransformation.getScheduler().size() <= 1);
 		if (analysisModelTransformation.getScheduler().isEmpty()) {
 			analysisModelTransformation.getScheduler().add(hu.bme.mit.gamma.genmodel.model.Scheduler.RANDOM);
+		}
+	}
+	
+	public String getFileName(String plainFileName, AnalysisLanguage analysisLanguage) {
+		switch (analysisLanguage) {
+		case THETA:
+			return fileNamer.getXtextXStsFileName(plainFileName);
+		case UPPAAL:
+			return fileNamer.getXmlUppaalFileName(plainFileName);
+		case XSTS_UPPAAL:
+			return fileNamer.getXmlUppaalFileName(plainFileName);
+		default:
+			throw new IllegalArgumentException("Not known language " + analysisLanguage);
 		}
 	}
 	
@@ -362,7 +375,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		protected final UppaalModelPreprocessor preprocessor = UppaalModelPreprocessor.INSTANCE;
 		
 		public void execute(AnalysisModelTransformation transformation) throws IOException {
-			logger.log(Level.INFO, "Starting UPPAAL transformation.");
+			logger.log(Level.INFO, "Starting UPPAAL transformation");
 			String fileName = transformation.getFileName().get(0);
 			// Unfolding the given system
 			ComponentReference reference = (ComponentReference) transformation.getModel();
@@ -408,7 +421,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			transformer.execute();
 			// Property serialization
 			serializeProperties(fileName);
-			logger.log(Level.INFO, "The UPPAAL transformation has been finished.");
+			logger.log(Level.INFO, "The UPPAAL transformation has been finished");
 		}
 		
 		private Constraint transformSchedulingConstraint(hu.bme.mit.gamma.genmodel.model.Constraint constraint) {
@@ -437,7 +450,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 		private AsynchronousInstanceConstraint transformAsynchronousInstanceConstraint(
 				hu.bme.mit.gamma.genmodel.model.AsynchronousInstanceConstraint asynchronousInstanceConstraint) {
-			ComponentInstanceReference reference = asynchronousInstanceConstraint.getInstance();
+			ComponentInstanceReferenceExpression reference = asynchronousInstanceConstraint.getInstance();
 				return new AsynchronousInstanceConstraint(reference /* null in the case of AA */,
 					(OrchestratingConstraint) transformSchedulingConstraint(asynchronousInstanceConstraint.getOrchestratingConstraint()));
 		}
@@ -470,7 +483,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		protected AnalysisSplit split = AnalysisSplit.NONE;
 		
 		public void execute(AnalysisModelTransformation transformation) throws IOException {
-			logger.log(Level.INFO, "Starting XSTS transformation.");
+			logger.log(Level.INFO, "Starting XSTS transformation");
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = evaluateConstraint(transformation.getConstraint());
@@ -506,9 +519,8 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			Gamma2XstsTransformerSerializer transformer = new Gamma2XstsTransformerSerializer(
 					component, reference.getArguments(),
 					targetFolderUri, fileName, schedulingConstraint,
-					transformation.isOptimize(),
-					TransitionMerging.HIERARCHICAL,
-					split,
+					transformation.isOptimize(), true,
+					TransitionMerging.HIERARCHICAL, split,
 					transformation.getPropertyPackage(), new AnnotatablePreprocessableElements(
 						testedComponentsForStates, testedComponentsForTransitions,
 						testedComponentsForTransitionPairs, testedComponentsForOutEvents,
@@ -521,7 +533,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			transformer.execute();
 			// Property serialization
 			serializeProperties(fileName);
-			logger.log(Level.INFO, "The XSTS transformation has been finished.");
+			logger.log(Level.INFO, "The XSTS transformation has been finished");
 		}
 		
 		@Override
@@ -540,7 +552,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 	class Xsts2UppaalTransformer extends AnalysisModelTransformer {
 		
 		public void execute(AnalysisModelTransformation transformation) {
-			logger.log(Level.INFO, "Starting XSTS-UPPAAL transformation.");
+			logger.log(Level.INFO, "Starting XSTS-UPPAAL transformation");
 			XSTS xSts = (XSTS) GenmodelDerivedFeatures.getModel(transformation);
 			String fileName = transformation.getFileName().get(0);
 			execute(xSts, fileName);
@@ -550,7 +562,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			Xsts2UppaalTransformerSerializer xStsToUppaalTransformer =
 					new Xsts2UppaalTransformerSerializer(xSts, targetFolderUri, fileName);
 			xStsToUppaalTransformer.execute();
-			logger.log(Level.INFO, "The XSTS-UPPAAL transformation has been finished.");
+			logger.log(Level.INFO, "The XSTS-UPPAAL transformation has been finished");
 		}
 		
 		@Override
@@ -568,7 +580,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 	class Gamma2XstsUppaalTransformer extends AnalysisModelTransformer {
 		
 		public void execute(AnalysisModelTransformation transformation) throws IOException {
-			logger.log(Level.INFO, "Starting Gamma -> XSTS-UPPAAL transformation.");
+			logger.log(Level.INFO, "Starting Gamma -> XSTS-UPPAAL transformation");
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = evaluateConstraint(transformation.getConstraint());
@@ -620,7 +632,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			transformer.execute();
 			// Property serialization
 			serializeProperties(fileName);
-			logger.log(Level.INFO, "The Gamma -> XSTS-UPPAAL transformation has been finished.");
+			logger.log(Level.INFO, "The Gamma -> XSTS-UPPAAL transformation has been finished");
 		}
 		
 		@Override

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2021 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -19,7 +19,7 @@ import java.util.Set
 
 class JavaUtil {
 	// Singleton
-	public static final JavaUtil INSTANCE =  new JavaUtil
+	public static final JavaUtil INSTANCE = new JavaUtil
 	protected new() {}
 	//
 
@@ -33,8 +33,30 @@ class JavaUtil {
 		return list
 	}
 	
-	def <T> Iterable<T> flattenIntoList(Iterable<? extends Iterable<? extends T>> inputs) {
+	def <T> List<T> flattenIntoList(Iterable<? extends Iterable<? extends T>> inputs) {
 		return IterableExtensions.flatten(inputs).toList
+	}
+	
+	def <T> T getFirstOfType(Iterable<? super T> collection, Class<T> clazz) {
+		for (element : collection) {
+			if (clazz.isInstance(element)) {
+				return element as T
+			}
+		}
+	}
+	
+	def <T> T getLastOfType(Iterable<? super T> collection, Class<T> clazz) {
+		return collection.toList
+			.reverseView
+			.getFirstOfType(clazz)
+	}
+	
+	def <T> T getLast(Iterable<T> collection) {
+		var T last = null
+		for (element : collection) {
+			last = element
+		}
+		return last
 	}
 	
 	def boolean isUnique(Iterable<?> collection) {
@@ -48,7 +70,7 @@ class JavaUtil {
 		return true
 	}
 	
-	def boolean containsOne(Collection<?> lhs, Iterable<?> rhs) {
+	def boolean containsAny(Collection<?> lhs, Iterable<?> rhs) {
 		for (element : rhs) {
 			if (lhs.contains(element)) {
 				return true
@@ -58,7 +80,7 @@ class JavaUtil {
 	}
 	
 	def boolean containsNone(Collection<?> lhs, Iterable<?> rhs) {
-		return !lhs.containsOne(rhs)
+		return !lhs.containsAny(rhs)
 	}
 	
 	def <T> T getOnlyElement(Iterable<T> collection) {
@@ -75,6 +97,20 @@ class JavaUtil {
 		return map.get(key)
 	}
 	
+	def <K, V> Set<V> getOrCreateSet(Map<K, Set<V>> map, K key) {
+		if (!map.containsKey(key)) {
+			map += key -> newLinkedHashSet
+		}
+		return map.get(key)
+	}
+	
+	def <K, V> V checkAndGet(Map<K, V> map, K key) {
+		if (!map.containsKey(key)) {
+			throw new IllegalArgumentException("Not contained element: " + key)
+		}
+		return map.get(key)
+	}
+	
 	def <K, V> Set<Entry<V, K>> invert(Map<K, V> map) {
 		return map.entrySet.invert.toSet
 	}
@@ -85,6 +121,14 @@ class JavaUtil {
 			entries += new SimpleEntry(entry.value, entry.key)
 		}
 		return entries
+	}
+	
+	def String toFirstCharUpper(String string) {
+		return string.toFirstUpper
+	}
+	
+	def String toFirstCharLower(String string) {
+		return string.toFirstLower
 	}
 	
 }

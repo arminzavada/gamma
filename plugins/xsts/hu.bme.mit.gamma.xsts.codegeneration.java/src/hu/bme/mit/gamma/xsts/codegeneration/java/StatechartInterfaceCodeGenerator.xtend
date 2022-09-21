@@ -12,7 +12,7 @@ package hu.bme.mit.gamma.xsts.codegeneration.java
 
 import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition
 
-import static extension hu.bme.mit.gamma.codegenerator.java.util.Namings.*
+import static extension hu.bme.mit.gamma.codegeneration.java.util.Namings.*
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
 
 class StatechartInterfaceCodeGenerator {
@@ -33,7 +33,7 @@ class StatechartInterfaceCodeGenerator {
 	protected def createStatechartWrapperInterface() '''
 		package «STATECHART_PACKAGE_NAME»;
 		
-		«FOR _package : gammaStatechart.containingPackage.imports.toSet»
+		«FOR _package : gammaStatechart.containingPackage.importsWithComponentsOrInterfacesOrTypes.toSet»
 			import «_package.getPackageString(BASE_PACKAGE_NAME)».*;
 		«ENDFOR»
 		

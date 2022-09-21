@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2020 Contributors to the Gamma project
+ * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -39,7 +39,6 @@ import hu.bme.mit.gamma.statechart.lowlevel.model.EventDirection
 import hu.bme.mit.gamma.statechart.lowlevel.model.Package
 import hu.bme.mit.gamma.statechart.lowlevel.model.Persistency
 import hu.bme.mit.gamma.statechart.lowlevel.model.Region
-import hu.bme.mit.gamma.statechart.lowlevel.model.State
 import hu.bme.mit.gamma.statechart.lowlevel.model.StatechartDefinition
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.xsts.model.SequentialAction
@@ -354,13 +353,27 @@ class LowlevelToXstsTransformer {
 			it.literals += lowlevelInactiveEnumLiteral
 		]
 		// Enum literals are based on states
-		for (lowlevelState : lowlevelRegion.stateNodes.filter(State)) {
+		for (lowlevelState : lowlevelRegion.states) {
 			val xStsEnumLiteral = createEnumerationLiteralDefinition => [
 				it.name = lowlevelState.name.stateEnumLiteralName
 			]
 			enumType.literals += xStsEnumLiteral
+			
 			trace.put(lowlevelState, xStsEnumLiteral) // Tracing
 		}
+		// History literals
+		if (lowlevelRegion.hasHistory) {
+			for (lowlevelState : lowlevelRegion.states) {
+				val xStsHistoryEnumLiteral = createEnumerationLiteralDefinition => [
+					it.name = lowlevelState.name.stateInactiveHistoryEnumLiteralName
+				]
+				enumType.literals += xStsHistoryEnumLiteral
+				
+				trace.putInactiveHistoryEnumLiteral(lowlevelState, xStsHistoryEnumLiteral) // Tracing
+			}
+		}
+		//
+		
 		// Creating type declaration from the enum type definition
 		val enumTypeDeclaration = createTypeDeclaration => [
 			it.type = enumType
@@ -606,7 +619,7 @@ class LowlevelToXstsTransformer {
 		if (inEventEnvironmentalActionRule === null) {
 			inEventEnvironmentalActionRule = createRule(InEvents.instance).action [
 				val lowlevelEvent = it.event
-				if (lowlevelEvent.notOptimizable) {
+				if (lowlevelEvent.notOptimizable && !lowlevelEvent.internal) {
 					val lowlevelEnvironmentalAction = inEventAction as SequentialAction
 					val xStsEventVariable = trace.getXStsVariable(lowlevelEvent)
 					
@@ -649,7 +662,7 @@ class LowlevelToXstsTransformer {
 		if (outEventEnvironmentalActionRule === null) {
 			outEventEnvironmentalActionRule = createRule(OutEvents.instance).action [
 				val lowlevelEvent = it.event
-				if (lowlevelEvent.notOptimizable) {
+				if (lowlevelEvent.notOptimizable && !lowlevelEvent.internal) {
 					val lowlevelEnvironmentalAction = outEventAction as SequentialAction
 					val xStsEventVariable = trace.getXStsVariable(lowlevelEvent)
 					lowlevelEnvironmentalAction.actions += xStsEventVariable

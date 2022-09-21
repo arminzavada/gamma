@@ -3,11 +3,11 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: hu.bme.mit.gamma.property.model;singleton:=true
 Automatic-Module-Name: hu.bme.mit.gamma.property.model
-Bundle-Version: 2.5.1.qualifier
+Bundle-Version: 2.7.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: hu.bme.mit.gamma.property.derivedfeatures,
  hu.bme.mit.gamma.property.model,
  hu.bme.mit.gamma.property.model.impl,

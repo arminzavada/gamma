@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2020-2021 Contributors to the Gamma project
+ * Copyright (c) 2020-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -12,6 +12,7 @@ package hu.bme.mit.gamma.scenario.statechart.generator.serializer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -20,10 +21,10 @@ import org.eclipse.emf.ecore.EObject;
 import hu.bme.mit.gamma.statechart.contract.ScenarioContractAnnotation;
 import hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures;
 import hu.bme.mit.gamma.statechart.interface_.Component;
+import hu.bme.mit.gamma.statechart.interface_.ComponentAnnotation;
 import hu.bme.mit.gamma.statechart.interface_.InterfaceModelFactory;
 import hu.bme.mit.gamma.statechart.interface_.Package;
 import hu.bme.mit.gamma.statechart.language.ui.serializer.StatechartLanguageSerializer;
-import hu.bme.mit.gamma.statechart.statechart.StatechartAnnotation;
 import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition;
 import hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory;
 
@@ -39,14 +40,15 @@ public class StatechartSerializer {
 		this.projectLocation = file.getProject().getLocation().toString();
 	}
 
-	public void saveStatechart(StatechartDefinition statechart, List<Package> interfaces, String path) {
+	public void saveStatechart(StatechartDefinition statechart,
+				Collection<? extends Package> interfaces, String path) {
 		Package _package = interfacefactory.createPackage();
 		_package.getComponents().add(statechart);
 		_package.setName(statechart.getName().toLowerCase());
 		_package.getImports().addAll(interfaces);
 
-		List<StatechartAnnotation> annotations = statechart.getAnnotations();
-		for (StatechartAnnotation annotation : annotations) {
+		List<ComponentAnnotation> annotations = statechart.getAnnotations();
+		for (ComponentAnnotation annotation : annotations) {
 			if (annotation instanceof ScenarioContractAnnotation) {
 				ScenarioContractAnnotation scenarioContractAnnotation = (ScenarioContractAnnotation) annotation;
 				Component monitoredComponent = scenarioContractAnnotation.getMonitoredComponent();
@@ -55,7 +57,7 @@ public class StatechartSerializer {
 			}
 		}
 		try {
-			saveModel(_package, path, statechart.getName() + "Statechart.gcd");
+			saveModel(_package, path, statechart.getName() + ".gcd");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
