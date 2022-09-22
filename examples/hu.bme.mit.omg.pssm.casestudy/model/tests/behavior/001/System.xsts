@@ -1,10 +1,10 @@
-type InOutCycleRegion_Trace : { __Inactive__, InOutCycleState }
 type MainRegion_Trace : { __Inactive__, _0, _1 }
+type InOutCycleRegion_Trace : { __Inactive__, InOutCycleState }
 type Log : { None, S1_Entry, S1_Exit, FS_Entry, FS_Exit }
 type Main_Target : { __Inactive__, S1, FS1 }
 var _testControl__start_Out_Trace_Trace : boolean = false
-ctrl var inOutCycleRegion_Trace_Trace : InOutCycleRegion_Trace = __Inactive__
 ctrl var mainRegion_Trace_Trace : MainRegion_Trace = __Inactive__
+ctrl var inOutCycleRegion_Trace_Trace : InOutCycleRegion_Trace = __Inactive__
 var inOutCycleVariable_Trace_Trace : boolean = false
 var testControl_start_In_system_Target : boolean = false
 ctrl var main_system_Target : Main_Target = __Inactive__
@@ -16,7 +16,7 @@ ctrl var sizeMasterTargetMessageQueueOfsystem : integer
 
 trans {
 	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer = master_TraceMessageQueueOfTrace;
+		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer = master_TraceMessageQueueOfTrace;
 		master_TraceMessageQueueOfTrace := 0;
 		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
 	}
@@ -28,13 +28,13 @@ trans {
 		_testControl__start_Out_Trace_Trace := false;
 	}
 	if ((0 < sizeMasterTargetMessageQueueOfsystem)) {
-		local var eventId_master_TargetMessageQueueOfsystem_1599081786 : integer = master_TargetMessageQueueOfsystem[0];
+		local var eventId_master_TargetMessageQueueOfsystem_2113539940 : integer = master_TargetMessageQueueOfsystem[0];
 		master_TargetMessageQueueOfsystem := [0 <- master_TargetMessageQueueOfsystem[1], 1 <- master_TargetMessageQueueOfsystem[2], 2 <- master_TargetMessageQueueOfsystem[3], 3 <- 0, default <- 0];
 		sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem - 1);
 		choice {
-			assume (eventId_master_TargetMessageQueueOfsystem_1599081786 == 0);
+			assume (eventId_master_TargetMessageQueueOfsystem_2113539940 == 0);
 		} or {
-			assume (eventId_master_TargetMessageQueueOfsystem_1599081786 == 1);
+			assume (eventId_master_TargetMessageQueueOfsystem_2113539940 == 1);
 			testControl_start_In_system_Target := true;
 			if (((main_system_Target == S1) && testControl_start_In_system_Target)) {
 				if ((main_system_Target == S1)) {
@@ -47,7 +47,7 @@ trans {
 		}
 	}
 	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer = master_TraceMessageQueueOfTrace;
+		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer = master_TraceMessageQueueOfTrace;
 		master_TraceMessageQueueOfTrace := 0;
 		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
 	}
@@ -61,8 +61,8 @@ trans {
 }
 init {
 	inOutCycleVariable_Trace_Trace := false;
-	inOutCycleRegion_Trace_Trace := __Inactive__;
 	mainRegion_Trace_Trace := __Inactive__;
+	inOutCycleRegion_Trace_Trace := __Inactive__;
 	_testControl__start_Out_Trace_Trace := false;
 	log_system_Target := None;
 	main_system_Target := __Inactive__;
@@ -97,7 +97,7 @@ init {
 		_testControl__start_Out_Trace_Trace := false;
 	}
 	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer = master_TraceMessageQueueOfTrace;
+		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer = master_TraceMessageQueueOfTrace;
 		master_TraceMessageQueueOfTrace := 0;
 		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
 	}
@@ -111,10 +111,10 @@ init {
 }
 env {
 	if ((sizeMasterTraceMessageQueueOfTrace <= 0)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer;
-		havoc eventId_master_TraceMessageQueueOfTrace_1802079553;
-		if (((0 < eventId_master_TraceMessageQueueOfTrace_1802079553) && (eventId_master_TraceMessageQueueOfTrace_1802079553 <= 0))) {
-			master_TraceMessageQueueOfTrace := eventId_master_TraceMessageQueueOfTrace_1802079553;
+		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer;
+		havoc eventId_master_TraceMessageQueueOfTrace_1403294904;
+		if (((0 < eventId_master_TraceMessageQueueOfTrace_1403294904) && (eventId_master_TraceMessageQueueOfTrace_1403294904 <= 0))) {
+			master_TraceMessageQueueOfTrace := eventId_master_TraceMessageQueueOfTrace_1403294904;
 			sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace + 1);
 		}
 	}

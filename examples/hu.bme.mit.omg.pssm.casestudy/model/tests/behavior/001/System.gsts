@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="ASCII"?>
 <hu.bme.mit.gamma.xsts:XSTS xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hu.bme.mit.gamma.expression="http://www.mit.bme.hu/gamma/expression/Model" xmlns:hu.bme.mit.gamma.xsts="http://www.mit.bme.hu/gamma/xSTS/Model" name="System" publicTypeDeclarations="//@typeDeclarations.2">
-  <typeDeclarations name="InOutCycleRegion_Trace">
-    <type xsi:type="hu.bme.mit.gamma.expression:EnumerationTypeDefinition">
-      <literals name="__Inactive__"/>
-      <literals name="InOutCycleState"/>
-    </type>
-  </typeDeclarations>
   <typeDeclarations name="MainRegion_Trace">
     <type xsi:type="hu.bme.mit.gamma.expression:EnumerationTypeDefinition">
       <literals name="__Inactive__"/>
       <literals name="_0"/>
       <literals name="_1"/>
+    </type>
+  </typeDeclarations>
+  <typeDeclarations name="InOutCycleRegion_Trace">
+    <type xsi:type="hu.bme.mit.gamma.expression:EnumerationTypeDefinition">
+      <literals name="__Inactive__"/>
+      <literals name="InOutCycleState"/>
     </type>
   </typeDeclarations>
   <typeDeclarations name="Log">
@@ -33,14 +33,14 @@
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
-  <variableDeclarations name="inOutCycleRegion_Trace_Trace">
+  <variableDeclarations name="mainRegion_Trace_Trace">
     <type xsi:type="hu.bme.mit.gamma.expression:TypeReference" reference="//@typeDeclarations.0"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.0/@type/@literals.0">
       <typeReference reference="//@typeDeclarations.0"/>
     </expression>
     <annotations xsi:type="hu.bme.mit.gamma.xsts:OnDemandControlVariableDeclarationAnnotation"/>
   </variableDeclarations>
-  <variableDeclarations name="mainRegion_Trace_Trace">
+  <variableDeclarations name="inOutCycleRegion_Trace_Trace">
     <type xsi:type="hu.bme.mit.gamma.expression:TypeReference" reference="//@typeDeclarations.1"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.1/@type/@literals.0">
       <typeReference reference="//@typeDeclarations.1"/>
@@ -173,15 +173,15 @@
     <action xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
       <actions xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
         <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-          <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.2"/>
-          <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.1/@type/@literals.1">
-            <typeReference reference="//@typeDeclarations.1"/>
-          </rhs>
-        </actions>
-        <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
           <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
           <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.0/@type/@literals.1">
             <typeReference reference="//@typeDeclarations.0"/>
+          </rhs>
+        </actions>
+        <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+          <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.2"/>
+          <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.1/@type/@literals.1">
+            <typeReference reference="//@typeDeclarations.1"/>
           </rhs>
         </actions>
         <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -298,7 +298,7 @@
           </condition>
           <then xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
             <actions xsi:type="hu.bme.mit.gamma.xsts:VariableDeclarationAction">
-              <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1802079553">
+              <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1403294904">
                 <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
                 <expression xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
               </variableDeclaration>
@@ -363,7 +363,7 @@
           </condition>
           <then xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
             <actions xsi:type="hu.bme.mit.gamma.xsts:VariableDeclarationAction">
-              <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1802079553">
+              <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1403294904">
                 <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
                 <expression xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
               </variableDeclaration>
@@ -422,7 +422,7 @@
           </condition>
           <then xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
             <actions xsi:type="hu.bme.mit.gamma.xsts:VariableDeclarationAction">
-              <variableDeclaration name="eventId_master_TargetMessageQueueOfsystem_1599081786">
+              <variableDeclaration name="eventId_master_TargetMessageQueueOfsystem_2113539940">
                 <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
                 <expression xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
                   <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
@@ -530,7 +530,7 @@
           </condition>
           <then xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
             <actions xsi:type="hu.bme.mit.gamma.xsts:VariableDeclarationAction">
-              <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1802079553">
+              <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1403294904">
                 <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
                 <expression xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
               </variableDeclaration>
@@ -594,7 +594,7 @@
         </condition>
         <then xsi:type="hu.bme.mit.gamma.xsts:SequentialAction">
           <actions xsi:type="hu.bme.mit.gamma.xsts:VariableDeclarationAction">
-            <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1802079553">
+            <variableDeclaration name="eventId_master_TraceMessageQueueOfTrace_1403294904">
               <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
             </variableDeclaration>
           </actions>

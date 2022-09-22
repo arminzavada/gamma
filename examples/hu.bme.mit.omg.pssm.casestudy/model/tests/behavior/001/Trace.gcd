@@ -1,6 +1,6 @@
 package trace
-import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/types.gcd"
 import "/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd"
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/types.gcd"
 @Asynchronous
 statechart Trace [
 	port _testControl_ : provides TestControl
@@ -18,6 +18,6 @@ statechart Trace [
 	transition from Initial to _0
 	transition from _0 to _1 when cycle [inOutCycleVariable] / raise _testControl_.start;
 	transition from InOutCycleInitialState to InOutCycleState
-	transition from InOutCycleState to InOutCycleState when cycle / inOutCycleVariable :=
-		!inOutCycleVariable;
+	transition from InOutCycleState to InOutCycleState when cycle / inOutCycleVariable := not
+		inOutCycleVariable;
 }
