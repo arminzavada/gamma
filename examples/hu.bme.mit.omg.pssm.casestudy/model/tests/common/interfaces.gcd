@@ -1,0 +1,17 @@
+package interfaces
+
+interface SUTControl {
+	out event continue
+	out event anotherSignal
+	out event pending
+	out event data(value : boolean)
+	out event integerData(value : integer)
+}
+
+interface TestControl {
+	out event start
+}
+
+interface ActivityInterface {
+	out event done
+}

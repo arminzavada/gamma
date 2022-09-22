@@ -1,0 +1,9 @@
+package types
+
+type Log : enum {
+	None,
+	S1_Entry,
+	S1_Exit,
+	FS_Entry,
+	FS_Exit
+}

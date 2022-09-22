@@ -1,0 +1,3 @@
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/003/System.gcd"
+component System
+E F [ { state Trace.MainRegion._2 } ]

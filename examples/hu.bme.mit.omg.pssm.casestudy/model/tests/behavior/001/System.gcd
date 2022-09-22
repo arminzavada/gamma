@@ -1,0 +1,10 @@
+package target
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/Trace.gcd"
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/target.gcd"
+scheduled-async System {
+	component Trace : Trace
+	component system : Target
+	channel [ Trace._testControl_ ] -o)- [ system.testControl ]
+	initial execute Trace
+	execute Trace, system, Trace
+}

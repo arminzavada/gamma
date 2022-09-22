@@ -1,0 +1,121 @@
+type InOutCycleRegion_Trace : { __Inactive__, InOutCycleState }
+type MainRegion_Trace : { __Inactive__, _0, _1 }
+type Log : { None, S1_Entry, S1_Exit, FS_Entry, FS_Exit }
+type Main_Target : { __Inactive__, S1, FS1 }
+var _testControl__start_Out_Trace_Trace : boolean = false
+ctrl var inOutCycleRegion_Trace_Trace : InOutCycleRegion_Trace = __Inactive__
+ctrl var mainRegion_Trace_Trace : MainRegion_Trace = __Inactive__
+var inOutCycleVariable_Trace_Trace : boolean = false
+var testControl_start_In_system_Target : boolean = false
+ctrl var main_system_Target : Main_Target = __Inactive__
+var log_system_Target : Log = None
+var master_TraceMessageQueueOfTrace : integer
+ctrl var sizeMasterTraceMessageQueueOfTrace : integer
+var master_TargetMessageQueueOfsystem : [integer] -> integer
+ctrl var sizeMasterTargetMessageQueueOfsystem : integer
+
+trans {
+	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
+		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer = master_TraceMessageQueueOfTrace;
+		master_TraceMessageQueueOfTrace := 0;
+		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
+	}
+	if (_testControl__start_Out_Trace_Trace) {
+		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
+			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+		}
+		_testControl__start_Out_Trace_Trace := false;
+	}
+	if ((0 < sizeMasterTargetMessageQueueOfsystem)) {
+		local var eventId_master_TargetMessageQueueOfsystem_1599081786 : integer = master_TargetMessageQueueOfsystem[0];
+		master_TargetMessageQueueOfsystem := [0 <- master_TargetMessageQueueOfsystem[1], 1 <- master_TargetMessageQueueOfsystem[2], 2 <- master_TargetMessageQueueOfsystem[3], 3 <- 0, default <- 0];
+		sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem - 1);
+		choice {
+			assume (eventId_master_TargetMessageQueueOfsystem_1599081786 == 0);
+		} or {
+			assume (eventId_master_TargetMessageQueueOfsystem_1599081786 == 1);
+			testControl_start_In_system_Target := true;
+			if (((main_system_Target == S1) && testControl_start_In_system_Target)) {
+				if ((main_system_Target == S1)) {
+					log_system_Target := S1_Exit;
+				}
+				main_system_Target := FS1;
+				log_system_Target := FS_Entry;
+			}
+			testControl_start_In_system_Target := false;
+		}
+	}
+	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
+		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer = master_TraceMessageQueueOfTrace;
+		master_TraceMessageQueueOfTrace := 0;
+		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
+	}
+	if (_testControl__start_Out_Trace_Trace) {
+		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
+			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+		}
+		_testControl__start_Out_Trace_Trace := false;
+	}
+}
+init {
+	inOutCycleVariable_Trace_Trace := false;
+	inOutCycleRegion_Trace_Trace := __Inactive__;
+	mainRegion_Trace_Trace := __Inactive__;
+	_testControl__start_Out_Trace_Trace := false;
+	log_system_Target := None;
+	main_system_Target := __Inactive__;
+	testControl_start_In_system_Target := false;
+	master_TargetMessageQueueOfsystem := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
+	sizeMasterTargetMessageQueueOfsystem := 0;
+	master_TraceMessageQueueOfTrace := 0;
+	sizeMasterTraceMessageQueueOfTrace := 0;
+	mainRegion_Trace_Trace := _0;
+	inOutCycleRegion_Trace_Trace := InOutCycleState;
+	main_system_Target := S1;
+	if ((main_system_Target == S1)) {
+		log_system_Target := S1_Entry;
+	}
+	else {
+		if ((main_system_Target == FS1)) {
+			log_system_Target := FS_Entry;
+		}
+	}
+	if (_testControl__start_Out_Trace_Trace) {
+		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
+			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+		}
+		_testControl__start_Out_Trace_Trace := false;
+	}
+	if (_testControl__start_Out_Trace_Trace) {
+		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
+			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+		}
+		_testControl__start_Out_Trace_Trace := false;
+	}
+	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
+		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer = master_TraceMessageQueueOfTrace;
+		master_TraceMessageQueueOfTrace := 0;
+		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
+	}
+	if (_testControl__start_Out_Trace_Trace) {
+		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
+			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+		}
+		_testControl__start_Out_Trace_Trace := false;
+	}
+}
+env {
+	if ((sizeMasterTraceMessageQueueOfTrace <= 0)) {
+		local var eventId_master_TraceMessageQueueOfTrace_1802079553 : integer;
+		havoc eventId_master_TraceMessageQueueOfTrace_1802079553;
+		if (((0 < eventId_master_TraceMessageQueueOfTrace_1802079553) && (eventId_master_TraceMessageQueueOfTrace_1802079553 <= 0))) {
+			master_TraceMessageQueueOfTrace := eventId_master_TraceMessageQueueOfTrace_1802079553;
+			sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace + 1);
+		}
+	}
+}

@@ -1,0 +1,27 @@
+package target
+
+import "interfaces"
+import "types"
+
+@Asynchronous
+statechart Target [
+	port testControl : requires TestControl
+] {
+	var log : Log := Log::None
+	
+	region Main {
+		initial Initial
+		state S1 {
+			entry / log := Log::S1_Entry;
+			exit / log := Log::S1_Exit;
+		}
+		state FS1 {
+			entry / log := Log::FS_Entry;
+			exit / log := Log::FS_Exit;
+		}
+	}
+	
+	transition from Initial to S1
+	transition from S1 to FS1 when testControl.start
+	
+}
