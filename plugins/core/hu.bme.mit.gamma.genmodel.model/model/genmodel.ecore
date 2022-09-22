@@ -48,6 +48,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//ModelReference"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="propertyPackage" eType="ecore:EClass ../../hu.bme.mit.gamma.property.model/model/property.ecore#//PropertyPackage"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="split" eType="#//AnalysisSplit"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="initialState" eType="ecore:EClass ../../hu.bme.mit.gamma.property.model/model/property.ecore#//PropertyPackage"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="initialStateSetting" eType="#//InitialStateSetting"
         defaultValueLiteral="EXECUTE_ENTRY_ACTIONS"/>
@@ -84,6 +85,10 @@
     <eLiterals name="UPPAAL"/>
     <eLiterals name="THETA" value="1"/>
     <eLiterals name="XSTS_UPPAAL" value="2" literal="XSTS_UPPAAL"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AnalysisSplit">
+    <eLiterals name="NONE"/>
+    <eLiterals name="CHOICE" value="1"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="YakinduCompilation" abstract="true"
       eSuperTypes="#//Task">

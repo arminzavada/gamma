@@ -33,8 +33,10 @@ class ActionSerializer {
 	// Auxiliary objects
 	protected final extension DeclarationSerializer declarationSerializer = DeclarationSerializer.INSTANCE
 	protected final extension ExpressionSerializer expressionSerializer = ExpressionSerializer.INSTANCE
-	
+	protected final extension AnnotationSerializer annotationSerializer = AnnotationSerializer.INSTANCE
+		
 	def String serializeXsts(XSTS xSts) '''
+		«xSts.serializeAnnotations»
 		«xSts.serializeDeclarations(false)»
 		
 		trans «FOR transition : xSts.transitions SEPARATOR " or "»{

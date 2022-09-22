@@ -1,0 +1,39 @@
+grammar hu.bme.mit.gamma.theta.trace.language.TraceLanguage with org.eclipse.xtext.common.Terminals
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "http://www.mit.bme.hu/gamma/theta/trace/Model"
+
+XstsTrace returns XstsTrace:
+	(sequences+=XstsStateSequence)+
+;
+
+XstsStateSequence returns XstsStateSequence:
+	{XstsStateSequence}
+	'(XstsStateSequence'
+	(states+=XstsState)*
+	')'
+;
+
+XstsState returns XstsState:
+	'(XstsState' (annotations+=SIMPLESTRING)*
+	state=ExplState
+	')'
+;
+
+ExplState returns ExplState:
+	{ExplState}
+	'(ExplState'
+	(valuations+=VariableValuation)*
+	')'
+;
+
+VariableValuation returns VariableValuation:
+	'(' name=SIMPLESTRING value=Value ')'
+;
+
+Value:
+	SIMPLESTRING | INT
+;
+
+terminal SIMPLESTRING: (SIMPLECHAR)(SIMPLECHAR|INT)*;
+terminal SIMPLECHAR: ('a'..'z'|'A'..'Z'|'_');

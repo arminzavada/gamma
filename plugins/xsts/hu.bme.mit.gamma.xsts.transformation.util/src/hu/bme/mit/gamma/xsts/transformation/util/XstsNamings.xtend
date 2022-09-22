@@ -27,4 +27,7 @@ class XstsNamings {
 	static def String getActivityNodeVariableName(ActivityNode node) '''«node.name»'''	
 	static def String getSuccessionVariableName(Succession succession) '''«succession.sourceNode.name»_to_«succession.targetNode.name»'''
 	
+	// Split
+	public static val String PC_VAR_NAME = "__pc"
+	public static val String TRANS_VAR_NAME = "__trans"
 }

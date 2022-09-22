@@ -24,6 +24,7 @@ import hu.bme.mit.gamma.transformation.util.preprocessor.AnalysisModelPreprocess
 import hu.bme.mit.gamma.util.FileUtil
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
 import hu.bme.mit.gamma.xsts.transformation.InitialStateSetting
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 import java.io.File
@@ -40,6 +41,7 @@ class Gamma2XstsTransformerSerializer {
 	protected final boolean optimize
 	protected final boolean optimizeArray
 	protected final TransitionMerging transitionMerging
+	protected final AnalysisSplit split
 	// Slicing
 	protected final PropertyPackage slicingProperties
 	// Annotation
@@ -67,7 +69,7 @@ class Gamma2XstsTransformerSerializer {
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint) {
 		this(component, arguments, targetFolderUri, fileName, schedulingConstraint,
-			true, false, TransitionMerging.HIERARCHICAL,
+			true, false, TransitionMerging.HIERARCHICAL, AnalysisSplit.NONE,
 			null, new AnnotatablePreprocessableElements(null, null, null, null, null,
 				InteractionCoverageCriterion.EVERY_INTERACTION, InteractionCoverageCriterion.EVERY_INTERACTION,
 				null, DataflowCoverageCriterion.ALL_USE,
@@ -80,6 +82,7 @@ class Gamma2XstsTransformerSerializer {
 			Integer schedulingConstraint,
 			boolean optimize, boolean optimizeArray,
 			TransitionMerging transitionMerging,
+			AnalysisSplit split,
 			PropertyPackage slicingProperties,
 			AnnotatablePreprocessableElements annotatableElements,
 			PropertyPackage initialState, InitialStateSetting initialStateSetting) {
@@ -92,6 +95,7 @@ class Gamma2XstsTransformerSerializer {
 		this.optimize = optimize
 		this.optimizeArray = optimizeArray
 		this.transitionMerging = transitionMerging
+		this.split = split
 		//
 		this.slicingProperties = slicingProperties
 		//
@@ -116,7 +120,7 @@ class Gamma2XstsTransformerSerializer {
 		slicerAnnotatorAndPropertyGenerator.execute
 		val gammaToXSTSTransformer = new GammaToXstsTransformer(
 			schedulingConstraint, true, true, optimizeArray,
-			transitionMerging, initialState, initialStateSetting)
+			transitionMerging, initialState, initialStateSetting, split)
 		// Normal transformation
 		val xSts = gammaToXSTSTransformer.execute(newGammaPackage)
 		// EMF

@@ -55,6 +55,7 @@ class GammaToXstsTransformer {
 	protected final Integer schedulingConstraint
 	protected final PropertyPackage initialState
 	protected final InitialStateSetting initialStateSetting
+	protected final AnalysisSplit split
 	protected final boolean optimizeArrays
 	// Auxiliary objects
 	protected final extension GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE
@@ -70,6 +71,7 @@ class GammaToXstsTransformer {
 	protected final extension XSTSModelFactory xStsModelFactory = XSTSModelFactory.eINSTANCE
 	protected final extension XstsActionUtil xStsActionUtil = XstsActionUtil.INSTANCE
 	protected final extension ExpressionEvaluator expressionEvaluator = ExpressionEvaluator.INSTANCE
+	protected final extension XstsSplitter xStsSplitter = XstsSplitter.INSTANCE
 	// Logger
 	protected final Logger logger = Logger.getLogger("GammaLogger")
 	
@@ -81,12 +83,12 @@ class GammaToXstsTransformer {
 			boolean optimize, boolean optimizeArrays, TransitionMerging transitionMerging) {
 		this(schedulingConstraint, transformOrthogonalActions,
 				optimize, optimizeArrays, transitionMerging,
-				null, null)
+				null, null, AnalysisSplit.NONE)
 	}
 	
 	new(Integer schedulingConstraint, boolean transformOrthogonalActions,
 			boolean optimize, boolean optimizeArrays, TransitionMerging transitionMerging,
-			PropertyPackage initialState, InitialStateSetting initialStateSetting) {
+			PropertyPackage initialState, InitialStateSetting initialStateSetting, AnalysisSplit split) {
 		this.gammaToLowlevelTransformer = new GammaToLowlevelTransformer
 		this.componentTransformer = new ComponentTransformer(this.gammaToLowlevelTransformer,
 			transformOrthogonalActions, optimize, transitionMerging)
@@ -94,6 +96,7 @@ class GammaToXstsTransformer {
 		this.initialState = initialState
 		this.initialStateSetting = initialStateSetting
 		this.optimizeArrays = optimizeArrays
+		this.split = split
 	}
 	
 	def preprocessAndExecuteAndSerialize(Package _package,
@@ -147,8 +150,13 @@ class GammaToXstsTransformer {
 				initialState, initialStateSetting)
 			initialStateHandler.execute
 		}
-		
-		return xSts
+		// Splitting
+		if (split == AnalysisSplit.NONE) {
+			return xSts
+		}
+		else {
+			return xSts.split
+		}
 	}
 	
 	protected def void setClockVariables(XSTS xSts) {
@@ -300,4 +308,7 @@ class GammaToXstsTransformer {
 		}
 	}
 	
+	enum AnalysisSplit {
+		NONE, CHOICE
+	}
 }

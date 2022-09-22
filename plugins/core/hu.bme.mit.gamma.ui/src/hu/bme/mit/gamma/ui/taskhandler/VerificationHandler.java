@@ -45,6 +45,7 @@ import hu.bme.mit.gamma.property.model.StateFormula;
 import hu.bme.mit.gamma.property.util.PropertyUtil;
 import hu.bme.mit.gamma.querygenerator.serializer.PropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.ThetaPropertySerializer;
+import hu.bme.mit.gamma.querygenerator.serializer.ThetaSplittedPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.XstsUppaalPropertySerializer;
 import hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures;
@@ -64,6 +65,9 @@ import hu.bme.mit.gamma.util.FileUtil;
 import hu.bme.mit.gamma.verification.result.ThreeStateBoolean;
 import hu.bme.mit.gamma.verification.util.AbstractVerification;
 import hu.bme.mit.gamma.verification.util.AbstractVerifier.Result;
+import hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures;
+import hu.bme.mit.gamma.xsts.model.SplittedAnnotation;
+import hu.bme.mit.gamma.xsts.model.XSTS;
 
 public class VerificationHandler extends TaskHandler {
 
@@ -108,6 +112,9 @@ public class VerificationHandler extends TaskHandler {
 		Set<AnalysisLanguage> languagesSet = new LinkedHashSet<AnalysisLanguage>(
 				verification.getAnalysisLanguages());
 		checkArgument(languagesSet.size() == 1);
+		String filePath = verification.getFileName().get(0);
+		File gstsFile = new File(filePath.replaceAll("xsts$", "gsts"));
+		File modelFile = new File(filePath);
 		List<String> verificationArguments = verification.getVerificationArguments();
 		
 		boolean distinguishStringFormulas = false;
@@ -121,7 +128,10 @@ public class VerificationHandler extends TaskHandler {
 					propertySerializer = UppaalPropertySerializer.INSTANCE;
 					break;
 				case THETA:
+					XSTS xSts = ((XSTS) ecoreUtil.normalLoad(gstsFile));
+					boolean splitted = XstsDerivedFeatures.hasAnnotation(xSts, SplittedAnnotation.class);
 					verificationTask = ThetaVerification.INSTANCE;
+					propertySerializer = splitted ? ThetaSplittedPropertySerializer.INSTANCE : ThetaPropertySerializer.INSTANCE;
 					propertySerializer = ThetaPropertySerializer.INSTANCE;
 					distinguishStringFormulas = true;
 					break;
@@ -137,9 +147,7 @@ public class VerificationHandler extends TaskHandler {
 		String[] arguments = verificationArguments.isEmpty() ?
 				verificationTask.getDefaultArguments() :
 					verificationArguments.toArray(new String[verificationArguments.size()]);
-		
-		String filePath = verification.getFileName().get(0);
-		File modelFile = new File(filePath);
+
 		boolean isOptimize = verification.isOptimize();
 		
 		// Retrieved traces

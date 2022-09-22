@@ -47,6 +47,7 @@ import hu.bme.mit.gamma.lowlevel.xsts.transformation.TransitionMerging;
 import hu.bme.mit.gamma.property.model.PropertyPackage;
 import hu.bme.mit.gamma.querygenerator.serializer.PropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.ThetaPropertySerializer;
+import hu.bme.mit.gamma.querygenerator.serializer.ThetaSplittedPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.UppaalPropertySerializer;
 import hu.bme.mit.gamma.querygenerator.serializer.XstsUppaalPropertySerializer;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstanceReferenceExpression;
@@ -74,6 +75,8 @@ import hu.bme.mit.gamma.uppaal.composition.transformation.SchedulingConstraint;
 import hu.bme.mit.gamma.uppaal.composition.transformation.api.Gamma2UppaalTransformerSerializer;
 import hu.bme.mit.gamma.uppaal.composition.transformation.api.util.UppaalModelPreprocessor;
 import hu.bme.mit.gamma.xsts.model.XSTS;
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer;
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit;
 import hu.bme.mit.gamma.xsts.transformation.InitialStateSetting;
 import hu.bme.mit.gamma.xsts.transformation.api.Gamma2XstsTransformerSerializer;
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer;
@@ -341,6 +344,18 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			}
 		}
 		
+		protected GammaToXstsTransformer.AnalysisSplit transformAnalysisSplit(
+				hu.bme.mit.gamma.genmodel.model.AnalysisSplit split) {
+			switch (split) {
+				case NONE:
+					return GammaToXstsTransformer.AnalysisSplit.NONE;
+				case CHOICE:
+					return GammaToXstsTransformer.AnalysisSplit.CHOICE;
+				default:
+					throw new IllegalArgumentException("Not known split: " + split);
+			}
+		}
+
 		protected InitialStateSetting transformInitialStateSetting(
 				hu.bme.mit.gamma.genmodel.model.InitialStateSetting initialStateSetting) {
 			switch (initialStateSetting) {
@@ -465,12 +480,14 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 		protected final AnalysisModelPreprocessor modelPreprocessor = AnalysisModelPreprocessor.INSTANCE;
 		protected final ActionSerializer actionSerializer = ActionSerializer.INSTANCE;
+		protected AnalysisSplit split = AnalysisSplit.NONE;
 		
 		public void execute(AnalysisModelTransformation transformation) throws IOException {
 			logger.log(Level.INFO, "Starting XSTS transformation");
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = evaluateConstraint(transformation.getConstraint());
+			split = transformAnalysisSplit(transformation.getSplit());
 			String fileName = transformation.getFileName().get(0);
 			// Coverages
 			List<Coverage> coverages = transformation.getCoverages();
@@ -503,7 +520,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 					component, reference.getArguments(),
 					targetFolderUri, fileName, schedulingConstraint,
 					transformation.isOptimize(), true,
-					TransitionMerging.HIERARCHICAL,
+					TransitionMerging.HIERARCHICAL, split,
 					transformation.getPropertyPackage(), new AnnotatablePreprocessableElements(
 						testedComponentsForStates, testedComponentsForTransitions,
 						testedComponentsForTransitionPairs, testedComponentsForOutEvents,
@@ -521,7 +538,8 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 		
 		@Override
 		protected PropertySerializer getPropertySerializer() {
-			return ThetaPropertySerializer.INSTANCE;
+			return split == AnalysisSplit.NONE ? ThetaPropertySerializer.INSTANCE
+					: ThetaSplittedPropertySerializer.INSTANCE;
 		}
 
 		@Override
@@ -566,6 +584,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 			ComponentReference reference = (ComponentReference) transformation.getModel();
 			Component component = reference.getComponent();
 			Integer schedulingConstraint = evaluateConstraint(transformation.getConstraint());
+			AnalysisSplit split = transformAnalysisSplit(transformation.getSplit());
 			String fileName = transformation.getFileName().get(0);
 			// Coverages
 			List<Coverage> coverages = transformation.getCoverages();
@@ -599,6 +618,7 @@ public class AnalysisModelTransformationHandler extends TaskHandler {
 					targetFolderUri, fileName, schedulingConstraint,
 					transformation.isOptimize(),
 					TransitionMerging.HIERARCHICAL,
+					split,
 					transformation.getPropertyPackage(),
 					new AnnotatablePreprocessableElements(
 						testedComponentsForStates, testedComponentsForTransitions,

@@ -24,6 +24,7 @@ import hu.bme.mit.gamma.xsts.transformation.InitialStateSetting
 import hu.bme.mit.gamma.xsts.transformation.api.Gamma2XstsTransformerSerializer
 import hu.bme.mit.gamma.xsts.uppaal.transformation.api.Xsts2UppaalTransformerSerializer
 import java.util.List
+import hu.bme.mit.gamma.xsts.transformation.GammaToXstsTransformer.AnalysisSplit
 
 class Gamma2XstsUppaalTransformerSerializer {
 
@@ -35,6 +36,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 	// Configuration
 	protected final boolean optimize
 	protected final TransitionMerging transitionMerging
+	protected final AnalysisSplit split
 	// Slicing
 	protected final PropertyPackage slicingProperties
 	// Annotation
@@ -59,7 +61,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 			String targetFolderUri, String fileName,
 			Integer schedulingConstraint) {
 		this(component, arguments, targetFolderUri, fileName, schedulingConstraint,
-			true, TransitionMerging.HIERARCHICAL,
+			true, TransitionMerging.HIERARCHICAL, AnalysisSplit.NONE,
 			null, new AnnotatablePreprocessableElements(
 				null, null, null, null, null,
 				InteractionCoverageCriterion.EVERY_INTERACTION,	InteractionCoverageCriterion.EVERY_INTERACTION,
@@ -74,6 +76,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 			Integer schedulingConstraint,
 			boolean optimize,
 			TransitionMerging transitionMerging,
+			AnalysisSplit split,
 			PropertyPackage slicingProperties,
 			AnnotatablePreprocessableElements annotatableElements,
 			PropertyPackage initialState, InitialStateSetting initialStateSetting) {
@@ -85,6 +88,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 		//
 		this.optimize = optimize
 		this.transitionMerging = transitionMerging
+		this.split = split
 		//
 		this.slicingProperties = slicingProperties
 		//
@@ -100,6 +104,7 @@ class Gamma2XstsUppaalTransformerSerializer {
 			fileName, schedulingConstraint,
 			optimize, false,
 			transitionMerging,
+			split,
 			slicingProperties, annotatableElements,
 			initialState, initialStateSetting)
 		xStsTransformer.execute

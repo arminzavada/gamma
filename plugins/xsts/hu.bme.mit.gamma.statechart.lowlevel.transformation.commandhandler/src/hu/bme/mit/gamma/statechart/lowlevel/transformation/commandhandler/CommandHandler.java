@@ -129,7 +129,7 @@ public class CommandHandler extends AbstractHandler {
 		// Saving the xSTS model
 		ecoreUtil.normalSave(xSts, modelFolderUri, fileNameWithoutExtenstion + ".gsts");
 		// Cannot be serialized anymore, as it references some XTransitions that are now not
-		// serialized due to variable inlinings (see LowlevelToXSTSTransformer.deleteNotReadTransientVariables)
+		// serialized due to variable inlinings (see LowlevelToXstsTransformer.deleteNotReadTransientVariables)
 //		ecoreUtil.normalSave(traceability, modelFolderUri, "." + fileNameWithoutExtenstion + ".l2s");
 		logger.log(Level.INFO, "The Gamma low level - xSTS transformation has been finished");
 		logger.log(Level.INFO, "Starting xSTS serialization: " + xSts.getName());
