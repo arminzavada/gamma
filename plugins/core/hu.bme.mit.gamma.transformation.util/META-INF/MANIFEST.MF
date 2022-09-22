@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.emf.ecore,
  hu.bme.mit.gamma.trace.model,
  hu.bme.mit.gamma.property.model,
  hu.bme.mit.gamma.eventpriority.transformation,
- hu.bme.mit.gamma.statechart.phase.transformation
+ hu.bme.mit.gamma.statechart.phase.transformation,
+ hu.bme.mit.gamma.statechart.log.injector;bundle-version="2.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: hu.bme.mit.gamma.transformation.util
 Import-Package: org.apache.log4j

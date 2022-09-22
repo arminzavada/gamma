@@ -66,6 +66,7 @@ import static extension java.lang.Math.abs
 import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode
 import hu.bme.mit.gamma.statechart.lowlevel.model.Succession
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.SuccessionTrace
+import hu.bme.mit.gamma.statechart.lowlevel.model.Component
 
 package class Trace {
 	// Trace model
@@ -83,6 +84,8 @@ package class Trace {
 	protected final Map<Transition, List<Expression>> guards = newHashMap // Guars of transitions leaving states - also negated due to priority
 	protected final Map<Transition, List<Expression>> choiceGuards = newHashMap // Guards of transitions leaving choices - also negated due to priority
 	protected final Map<State, List<Expression>> stateReferenceExpressions = newHashMap
+	protected final Map<Component, VariableDeclaration> logVariable = newHashMap
+	protected final Map<Component, TypeDeclaration> logType = newHashMap
 	
 	new(Package _package, XSTS xSts) {
 		this.trace = createL2STrace => [
@@ -708,6 +711,40 @@ package class Trace {
 		val matches = SuccessionTrace.Matcher.on(tracingEngine).getAllValuesOfsuccession(xStsVariable)
 		checkState(matches.size == 1, matches.size)
 		return matches.head
+	}
+	
+	// Log variable
+	def put(Component component, VariableDeclaration xStsVariable) {
+		checkArgument(component !== null)
+		checkArgument(xStsVariable !== null)
+		logVariable.put(component, xStsVariable)
+	}
+	
+	def isTraced(Component component) {
+		checkArgument(component !== null)
+		return logVariable.containsKey(component)
+	}
+	
+	def getXStsVariable(Component component) {
+		checkArgument(component !== null)
+		return logVariable.get(component)
+	}
+	
+	// Log type
+	def put(Component component, TypeDeclaration type) {
+		checkArgument(component !== null)
+		checkArgument(type !== null)
+		logType.put(component, type)
+	}
+	
+	def isTypeTraced(Component component) {
+		checkArgument(component !== null)
+		return logType.containsKey(component)
+	}
+	
+	def getType(Component component) {
+		checkArgument(component !== null)
+		return logType.get(component)
 	}
 	
 }

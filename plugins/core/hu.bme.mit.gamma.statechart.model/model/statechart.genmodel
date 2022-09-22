@@ -195,6 +195,7 @@
     <genClasses image="false" ecoreClass="interface.ecore#//EventSource"/>
     <genClasses ecoreClass="interface.ecore#//Port">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference interface.ecore#//Port/interfaceRealization"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference interface.ecore#//Port/annotations"/>
     </genClasses>
     <genClasses ecoreClass="interface.ecore#//InterfaceRealization">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute interface.ecore#//InterfaceRealization/realizationMode"/>
@@ -233,6 +234,7 @@
     <genClasses ecoreClass="interface.ecore#//SchedulingConstraintAnnotation">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference interface.ecore#//SchedulingConstraintAnnotation/schedulingConstraint"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="interface.ecore#//PortAnnotation"/>
   </genPackages>
   <genPackages prefix="PhaseModel" basePackage="hu.bme.mit.gamma.statechart" disposableProviderFactory="true"
       ecorePackage="phase.ecore#/">
@@ -398,5 +400,7 @@
     <genClasses ecoreClass="activity.ecore#//RunActivityAction">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference activity.ecore#//RunActivityAction/activity"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="activity.ecore#//ActivityDerivedAnnotation"/>
+    <genClasses ecoreClass="activity.ecore#//ActivityControllerPortAnnotation"/>
   </genPackages>
 </genmodel:GenModel>

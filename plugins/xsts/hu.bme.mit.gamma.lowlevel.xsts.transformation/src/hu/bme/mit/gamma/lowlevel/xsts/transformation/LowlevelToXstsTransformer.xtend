@@ -63,6 +63,7 @@ import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionMo
 import static extension hu.bme.mit.gamma.statechart.lowlevel.derivedfeatures.LowlevelStatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.XstsNamings.*
+import hu.bme.mit.gamma.statechart.lowlevel.model.Component
 
 class LowlevelToXstsTransformer {
 	// Transformation-related extensions
@@ -194,6 +195,14 @@ class LowlevelToXstsTransformer {
 		getFirstChoiceTransitionsRule.fireAllCurrent
 		getInEventEnvironmentalActionRule.fireAllCurrent
 		getOutEventEnvironmentalActionRule.fireAllCurrent
+				
+		for (Component component : _package.components) {
+			if (trace.isTraced(component)) {
+				xSts.typeDeclarations += trace.getType(component)
+				xSts.variableDeclarations += trace.getXStsVariable(component)
+			}
+		}
+		
 		mergeTransitions
 		xSts.optimizeXSts
 		xSts.fillNullTransitions

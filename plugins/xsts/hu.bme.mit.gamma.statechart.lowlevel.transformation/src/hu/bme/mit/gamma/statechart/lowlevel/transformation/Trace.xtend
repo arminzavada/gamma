@@ -39,6 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
+import hu.bme.mit.gamma.statechart.composite.StatefulComponent
 
 class Trace {
 
@@ -73,6 +74,7 @@ class Trace {
 	final Map<Pin, VariableDeclaration> pinMappings = newHashMap
 	final Map<Flow, hu.bme.mit.gamma.statechart.lowlevel.model.Succession> flowMappings = newHashMap
 	final Map<ActivityNode, hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode> activityNodeMappings = newHashMap
+	final Map<StatefulComponent, VariableDeclaration> logVariableMapping = newHashMap
 	
 	// Package
 	def put(Package gammaPackage, hu.bme.mit.gamma.statechart.lowlevel.model.Package lowlevelPackage) {
@@ -584,6 +586,22 @@ class Trace {
 	def getActivityNode(ActivityNode node) {
 		checkNotNull(node)
 		return activityNodeMappings.get(node)
+	}
+	
+	def putLogVariable(StatefulComponent component, VariableDeclaration variable) {
+		checkNotNull(component)
+		checkNotNull(variable)
+		logVariableMapping.put(component, variable)
+	}	
+	
+	def isLogVariableMapped(StatefulComponent component) {
+		checkNotNull(component)
+		return logVariableMapping.containsKey(component)
+	}
+
+	def getLogVariable(StatefulComponent component) {
+		checkNotNull(component)
+		return logVariableMapping.get(component)
 	}
 	
 }

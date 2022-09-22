@@ -57,5 +57,8 @@
     <genClasses ecoreClass="action.ecore#//AssertionStatement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference action.ecore#//AssertionStatement/assertion"/>
     </genClasses>
+    <genClasses ecoreClass="action.ecore#//LogStatement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute action.ecore#//LogStatement/text"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

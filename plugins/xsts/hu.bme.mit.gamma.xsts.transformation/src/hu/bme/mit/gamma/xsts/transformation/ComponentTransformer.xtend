@@ -58,6 +58,7 @@ import static extension java.lang.Math.*
 import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDefinition
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelActivityToXstsTransformer
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelToXstsTransformer
+import hu.bme.mit.gamma.transformation.util.preprocessor.StatechartPreprocessor
 
 class ComponentTransformer {
 	// This gammaToLowlevelTransformer must be the same during this transformation cycle due to tracing
@@ -892,10 +893,12 @@ class ComponentTransformer {
 		logger.log(Level.INFO, "Transforming statechart " + statechart.name)
 		/* Note that the package is already transformed and traced because of
 		   the "val lowlevelPackage = gammaToLowlevelTransformer.transform(_package)" call */
+		val preprocessor = new StatechartPreprocessor(statechart)
+		preprocessor.execute
 		val lowlevelStatechart = gammaToLowlevelTransformer.transform(statechart)
 		lowlevelPackage.components += lowlevelStatechart
 		val lowlevelToXSTSTransformer = new LowlevelToXstsTransformer(
-			lowlevelPackage, optimize, transitionMerging)
+			lowlevelPackage, optimize, transitionMerging) 
 		val xStsEntry = lowlevelToXSTSTransformer.execute
 		lowlevelPackage.components -= lowlevelStatechart // So that next time the matches do not return elements from this statechart
 		val xSts = xStsEntry.key

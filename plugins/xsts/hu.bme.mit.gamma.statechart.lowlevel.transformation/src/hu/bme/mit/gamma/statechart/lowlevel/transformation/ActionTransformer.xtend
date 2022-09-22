@@ -41,6 +41,7 @@ import java.util.List
 import static extension com.google.common.collect.Iterables.getOnlyElement
 import hu.bme.mit.gamma.activity.model.ExecuteActivityAction
 import hu.bme.mit.gamma.statechart.ActivityComposition.RunActivityAction
+import hu.bme.mit.gamma.action.model.LogStatement
 
 class ActionTransformer {
 	// Auxiliary objects
@@ -93,6 +94,14 @@ class ActionTransformer {
 	protected def dispatch List<Action> transformAction(EmptyStatement action) {
 		return #[
 			createEmptyStatement
+		]
+	}
+	
+	protected def dispatch List<Action> transformAction(LogStatement action) {
+		return #[
+			createLogStatement => [
+				it.text = action.text
+			]
 		]
 	}
 	

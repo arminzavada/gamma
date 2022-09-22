@@ -25,6 +25,8 @@ import hu.bme.mit.gamma.action.derivedfeatures.ActionModelDerivedFeatures;
 import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityControllerEventAnnotation;
 import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityDefinition;
 import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityDerivedAnnotation;
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode;
+import hu.bme.mit.gamma.statechart.lowlevel.model.Component;
 import hu.bme.mit.gamma.statechart.lowlevel.model.CompositeElement;
 import hu.bme.mit.gamma.statechart.lowlevel.model.DeepHistoryState;
 import hu.bme.mit.gamma.statechart.lowlevel.model.EventDeclaration;
@@ -46,7 +48,22 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 		}
 		return getStatechart(object.eContainer());
 	}
+	
 
+	public static ActivityDefinition getActivity(EObject object) {
+		if (object instanceof ActivityDefinition) {
+			return (ActivityDefinition) object;
+		}
+		return getActivity(object.eContainer());
+	}
+
+	public static Component getComponent(EObject object) {
+		if (object instanceof Component) {
+			return (Component) object;
+		}
+		return getComponent(object.eContainer());
+	} 
+	
 	public static boolean isInternal(EventDeclaration lowlevelEventDeclaration) {
 		StatechartDefinition statechart = getStatechart(lowlevelEventDeclaration);
 		List<EventDeclaration> internalEventDeclarations = statechart.getInternalEventDeclarations();
@@ -318,5 +335,13 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 	public static EventDeclaration getActivityControllerEvent(ActivityDefinition activity) {
 		return activity.getEventDeclarations().stream().filter(event -> isActivityControllerEvent(event)).findFirst().orElseThrow();
 	}
+	
+	public static List<ActivityNode> getPredecessors(ActivityNode node) {
+		return node.getIncoming().stream().map(s -> s.getSourceNode()).toList();
+	}
+	
+	public static List<ActivityNode> getSuccessors(ActivityNode node) {
+		return node.getOutgoing().stream().map(s -> s.getTargetNode()).toList();
+	}	
 	
 }
