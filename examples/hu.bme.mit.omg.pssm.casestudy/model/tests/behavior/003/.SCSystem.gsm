@@ -295,7 +295,7 @@
     <activityNodes xsi:type="hu.bme.mit.gamma.activity:InitialNode" name="init"/>
     <activityNodes xsi:type="hu.bme.mit.gamma.activity:ActionNode" name="Part1">
       <action>
-        <actions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1(doActivityPartI)"/>
+        <actions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_doActivityPartI"/>
       </action>
     </activityNodes>
     <activityNodes xsi:type="hu.bme.mit.gamma.statechart.activitycomposition:TriggerNode" name="Wait">
@@ -307,7 +307,7 @@
     </activityNodes>
     <activityNodes xsi:type="hu.bme.mit.gamma.activity:ActionNode" name="Part2">
       <action>
-        <actions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1(doActivityPartII)"/>
+        <actions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_doActivityPartII"/>
       </action>
     </activityNodes>
     <activityNodes xsi:type="hu.bme.mit.gamma.activity:ActionNode" name="end">

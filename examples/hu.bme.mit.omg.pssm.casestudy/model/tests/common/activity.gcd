@@ -11,13 +11,13 @@ activity Activity [
 	initial init
 	
 	action Part1 {
-		log "S1(doActivityPartI)";
+		log "S1_doActivityPartI";
 	}
 	
 	trigger Wait when control.continue
 	
 	action Part2 {
-		log "S1(doActivityPartII)";
+		log "S1_doActivityPartII";
 	}
 	
 	action end {
