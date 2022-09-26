@@ -3,6 +3,6 @@ import "/hu.bme.mit.omg.pssm/model/tests/behavior/003/SCSystem.gcd"
 analysis {
 	component : SCSystem
 	language : Theta
-	optimize : false
+	optimize : true
 	split-by : CHOICE
 }

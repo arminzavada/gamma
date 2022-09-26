@@ -1,13 +1,14 @@
 package target
 
 import "interfaces"
+import "common"
 
 async Target [
 	port testControl : requires TestControl
 	port control : requires SUTControl
 ] {
 	component sc : SC
-	component act : Activity
+	component act : DoActivity
 	
 	bind testControl -> sc.testControl
 	bind control -> sc.control
@@ -39,29 +40,3 @@ statechart SC [
 	transition from S1 to Error when doActivityController.done
 	transition from S1 to FS1 when control.anotherSignal
 }
-
-activity DoActivity [
-	@ActivityController
-	port controller : provides ActivityControllerInterface
-] {
-	
-	initial init
-	
-	action end {
-		raise controller.done;
-	}
-	
-	final fin
-	
-	succession from init to end
-	succession from end to fin
-	
-}
-
-adapter Activity of component doActivity : DoActivity {	
-	when any / run
-	
-	queue controllerMessages(priority = 1, capacity = 1) {
-		controller.any
-	}
-} 

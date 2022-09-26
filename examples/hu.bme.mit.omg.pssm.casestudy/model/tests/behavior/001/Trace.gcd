@@ -12,6 +12,7 @@ statechart Trace [
 			region InputRegion {
 				initial InputInitialState
 				state InputState
+				choice Choice0
 			}
 		}
 	}
@@ -27,10 +28,11 @@ statechart Trace [
 	transition from Initial to _0
 	transition from _0 to _1 when cycle [inOutCycleVariable] / raise _testControl_.start;
 	transition from InputInitialState to InputState
-	transition from InputState to InputState when testControl.start [inOutCycleVariable] / raise
-		_testControl_.start;
+	transition from InputState to Choice0 when cycle [inOutCycleVariable]
+	transition from Choice0 to InputState when testControl.start / raise _testControl_.start;
+	transition from Choice0 to InputState [else]
 	transition from OutputInitialState to FirstOutputState
 	transition from InOutCycleInitialState to InOutCycleState
-	transition from InOutCycleState to InOutCycleState when cycle / inOutCycleVariable :=
-		!inOutCycleVariable;
+	transition from InOutCycleState to InOutCycleState when cycle / inOutCycleVariable := not
+		inOutCycleVariable;
 }

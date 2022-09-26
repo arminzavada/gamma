@@ -28,6 +28,7 @@
         <regions name="InputRegion">
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="InputInitialState"/>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="InputState"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:ChoiceState" name="Choice0"/>
         </regions>
       </stateNodes>
     </regions>
@@ -58,16 +59,22 @@
       </effects>
     </transitions>
     <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.0" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1"/>
-    <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1">
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.2">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart:OnCycleTrigger"/>
+      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>
+    </transitions>
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.2" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.1/@ports.1">
           <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
         </eventReference>
       </trigger>
-      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.1/@ports.0">
         <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
       </effects>
+    </transitions>
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.2" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1">
+      <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
     </transitions>
     <transitions sourceState="//@components.1/@regions.1/@stateNodes.0" targetState="//@components.1/@regions.1/@stateNodes.1"/>
     <transitions sourceState="//@components.1/@regions.1/@stateNodes.1" targetState="//@components.1/@regions.1/@stateNodes.1">

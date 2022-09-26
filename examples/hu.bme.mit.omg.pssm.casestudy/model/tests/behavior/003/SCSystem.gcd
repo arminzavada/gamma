@@ -10,8 +10,8 @@ scheduled-async SCSystem [
 	component sCSystem : Target
 	bind testControl -> Trace.testControl
 	bind control -> Trace.control
-	channel [ Trace._testControl_ ] -o)- [ sCSystem.testControl ]
 	channel [ Trace._control_ ] -o)- [ sCSystem.control ]
+	channel [ Trace._testControl_ ] -o)- [ sCSystem.testControl ]
 	initial execute Trace
 	execute Trace, sCSystem, Trace
 }

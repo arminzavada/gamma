@@ -18,12 +18,12 @@
       <instancePortReference instance="//@components.0/@components.0" port="//@components.2/@ports.3"/>
     </portBindings>
     <channels xsi:type="hu.bme.mit.gamma.statechart.composite:SimpleChannel">
-      <providedPort instance="//@components.0/@components.0" port="//@components.2/@ports.0"/>
-      <requiredPort instance="//@components.0/@components.1" port="//@components.3/@ports.0"/>
-    </channels>
-    <channels xsi:type="hu.bme.mit.gamma.statechart.composite:SimpleChannel">
       <providedPort instance="//@components.0/@components.0" port="//@components.2/@ports.2"/>
       <requiredPort instance="//@components.0/@components.1" port="//@components.3/@ports.1"/>
+    </channels>
+    <channels xsi:type="hu.bme.mit.gamma.statechart.composite:SimpleChannel">
+      <providedPort instance="//@components.0/@components.0" port="//@components.2/@ports.0"/>
+      <requiredPort instance="//@components.0/@components.1" port="//@components.3/@ports.0"/>
     </channels>
     <components name="Trace" type="//@components.1"/>
     <components name="sCSystem" type="//@components.3"/>
@@ -53,11 +53,6 @@
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="InputState"/>
         </regions>
       </stateNodes>
-    </regions>
-    <regions name="OutputRegion">
-      <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="OutputInitialState"/>
-      <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="OutputState"/>
-      <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="FirstOutputState"/>
     </regions>
     <regions name="InOutCycleRegion">
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="InOutCycleInitialState"/>
@@ -163,9 +158,8 @@
         <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
       </effects>
     </transitions>
-    <transitions sourceState="//@components.2/@regions.1/@stateNodes.0" targetState="//@components.2/@regions.1/@stateNodes.2"/>
-    <transitions sourceState="//@components.2/@regions.2/@stateNodes.0" targetState="//@components.2/@regions.2/@stateNodes.1"/>
-    <transitions sourceState="//@components.2/@regions.2/@stateNodes.1" targetState="//@components.2/@regions.2/@stateNodes.1">
+    <transitions sourceState="//@components.2/@regions.1/@stateNodes.0" targetState="//@components.2/@regions.1/@stateNodes.1"/>
+    <transitions sourceState="//@components.2/@regions.1/@stateNodes.1" targetState="//@components.2/@regions.1/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart:OnCycleTrigger"/>
       <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
@@ -267,7 +261,7 @@
       </trigger>
     </transitions>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="Activity">
+  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="DoActivity">
     <controlSpecifications>
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
     </controlSpecifications>
@@ -275,18 +269,47 @@
       <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.7/@ports.0"/>
     </messageQueues>
-    <wrappedComponent name="sCSystem_act_doActivity" type="//@components.7"/>
+    <messageQueues name="controlMessages" priority="2">
+      <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+      <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.7/@ports.1"/>
+    </messageQueues>
+    <wrappedComponent name="sCSystem_act_act" type="//@components.7"/>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart.activitycomposition:SynchronousActivityDefinition" name="DoActivity">
+  <components xsi:type="hu.bme.mit.gamma.statechart.activitycomposition:SynchronousActivityDefinition" name="Activity">
     <ports name="controller">
       <interfaceRealization>
         <interface href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.2"/>
       </interfaceRealization>
       <annotations xsi:type="hu.bme.mit.gamma.statechart.activitycomposition:ActivityControllerPortAnnotation"/>
     </ports>
+    <ports name="control">
+      <interfaceRealization realizationMode="REQUIRED">
+        <interface href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+      </interfaceRealization>
+    </ports>
     <flows xsi:type="hu.bme.mit.gamma.activity:ControlFlow" sourceNode="//@components.7/@activityNodes.0" targetNode="//@components.7/@activityNodes.1"/>
     <flows xsi:type="hu.bme.mit.gamma.activity:ControlFlow" sourceNode="//@components.7/@activityNodes.1" targetNode="//@components.7/@activityNodes.2"/>
+    <flows xsi:type="hu.bme.mit.gamma.activity:ControlFlow" sourceNode="//@components.7/@activityNodes.2" targetNode="//@components.7/@activityNodes.3"/>
+    <flows xsi:type="hu.bme.mit.gamma.activity:ControlFlow" sourceNode="//@components.7/@activityNodes.3" targetNode="//@components.7/@activityNodes.4"/>
+    <flows xsi:type="hu.bme.mit.gamma.activity:ControlFlow" sourceNode="//@components.7/@activityNodes.4" targetNode="//@components.7/@activityNodes.5"/>
     <activityNodes xsi:type="hu.bme.mit.gamma.activity:InitialNode" name="init"/>
+    <activityNodes xsi:type="hu.bme.mit.gamma.activity:ActionNode" name="Part1">
+      <action>
+        <actions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1(doActivityPartI)"/>
+      </action>
+    </activityNodes>
+    <activityNodes xsi:type="hu.bme.mit.gamma.statechart.activitycomposition:TriggerNode" name="Wait">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.7/@ports.1">
+          <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        </eventReference>
+      </trigger>
+    </activityNodes>
+    <activityNodes xsi:type="hu.bme.mit.gamma.activity:ActionNode" name="Part2">
+      <action>
+        <actions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1(doActivityPartII)"/>
+      </action>
+    </activityNodes>
     <activityNodes xsi:type="hu.bme.mit.gamma.activity:ActionNode" name="end">
       <action>
         <actions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.7/@ports.0">
