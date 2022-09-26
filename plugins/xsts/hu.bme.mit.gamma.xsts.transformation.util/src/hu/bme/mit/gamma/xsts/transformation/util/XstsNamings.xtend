@@ -24,4 +24,5 @@ class XstsNamings {
 	// Split
 	public static val String PC_VAR_NAME = "__pc"
 	public static val String TRANS_VAR_NAME = "__trans"
+	public static val String INIT_VAR_NAME = "__init"
 }
