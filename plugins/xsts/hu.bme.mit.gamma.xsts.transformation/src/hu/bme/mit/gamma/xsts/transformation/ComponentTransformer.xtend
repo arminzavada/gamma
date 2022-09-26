@@ -647,10 +647,7 @@ class ComponentTransformer {
 		
 		wrappedType.extractParameters(wrappedInstance.arguments) 
 		val xSts = wrappedType.transform(lowlevelPackage)
-		if (wrappedType.statechart) {
-			// Customize names as the type can be a statechart (before setting the new in event)
-			xSts.customizeDeclarationNames(wrappedInstance)
-		}
+		xSts.customizeDeclarationNames(wrappedInstance)
 		
 		// Resetting out and events manually as a "schedule" call in the code does that
 		xSts.resetOutEventsBeforeMergedAction(wrappedType)
