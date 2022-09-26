@@ -3,9 +3,9 @@
 type MainRegion_Trace : { __Inactive__, _0, _1 }
 type InOutCycleRegion_Trace : { __Inactive__, InOutCycleState }
 type InputRegion_Trace : { __Inactive__, InputState }
-type TraceLogs : { None, t(, t(, _0(entry), _1(entry), InputState(entry), InOutCycleState(entry), InOutCycleState(exit), t(, InOutCycleState(entry), _0(exit), t(, t(, _1(entry), InputState(entry), t(, InputState(entry), t(, InputState(entry), InputState(exit), t( }
+type TraceLogs : { None, t_from_Initial_to__0_effect, t_from_InOutCycleInitialState_to_InOutCycleState_effect, _0_entry, _1_entry, InputState_entry, InOutCycleState_entry, _0_exit, t_from__0_to__1_effect, t_from_InputInitialState_to_InputState_effect, InOutCycleState_exit, t_from_InOutCycleState_to_InOutCycleState_effect, t_from_Choice0_to_InputState_effect, InputState_exit, t_from_InputState_to_Choice0_effect }
 type Main_Target : { __Inactive__, S1, FS1 }
-type TargetLogs : { None, t(, S1(entry), FS1(entry), S1(exit), t(, FS1(entry) }
+type TargetLogs : { None, t_from_Initial_to_S1_effect, S1_entry, FS1_entry, S1_exit, t_from_S1_to_FS1_effect }
 var testControl_start_In_Trace : boolean = false
 ctrl var mainRegion_Trace : MainRegion_Trace = __Inactive__
 ctrl var inOutCycleRegion_Trace : InOutCycleRegion_Trace = __Inactive__
@@ -26,14 +26,14 @@ trans {
 	__pc := (if (mainRegion_Trace == _0) then 5 else 4);
 } or {
 	assume ((__trans == true) && (__pc == 5));
-	logs_Trace := _0(exit);
+	logs_Trace := _0_exit;
 	__pc := 4;
 } or {
 	assume ((__trans == true) && (__pc == 4));
 	testControl_start_In_system := true;
 	mainRegion_Trace := _1;
 	inputRegion_Trace := InputState;
-	logs_Trace := InputState(entry);
+	logs_Trace := InputState_entry;
 	__pc := 1;
 } or {
 	assume ((__trans == true) && (__pc == 3));
@@ -43,12 +43,12 @@ trans {
 	__pc := (if (inputRegion_Trace == InputState) then 8 else 7);
 } or {
 	assume ((__trans == true) && (__pc == 8));
-	logs_Trace := InputState(exit);
+	logs_Trace := InputState_exit;
 	__pc := 7;
 } or {
 	assume ((__trans == true) && (__pc == 7));
 	inputRegion_Trace := __Inactive__;
-	logs_Trace := t(;
+	logs_Trace := t_from_InputState_to_Choice0_effect;
 	__pc := 9;
 } or {
 	assume ((__trans == true) && (__pc == 9));
@@ -57,12 +57,12 @@ trans {
 	assume ((__trans == true) && (__pc == 10));
 	testControl_start_In_system := true;
 	inputRegion_Trace := InputState;
-	logs_Trace := InputState(entry);
+	logs_Trace := InputState_entry;
 	__pc := 1;
 } or {
 	assume ((__trans == true) && (__pc == 11));
 	inputRegion_Trace := InputState;
-	logs_Trace := InputState(entry);
+	logs_Trace := InputState_entry;
 	__pc := 1;
 } or {
 	assume ((__trans == true) && (__pc == 1));
@@ -72,13 +72,13 @@ trans {
 	__pc := (if (inOutCycleRegion_Trace == InOutCycleState) then 15 else 14);
 } or {
 	assume ((__trans == true) && (__pc == 15));
-	logs_Trace := InOutCycleState(exit);
+	logs_Trace := InOutCycleState_exit;
 	__pc := 14;
 } or {
 	assume ((__trans == true) && (__pc == 14));
 	inOutCycleVariable_Trace := (!(inOutCycleVariable_Trace));
 	inOutCycleRegion_Trace := InOutCycleState;
-	logs_Trace := InOutCycleState(entry);
+	logs_Trace := InOutCycleState_entry;
 	__pc := 12;
 } or {
 	assume ((__trans == true) && (__pc == 12));
@@ -92,12 +92,12 @@ trans {
 	__pc := (if (main_system == S1) then 20 else 19);
 } or {
 	assume ((__trans == true) && (__pc == 20));
-	logs_system := S1(exit);
+	logs_system := S1_exit;
 	__pc := 19;
 } or {
 	assume ((__trans == true) && (__pc == 19));
 	main_system := FS1;
-	logs_system := FS1(entry);
+	logs_system := FS1_entry;
 	__pc := 17;
 } or {
 	assume ((__trans == true) && (__pc == 17));
@@ -111,14 +111,14 @@ trans {
 	__pc := (if (mainRegion_Trace == _0) then 26 else 25);
 } or {
 	assume ((__trans == true) && (__pc == 26));
-	logs_Trace := _0(exit);
+	logs_Trace := _0_exit;
 	__pc := 25;
 } or {
 	assume ((__trans == true) && (__pc == 25));
 	testControl_start_In_system := true;
 	mainRegion_Trace := _1;
 	inputRegion_Trace := InputState;
-	logs_Trace := InputState(entry);
+	logs_Trace := InputState_entry;
 	__pc := 22;
 } or {
 	assume ((__trans == true) && (__pc == 24));
@@ -128,12 +128,12 @@ trans {
 	__pc := (if (inputRegion_Trace == InputState) then 29 else 28);
 } or {
 	assume ((__trans == true) && (__pc == 29));
-	logs_Trace := InputState(exit);
+	logs_Trace := InputState_exit;
 	__pc := 28;
 } or {
 	assume ((__trans == true) && (__pc == 28));
 	inputRegion_Trace := __Inactive__;
-	logs_Trace := t(;
+	logs_Trace := t_from_InputState_to_Choice0_effect;
 	__pc := 30;
 } or {
 	assume ((__trans == true) && (__pc == 30));
@@ -142,12 +142,12 @@ trans {
 	assume ((__trans == true) && (__pc == 31));
 	testControl_start_In_system := true;
 	inputRegion_Trace := InputState;
-	logs_Trace := InputState(entry);
+	logs_Trace := InputState_entry;
 	__pc := 22;
 } or {
 	assume ((__trans == true) && (__pc == 32));
 	inputRegion_Trace := InputState;
-	logs_Trace := InputState(entry);
+	logs_Trace := InputState_entry;
 	__pc := 22;
 } or {
 	assume ((__trans == true) && (__pc == 22));
@@ -157,13 +157,13 @@ trans {
 	__pc := (if (inOutCycleRegion_Trace == InOutCycleState) then 36 else 35);
 } or {
 	assume ((__trans == true) && (__pc == 36));
-	logs_Trace := InOutCycleState(exit);
+	logs_Trace := InOutCycleState_exit;
 	__pc := 35;
 } or {
 	assume ((__trans == true) && (__pc == 35));
 	inOutCycleVariable_Trace := (!(inOutCycleVariable_Trace));
 	inOutCycleRegion_Trace := InOutCycleState;
-	logs_Trace := InOutCycleState(entry);
+	logs_Trace := InOutCycleState_entry;
 	__pc := 33;
 } or {
 	assume ((__trans == true) && (__pc == 33));
@@ -188,66 +188,66 @@ init {
 	main_system := __Inactive__;
 	testControl_start_In_system := false;
 	mainRegion_Trace := _0;
-	logs_Trace := t(;
+	logs_Trace := t_from_InOutCycleInitialState_to_InOutCycleState_effect;
 	inOutCycleRegion_Trace := InOutCycleState;
-	logs_system := t(;
+	logs_system := t_from_Initial_to_S1_effect;
 	main_system := S1;
 	if ((mainRegion_Trace == _0)) {
-		logs_Trace := _0(entry);
+		logs_Trace := _0_entry;
 	}
 	else {
 		if ((mainRegion_Trace == _1)) {
-			logs_Trace := _1(entry);
+			logs_Trace := _1_entry;
 			if ((inputRegion_Trace == InputState)) {
-				logs_Trace := InputState(entry);
+				logs_Trace := InputState_entry;
 			}
 		}
 	}
 	if ((inOutCycleRegion_Trace == InOutCycleState)) {
-		logs_Trace := InOutCycleState(entry);
+		logs_Trace := InOutCycleState_entry;
 	}
 	if ((main_system == S1)) {
-		logs_system := S1(entry);
+		logs_system := S1_entry;
 	}
 	else {
 		if ((main_system == FS1)) {
-			logs_system := FS1(entry);
+			logs_system := FS1_entry;
 		}
 	}
 	if (((mainRegion_Trace == _0) && inOutCycleVariable_Trace)) {
 		if ((mainRegion_Trace == _0)) {
-			logs_Trace := _0(exit);
+			logs_Trace := _0_exit;
 		}
 		testControl_start_In_system := true;
 		mainRegion_Trace := _1;
 		inputRegion_Trace := InputState;
-		logs_Trace := InputState(entry);
+		logs_Trace := InputState_entry;
 	}
 	else {
 		if (((inputRegion_Trace == InputState) && inOutCycleVariable_Trace)) {
 			if ((inputRegion_Trace == InputState)) {
-				logs_Trace := InputState(exit);
+				logs_Trace := InputState_exit;
 			}
 			inputRegion_Trace := __Inactive__;
-			logs_Trace := t(;
+			logs_Trace := t_from_InputState_to_Choice0_effect;
 			if (testControl_start_In_Trace) {
 				testControl_start_In_system := true;
 				inputRegion_Trace := InputState;
-				logs_Trace := InputState(entry);
+				logs_Trace := InputState_entry;
 			}
 			else {
 				inputRegion_Trace := InputState;
-				logs_Trace := InputState(entry);
+				logs_Trace := InputState_entry;
 			}
 		}
 	}
 	if ((inOutCycleRegion_Trace == InOutCycleState)) {
 		if ((inOutCycleRegion_Trace == InOutCycleState)) {
-			logs_Trace := InOutCycleState(exit);
+			logs_Trace := InOutCycleState_exit;
 		}
 		inOutCycleVariable_Trace := (!(inOutCycleVariable_Trace));
 		inOutCycleRegion_Trace := InOutCycleState;
-		logs_Trace := InOutCycleState(entry);
+		logs_Trace := InOutCycleState_entry;
 	}
 	testControl_start_In_Trace := false;
 }

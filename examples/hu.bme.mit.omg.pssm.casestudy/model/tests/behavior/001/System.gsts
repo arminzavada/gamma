@@ -24,26 +24,20 @@
   <typeDeclarations name="TraceLogs">
     <type xsi:type="hu.bme.mit.gamma.expression:EnumerationTypeDefinition">
       <literals name="None"/>
-      <literals name="t("/>
-      <literals name="t("/>
-      <literals name="_0(entry)"/>
-      <literals name="_1(entry)"/>
-      <literals name="InputState(entry)"/>
-      <literals name="InOutCycleState(entry)"/>
-      <literals name="InOutCycleState(exit)"/>
-      <literals name="t("/>
-      <literals name="InOutCycleState(entry)"/>
-      <literals name="_0(exit)"/>
-      <literals name="t("/>
-      <literals name="t("/>
-      <literals name="_1(entry)"/>
-      <literals name="InputState(entry)"/>
-      <literals name="t("/>
-      <literals name="InputState(entry)"/>
-      <literals name="t("/>
-      <literals name="InputState(entry)"/>
-      <literals name="InputState(exit)"/>
-      <literals name="t("/>
+      <literals name="t_from_Initial_to__0_effect"/>
+      <literals name="t_from_InOutCycleInitialState_to_InOutCycleState_effect"/>
+      <literals name="_0_entry"/>
+      <literals name="_1_entry"/>
+      <literals name="InputState_entry"/>
+      <literals name="InOutCycleState_entry"/>
+      <literals name="_0_exit"/>
+      <literals name="t_from__0_to__1_effect"/>
+      <literals name="t_from_InputInitialState_to_InputState_effect"/>
+      <literals name="InOutCycleState_exit"/>
+      <literals name="t_from_InOutCycleState_to_InOutCycleState_effect"/>
+      <literals name="t_from_Choice0_to_InputState_effect"/>
+      <literals name="InputState_exit"/>
+      <literals name="t_from_InputState_to_Choice0_effect"/>
     </type>
   </typeDeclarations>
   <typeDeclarations name="Main_Target">
@@ -56,12 +50,11 @@
   <typeDeclarations name="TargetLogs">
     <type xsi:type="hu.bme.mit.gamma.expression:EnumerationTypeDefinition">
       <literals name="None"/>
-      <literals name="t("/>
-      <literals name="S1(entry)"/>
-      <literals name="FS1(entry)"/>
-      <literals name="S1(exit)"/>
-      <literals name="t("/>
-      <literals name="FS1(entry)"/>
+      <literals name="t_from_Initial_to_S1_effect"/>
+      <literals name="S1_entry"/>
+      <literals name="FS1_entry"/>
+      <literals name="S1_exit"/>
+      <literals name="t_from_S1_to_FS1_effect"/>
     </type>
   </typeDeclarations>
   <variableDeclarations name="testControl_start_In_Trace">
@@ -124,11 +117,11 @@
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
-  <variableGroups variables="//@variableDeclarations.0 //@variableDeclarations.6">
-    <annotation xsi:type="hu.bme.mit.gamma.xsts:InEventGroup"/>
-  </variableGroups>
   <variableGroups>
     <annotation xsi:type="hu.bme.mit.gamma.xsts:OutEventGroup"/>
+  </variableGroups>
+  <variableGroups variables="//@variableDeclarations.0 //@variableDeclarations.6">
+    <annotation xsi:type="hu.bme.mit.gamma.xsts:InEventGroup"/>
   </variableGroups>
   <variableGroups variables="//@variableDeclarations.1 //@variableDeclarations.2 //@variableDeclarations.3 //@variableDeclarations.7">
     <annotation xsi:type="hu.bme.mit.gamma.xsts:RegionGroup"/>
@@ -336,7 +329,7 @@
               </condition>
               <then xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
                 <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-                <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.10">
+                <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.7">
                   <typeReference reference="//@typeDeclarations.3"/>
                 </rhs>
               </then>
@@ -360,7 +353,7 @@
             </actions>
             <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
               <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-              <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.14">
+              <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
                 <typeReference reference="//@typeDeclarations.3"/>
               </rhs>
             </actions>
@@ -385,7 +378,7 @@
                 </condition>
                 <then xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
                   <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-                  <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.19">
+                  <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.13">
                     <typeReference reference="//@typeDeclarations.3"/>
                   </rhs>
                 </then>
@@ -399,7 +392,7 @@
               </actions>
               <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
                 <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-                <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.20">
+                <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.14">
                   <typeReference reference="//@typeDeclarations.3"/>
                 </rhs>
               </actions>
@@ -418,7 +411,7 @@
                   </actions>
                   <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
                     <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-                    <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.16">
+                    <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
                       <typeReference reference="//@typeDeclarations.3"/>
                     </rhs>
                   </actions>
@@ -432,7 +425,7 @@
                   </actions>
                   <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
                     <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-                    <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.18">
+                    <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
                       <typeReference reference="//@typeDeclarations.3"/>
                     </rhs>
                   </actions>
@@ -459,7 +452,7 @@
               </condition>
               <then xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
                 <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-                <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.7">
+                <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.10">
                   <typeReference reference="//@typeDeclarations.3"/>
                 </rhs>
               </then>
@@ -479,7 +472,7 @@
             </actions>
             <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
               <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-              <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.9">
+              <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.6">
                 <typeReference reference="//@typeDeclarations.3"/>
               </rhs>
             </actions>
@@ -570,7 +563,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.10">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -612,7 +605,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.14">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -699,7 +692,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.19">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.13">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -731,7 +724,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.20">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.14">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -791,7 +784,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.16">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -823,7 +816,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.18">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -907,7 +900,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.10">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -945,7 +938,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.9">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1088,7 +1081,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.5/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.5/@type/@literals.3">
           <typeReference reference="//@typeDeclarations.5"/>
         </rhs>
       </actions>
@@ -1199,7 +1192,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.10">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1241,7 +1234,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.14">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1328,7 +1321,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.19">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.13">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1360,7 +1353,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.20">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.14">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1420,7 +1413,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.16">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1452,7 +1445,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.18">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.5">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1536,7 +1529,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.10">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>
@@ -1574,7 +1567,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.9">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.3/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.3"/>
         </rhs>
       </actions>

@@ -43,16 +43,16 @@ class LogActionInjector {
 	
 	private dispatch def injectLogAction(Transition transition) {
 		transition.effects.add(0, createLogStatement => [
-			it.text = "t(" transition.sourceState.name + "_to_" + transition.targetState.name + ")(effect)"
+			it.text = "t_from_" + transition.sourceState.name + "_to_" + transition.targetState.name + "_effect"
 		])
 	}
 	
 	private dispatch def injectLogAction(State state) {
 		state.entryActions.add(0, createLogStatement => [
-			it.text = state.name + "(entry)"
+			it.text = state.name + "_entry"
 		])
 		state.exitActions.add(0, createLogStatement => [
-			it.text = state.name + "(exit)"
+			it.text = state.name + "_exit"
 		])
 	}
 

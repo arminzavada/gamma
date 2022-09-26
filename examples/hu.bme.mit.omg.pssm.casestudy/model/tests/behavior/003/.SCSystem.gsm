@@ -86,6 +86,17 @@
     <transitions sourceState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.0" targetState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1"/>
     <transitions sourceState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.1">
+          <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
+        </eventReference>
+      </trigger>
+      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.0">
+        <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
+      </effects>
+    </transitions>
+    <transitions sourceState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.3">
           <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
         </eventReference>
@@ -145,17 +156,6 @@
           <parameter href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.4/@event/@parameterDeclarations.0"/>
         </arguments>
         <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
-      </effects>
-    </transitions>
-    <transitions sourceState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1">
-      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
-        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.1">
-          <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
-        </eventReference>
-      </trigger>
-      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
-      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.0">
-        <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
       </effects>
     </transitions>
     <transitions sourceState="//@components.2/@regions.1/@stateNodes.0" targetState="//@components.2/@regions.1/@stateNodes.1"/>

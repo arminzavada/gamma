@@ -33,6 +33,6 @@ statechart Trace [
 	transition from Choice0 to InputState [else]
 	transition from OutputInitialState to FirstOutputState
 	transition from InOutCycleInitialState to InOutCycleState
-	transition from InOutCycleState to InOutCycleState when cycle / inOutCycleVariable := not
-		inOutCycleVariable;
+	transition from InOutCycleState to InOutCycleState when cycle / inOutCycleVariable :=
+		!inOutCycleVariable;
 }

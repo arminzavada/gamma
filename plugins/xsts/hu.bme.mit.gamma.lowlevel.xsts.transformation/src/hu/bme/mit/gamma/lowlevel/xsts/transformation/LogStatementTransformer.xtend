@@ -35,9 +35,9 @@ class LogStatementTransformer {
 	}
 	 
 	def transformLogStatement(LogStatement logStatement) {
-		var component = logStatement.component
-		var literal = logStatement.text.createLogLiteral
-		var type = component.getTypeDefinition
+		val component = logStatement.component
+		val literal = logStatement.logLiteral
+		val type = component.getTypeDefinition
 		type.literals += literal
 		return createAssignmentAction(component.logVariable, literal.createEnumerationLiteralExpression)
 	}
@@ -47,7 +47,7 @@ class LogStatementTransformer {
 			return trace.getXStsVariable(component)
 		}
 		
-		var varDecl = createVariableDeclaration => [
+		val varDecl = createVariableDeclaration => [
 			it.name = "logs"
 		]
 		
@@ -66,7 +66,7 @@ class LogStatementTransformer {
 			return trace.getType(component)
 		}
 		
-		var typeDecl = createTypeDeclaration => [
+		val typeDecl = createTypeDeclaration => [
 			it.name = component.name + "Logs"
 			it.type = createEnumerationTypeDefinition => [ defi |
 				defi.literals += createLogLiteral("None")
@@ -80,6 +80,19 @@ class LogStatementTransformer {
 	
 	private def getTypeDefinition(Component component) {
 		return component.getTypeDeclaration.type as EnumerationTypeDefinition
+	}
+	
+	private def getLogLiteral(LogStatement logStatement) {
+		val component = logStatement.component
+		val type = component.getTypeDefinition
+		
+		var literal = type.literals.findFirst[it.name == logStatement.text]
+		
+		if (literal === null) {
+			literal = createLogLiteral(logStatement.text)
+		}
+		
+		return literal
 	}
 	
 	private def createLogLiteral(String text) {
