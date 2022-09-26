@@ -2,7 +2,7 @@ package target
 import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/Trace.gcd"
 import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/target.gcd"
 import "/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd"
-scheduled-async System [
+cascade System [
 	port testControl : requires TestControl
 ] {
 	component Trace : Trace

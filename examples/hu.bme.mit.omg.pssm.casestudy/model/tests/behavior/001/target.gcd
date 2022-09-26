@@ -2,7 +2,6 @@ package target
 
 import "interfaces"
 
-@Asynchronous
 statechart Target [
 	port testControl : requires TestControl
 ] {	

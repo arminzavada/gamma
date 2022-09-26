@@ -1,6 +1,5 @@
 package trace
 import "/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd"
-@Asynchronous
 statechart Trace [
 	port _testControl_ : provides TestControl
 	port testControl : requires TestControl

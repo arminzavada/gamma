@@ -1,35 +1,24 @@
 <?xml version="1.0" encoding="ASCII"?>
 <hu.bme.mit.gamma.statechart.interface:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hu.bme.mit.gamma.action="http://www.mit.bme.hu/gamma/action/Model" xmlns:hu.bme.mit.gamma.expression="http://www.mit.bme.hu/gamma/expression/Model" xmlns:hu.bme.mit.gamma.statechart="http://www.mit.bme.hu/gamma/statechart/Model/Statechart" xmlns:hu.bme.mit.gamma.statechart.composite="http://www.mit.bme.hu/gamma/statechart/Model/Composite" xmlns:hu.bme.mit.gamma.statechart.interface="http://www.mit.bme.hu/gamma/statechart/Model/Interface" name="targetView">
-  <components xsi:type="hu.bme.mit.gamma.statechart.composite:ScheduledAsynchronousCompositeComponent" name="System">
+  <components xsi:type="hu.bme.mit.gamma.statechart.composite:CascadeCompositeComponent" name="System">
     <ports name="testControl">
       <interfaceRealization realizationMode="REQUIRED">
         <interface href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1"/>
       </interfaceRealization>
     </ports>
     <portBindings compositeSystemPort="//@components.0/@ports.0">
-      <instancePortReference instance="//@components.0/@components.0" port="//@components.2/@ports.1"/>
+      <instancePortReference instance="//@components.0/@components.0" port="//@components.1/@ports.1"/>
     </portBindings>
     <channels xsi:type="hu.bme.mit.gamma.statechart.composite:SimpleChannel">
-      <providedPort instance="//@components.0/@components.0" port="//@components.2/@ports.0"/>
-      <requiredPort instance="//@components.0/@components.1" port="//@components.4/@ports.0"/>
+      <providedPort instance="//@components.0/@components.0" port="//@components.1/@ports.0"/>
+      <requiredPort instance="//@components.0/@components.1" port="//@components.2/@ports.0"/>
     </channels>
     <components name="Trace" type="//@components.1"/>
-    <components name="system" type="//@components.3"/>
+    <components name="system" type="//@components.2"/>
     <initialExecutionList componentInstance="//@components.0/@components.0"/>
     <executionList componentInstance="//@components.0/@components.0"/>
     <executionList componentInstance="//@components.0/@components.1"/>
     <executionList componentInstance="//@components.0/@components.0"/>
-  </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="Trace">
-    <annotations xsi:type="hu.bme.mit.gamma.statechart.interface:WrapperComponentAnnotation"/>
-    <controlSpecifications>
-      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
-    </controlSpecifications>
-    <messageQueues name="TraceMessageQueue" priority="1">
-      <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="4"/>
-      <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.2/@ports.1"/>
-    </messageQueues>
-    <wrappedComponent name="Trace_Trace" type="//@components.2"/>
   </components>
   <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="Trace">
     <regions name="MainRegion">
@@ -60,47 +49,36 @@
       <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
       <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
     </variableDeclarations>
-    <transitions sourceState="//@components.2/@regions.0/@stateNodes.0" targetState="//@components.2/@regions.0/@stateNodes.1"/>
-    <transitions sourceState="//@components.2/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.2">
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.0" targetState="//@components.1/@regions.0/@stateNodes.1"/>
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.1" targetState="//@components.1/@regions.0/@stateNodes.2">
       <trigger xsi:type="hu.bme.mit.gamma.statechart:OnCycleTrigger"/>
-      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
-      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.0">
+      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.1/@ports.0">
         <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
       </effects>
     </transitions>
-    <transitions sourceState="//@components.2/@regions.0/@stateNodes.2/@regions.0/@stateNodes.0" targetState="//@components.2/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1"/>
-    <transitions sourceState="//@components.2/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1">
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.0" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1"/>
+    <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
-        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.1">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.1/@ports.1">
           <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
         </eventReference>
       </trigger>
-      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
-      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.0">
+      <guard xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.1/@ports.0">
         <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
       </effects>
     </transitions>
-    <transitions sourceState="//@components.2/@regions.1/@stateNodes.0" targetState="//@components.2/@regions.1/@stateNodes.1"/>
-    <transitions sourceState="//@components.2/@regions.1/@stateNodes.1" targetState="//@components.2/@regions.1/@stateNodes.1">
+    <transitions sourceState="//@components.1/@regions.1/@stateNodes.0" targetState="//@components.1/@regions.1/@stateNodes.1"/>
+    <transitions sourceState="//@components.1/@regions.1/@stateNodes.1" targetState="//@components.1/@regions.1/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart:OnCycleTrigger"/>
       <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:NotExpression">
-          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.2/@variableDeclarations.0"/>
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>
         </rhs>
       </effects>
     </transitions>
-  </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="Target">
-    <annotations xsi:type="hu.bme.mit.gamma.statechart.interface:WrapperComponentAnnotation"/>
-    <controlSpecifications>
-      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
-    </controlSpecifications>
-    <messageQueues name="TargetMessageQueue" priority="1">
-      <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="4"/>
-      <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.4/@ports.0"/>
-    </messageQueues>
-    <wrappedComponent name="system_Target" type="//@components.4"/>
   </components>
   <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="Target">
     <regions name="Main">
@@ -113,10 +91,10 @@
         <interface href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1"/>
       </interfaceRealization>
     </ports>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.0" targetState="//@components.4/@regions.0/@stateNodes.1"/>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.2">
+    <transitions sourceState="//@components.2/@regions.0/@stateNodes.0" targetState="//@components.2/@regions.0/@stateNodes.1"/>
+    <transitions sourceState="//@components.2/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.2">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
-        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.0">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.0">
           <event href="/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
         </eventReference>
       </trigger>
