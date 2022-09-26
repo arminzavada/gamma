@@ -32,6 +32,11 @@
         </regions>
       </stateNodes>
     </regions>
+    <regions name="OutputRegion">
+      <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="OutputInitialState"/>
+      <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="OutputState"/>
+      <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="FirstOutputState"/>
+    </regions>
     <regions name="InOutCycleRegion">
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="InOutCycleInitialState"/>
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="InOutCycleState"/>
@@ -76,8 +81,9 @@
     <transitions sourceState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.2" targetState="//@components.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1">
       <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
     </transitions>
-    <transitions sourceState="//@components.1/@regions.1/@stateNodes.0" targetState="//@components.1/@regions.1/@stateNodes.1"/>
-    <transitions sourceState="//@components.1/@regions.1/@stateNodes.1" targetState="//@components.1/@regions.1/@stateNodes.1">
+    <transitions sourceState="//@components.1/@regions.1/@stateNodes.0" targetState="//@components.1/@regions.1/@stateNodes.2"/>
+    <transitions sourceState="//@components.1/@regions.2/@stateNodes.0" targetState="//@components.1/@regions.2/@stateNodes.1"/>
+    <transitions sourceState="//@components.1/@regions.2/@stateNodes.1" targetState="//@components.1/@regions.2/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart:OnCycleTrigger"/>
       <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.1/@variableDeclarations.0"/>

@@ -3,6 +3,6 @@ import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/System.gcd"
 analysis {
 	component : System
 	language : Theta
-	optimize : true
+	optimize : false
 	split-by : CHOICE
 }

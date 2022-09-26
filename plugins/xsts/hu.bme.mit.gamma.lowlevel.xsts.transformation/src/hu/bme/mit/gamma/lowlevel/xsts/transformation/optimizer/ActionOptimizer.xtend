@@ -93,7 +93,7 @@ class ActionOptimizer {
 				
 				.optimizeIfActions
 				
-			newXStsAction.optimizeAssignmentActions
+			//newXStsAction.optimizeAssignmentActions
 			newXStsAction.deleteTrivialNonDeterministicActions
 			newXStsAction = newXStsAction.optimizeParallelActions // Might be resource intensive
 			newXStsAction.deleteUnnecessaryAssumeActions // Not correct in other transformation implementations
