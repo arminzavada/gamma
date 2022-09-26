@@ -1,9 +1,13 @@
 package target
 import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/Trace.gcd"
 import "/hu.bme.mit.omg.pssm/model/tests/behavior/001/target.gcd"
-scheduled-async System {
+import "/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd"
+scheduled-async System [
+	port testControl : requires TestControl
+] {
 	component Trace : Trace
 	component system : Target
+	bind testControl -> Trace.testControl
 	channel [ Trace._testControl_ ] -o)- [ system.testControl ]
 	initial execute Trace
 	execute Trace, system, Trace

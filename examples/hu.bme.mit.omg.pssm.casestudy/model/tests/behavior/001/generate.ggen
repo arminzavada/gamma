@@ -1,8 +1,7 @@
-import "target"
 import trace "trace.get"
 
 trace-replay {
 	trace : Trace
 	system-file : "System"
-	environment-model : off
+	environment-model : asynchronous
 }

@@ -1,0 +1,17 @@
+package target
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/003/Trace.gcd"
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/003/target.gcd"
+import "/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd"
+scheduled-async SCSystem [
+	port testControl : requires TestControl
+	port control : requires SUTControl
+] {
+	component Trace : Trace
+	component sCSystem : Target
+	bind testControl -> Trace.testControl
+	bind control -> Trace.control
+	channel [ Trace._testControl_ ] -o)- [ sCSystem.testControl ]
+	channel [ Trace._control_ ] -o)- [ sCSystem.control ]
+	initial execute Trace
+	execute Trace, sCSystem, Trace
+}

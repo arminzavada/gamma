@@ -12,6 +12,7 @@ interface TestControl {
 	out event start
 }
 
-interface ActivityInterface {
+interface ActivityControllerInterface {
+	in persistent event control(isActive : boolean)
 	out event done
 }

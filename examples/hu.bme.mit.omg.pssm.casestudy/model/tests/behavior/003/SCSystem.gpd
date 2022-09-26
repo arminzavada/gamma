@@ -1,0 +1,3 @@
+import "/hu.bme.mit.omg.pssm/model/tests/behavior/003/SCSystem.gcd"
+component SCSystem
+E F [ { state Trace.MainRegion._0 } ]

@@ -1,38 +1,67 @@
 package target
 
 import "interfaces"
-import "types"
 
-async Target {
+async Target [
+	port testControl : requires TestControl
+	port control : requires SUTControl
+] {
+	component sc : SC
+	component act : Activity
 	
+	bind testControl -> sc.testControl
+	bind control -> sc.control
+	
+	channel [ act.controller ] -o)- [ sc.doActivityController ]
 }
 
 @Asynchronous
 statechart SC [
 	port testControl : requires TestControl
 	port control : requires SUTControl
+	
+	port doActivityController : requires ActivityControllerInterface
 ] {
-	var log : Log := Log::None
 	
 	region Main {
 		initial Initial
+		state Wait
 		state S1 {
-			entry / log := Log::S1_Entry;
-			exit / log := Log::S1_Exit;
+			entry / raise doActivityController.control(true);
+			exit / raise doActivityController.control(false);
 		}
-		state FS1 {
-			entry / log := Log::FS_Entry;
-			exit / log := Log::FS_Exit;
-		}
+		state Error
+		state FS1
 	}
 	
-	transition from Initial to S1
-	transition from S1 to FS1 when testControl.start
+	transition from Initial to Wait
+	transition from Wait to S1 when testControl.start
+	transition from S1 to Error when doActivityController.done
+	transition from S1 to FS1 when control.anotherSignal
+}
+
+activity DoActivity [
+	@ActivityController
+	port controller : provides ActivityControllerInterface
+] {
+	
+	initial init
+	
+	action end {
+		raise controller.done;
+	}
+	
+	final fin
+	
+	succession from init to end
+	succession from end to fin
 	
 }
 
-activity doActivity {
+adapter Activity of component doActivity : DoActivity {	
+	when any / run
 	
-}
-
-adapter Activity of component doActivity : doActivity 
+	queue controllerMessages(priority = 1, capacity = 1) {
+		controller.any
+	}
+} 

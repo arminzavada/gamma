@@ -1,70 +1,270 @@
+//@splitted
+//@noenv
 type MainRegion_Trace : { __Inactive__, _0, _1 }
 type InOutCycleRegion_Trace : { __Inactive__, InOutCycleState }
-type Log : { None, S1_Entry, S1_Exit, FS_Entry, FS_Exit }
+type InputRegion_Trace : { __Inactive__, InputState }
+type TraceLogs : { None, Initial____0, InOutCycleInitialState___InOutCycleState, Entry__0, Entry__1, Entry_InputState, Entry_InOutCycleState, Exit_InOutCycleState, InOutCycleState___InOutCycleState, Entry_InOutCycleState, Exit_InputState, InputState___InputState, Entry_InputState, Exit__0, _0____1, InputInitialState___InputState, Entry__1, Entry_InputState }
 type Main_Target : { __Inactive__, S1, FS1 }
+type TargetLogs : { None, Initial___S1, Entry_S1, Entry_FS1, Exit_S1, S1___FS1, Entry_FS1 }
 var _testControl__start_Out_Trace_Trace : boolean = false
+var testControl_start_In_Trace_Trace : boolean = false
 ctrl var mainRegion_Trace_Trace : MainRegion_Trace = __Inactive__
 ctrl var inOutCycleRegion_Trace_Trace : InOutCycleRegion_Trace = __Inactive__
+ctrl var inputRegion_Trace_Trace : InputRegion_Trace = __Inactive__
 var inOutCycleVariable_Trace_Trace : boolean = false
+var logs_Trace_Trace : TraceLogs = None
 var testControl_start_In_system_Target : boolean = false
 ctrl var main_system_Target : Main_Target = __Inactive__
-var log_system_Target : Log = None
+var logs_system_Target : TargetLogs = None
 var master_TraceMessageQueueOfTrace : integer
 ctrl var sizeMasterTraceMessageQueueOfTrace : integer
 var master_TargetMessageQueueOfsystem : [integer] -> integer
 ctrl var sizeMasterTargetMessageQueueOfsystem : integer
+var __pc : integer = 0
+var __trans : boolean = false
+var eventId_master_TraceMessageQueueOfTrace_1503625684 : integer
 
 trans {
-	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer = master_TraceMessageQueueOfTrace;
-		master_TraceMessageQueueOfTrace := 0;
-		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
-	}
-	if (_testControl__start_Out_Trace_Trace) {
-		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
-			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
-			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
-		}
-		_testControl__start_Out_Trace_Trace := false;
-	}
-	if ((0 < sizeMasterTargetMessageQueueOfsystem)) {
-		local var eventId_master_TargetMessageQueueOfsystem_2113539940 : integer = master_TargetMessageQueueOfsystem[0];
-		master_TargetMessageQueueOfsystem := [0 <- master_TargetMessageQueueOfsystem[1], 1 <- master_TargetMessageQueueOfsystem[2], 2 <- master_TargetMessageQueueOfsystem[3], 3 <- 0, default <- 0];
-		sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem - 1);
-		choice {
-			assume (eventId_master_TargetMessageQueueOfsystem_2113539940 == 0);
-		} or {
-			assume (eventId_master_TargetMessageQueueOfsystem_2113539940 == 1);
-			testControl_start_In_system_Target := true;
-			if (((main_system_Target == S1) && testControl_start_In_system_Target)) {
-				if ((main_system_Target == S1)) {
-					log_system_Target := S1_Exit;
-				}
-				main_system_Target := FS1;
-				log_system_Target := FS_Entry;
-			}
-			testControl_start_In_system_Target := false;
-		}
-	}
-	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer = master_TraceMessageQueueOfTrace;
-		master_TraceMessageQueueOfTrace := 0;
-		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
-	}
-	if (_testControl__start_Out_Trace_Trace) {
-		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
-			master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
-			sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
-		}
-		_testControl__start_Out_Trace_Trace := false;
-	}
+	assume ((__trans == true) && (__pc == 0));
+	__pc := (if (0 < sizeMasterTraceMessageQueueOfTrace) then 2 else 1);
+} or {
+	assume ((__trans == true) && (__pc == 2));
+	local var eventId_master_TraceMessageQueueOfTrace_1503625684 : integer = master_TraceMessageQueueOfTrace;
+	master_TraceMessageQueueOfTrace := 0;
+	sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
+	__pc := 3;
+} or {
+	assume ((__trans == true) && (__pc == 3));
+	assume (eventId_master_TraceMessageQueueOfTrace_1503625684 == 0);
+	__pc := 1;
+} or {
+	assume ((__trans == true) && (__pc == 3));
+	assume (eventId_master_TraceMessageQueueOfTrace_1503625684 == 1);
+	testControl_start_In_Trace_Trace := true;
+	_testControl__start_Out_Trace_Trace := false;
+	__pc := 4;
+} or {
+	assume ((__trans == true) && (__pc == 4));
+	__pc := (if ((mainRegion_Trace_Trace == _0) && inOutCycleVariable_Trace_Trace) then 6 else 7);
+} or {
+	assume ((__trans == true) && (__pc == 6));
+	__pc := (if (mainRegion_Trace_Trace == _0) then 9 else 8);
+} or {
+	assume ((__trans == true) && (__pc == 9));
+	logs_Trace_Trace := Exit__0;
+	__pc := 8;
+} or {
+	assume ((__trans == true) && (__pc == 8));
+	_testControl__start_Out_Trace_Trace := true;
+	mainRegion_Trace_Trace := _1;
+	inputRegion_Trace_Trace := InputState;
+	logs_Trace_Trace := Entry_InputState;
+	__pc := 5;
+} or {
+	assume ((__trans == true) && (__pc == 7));
+	__pc := (if ((inputRegion_Trace_Trace == InputState) && testControl_start_In_Trace_Trace && inOutCycleVariable_Trace_Trace) then 10 else 5);
+} or {
+	assume ((__trans == true) && (__pc == 10));
+	__pc := (if (inputRegion_Trace_Trace == InputState) then 12 else 11);
+} or {
+	assume ((__trans == true) && (__pc == 12));
+	logs_Trace_Trace := Exit_InputState;
+	__pc := 11;
+} or {
+	assume ((__trans == true) && (__pc == 11));
+	_testControl__start_Out_Trace_Trace := true;
+	inputRegion_Trace_Trace := InputState;
+	logs_Trace_Trace := Entry_InputState;
+	__pc := 5;
+} or {
+	assume ((__trans == true) && (__pc == 5));
+	__pc := (if (inOutCycleRegion_Trace_Trace == InOutCycleState) then 14 else 13);
+} or {
+	assume ((__trans == true) && (__pc == 14));
+	__pc := (if (inOutCycleRegion_Trace_Trace == InOutCycleState) then 16 else 15);
+} or {
+	assume ((__trans == true) && (__pc == 16));
+	logs_Trace_Trace := Exit_InOutCycleState;
+	__pc := 15;
+} or {
+	assume ((__trans == true) && (__pc == 15));
+	inOutCycleVariable_Trace_Trace := (!(inOutCycleVariable_Trace_Trace));
+	inOutCycleRegion_Trace_Trace := InOutCycleState;
+	logs_Trace_Trace := Entry_InOutCycleState;
+	__pc := 13;
+} or {
+	assume ((__trans == true) && (__pc == 13));
+	testControl_start_In_Trace_Trace := false;
+	__pc := 1;
+} or {
+	assume ((__trans == true) && (__pc == 1));
+	__pc := (if _testControl__start_Out_Trace_Trace then 18 else 17);
+} or {
+	assume ((__trans == true) && (__pc == 18));
+	__pc := (if (sizeMasterTargetMessageQueueOfsystem < 4) then 20 else 19);
+} or {
+	assume ((__trans == true) && (__pc == 20));
+	master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+	sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+	__pc := 19;
+} or {
+	assume ((__trans == true) && (__pc == 19));
+	_testControl__start_Out_Trace_Trace := false;
+	__pc := 17;
+} or {
+	assume ((__trans == true) && (__pc == 17));
+	__pc := (if (0 < sizeMasterTargetMessageQueueOfsystem) then 22 else 21);
+} or {
+	assume ((__trans == true) && (__pc == 22));
+	local var eventId_master_TargetMessageQueueOfsystem_252617304 : integer = master_TargetMessageQueueOfsystem[0];
+	master_TargetMessageQueueOfsystem := [0 <- master_TargetMessageQueueOfsystem[1], 1 <- master_TargetMessageQueueOfsystem[2], 2 <- master_TargetMessageQueueOfsystem[3], 3 <- 0, default <- 0];
+	sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem - 1);
+	__pc := 23;
+} or {
+	assume ((__trans == true) && (__pc == 23));
+	assume (eventId_master_TargetMessageQueueOfsystem_252617304 == 0);
+	__pc := 21;
+} or {
+	assume ((__trans == true) && (__pc == 23));
+	assume (eventId_master_TargetMessageQueueOfsystem_252617304 == 1);
+	testControl_start_In_system_Target := true;
+	__pc := 24;
+} or {
+	assume ((__trans == true) && (__pc == 24));
+	__pc := (if ((main_system_Target == S1) && testControl_start_In_system_Target) then 26 else 25);
+} or {
+	assume ((__trans == true) && (__pc == 26));
+	__pc := (if (main_system_Target == S1) then 28 else 27);
+} or {
+	assume ((__trans == true) && (__pc == 28));
+	logs_system_Target := Exit_S1;
+	__pc := 27;
+} or {
+	assume ((__trans == true) && (__pc == 27));
+	main_system_Target := FS1;
+	logs_system_Target := Entry_FS1;
+	__pc := 25;
+} or {
+	assume ((__trans == true) && (__pc == 25));
+	testControl_start_In_system_Target := false;
+	__pc := 21;
+} or {
+	assume ((__trans == true) && (__pc == 21));
+	__pc := (if (0 < sizeMasterTraceMessageQueueOfTrace) then 30 else 29);
+} or {
+	assume ((__trans == true) && (__pc == 30));
+	local var eventId_master_TraceMessageQueueOfTrace_1503625684 : integer = master_TraceMessageQueueOfTrace;
+	master_TraceMessageQueueOfTrace := 0;
+	sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
+	__pc := 31;
+} or {
+	assume ((__trans == true) && (__pc == 31));
+	assume (eventId_master_TraceMessageQueueOfTrace_1503625684 == 0);
+	__pc := 29;
+} or {
+	assume ((__trans == true) && (__pc == 31));
+	assume (eventId_master_TraceMessageQueueOfTrace_1503625684 == 1);
+	testControl_start_In_Trace_Trace := true;
+	_testControl__start_Out_Trace_Trace := false;
+	__pc := 32;
+} or {
+	assume ((__trans == true) && (__pc == 32));
+	__pc := (if ((mainRegion_Trace_Trace == _0) && inOutCycleVariable_Trace_Trace) then 34 else 35);
+} or {
+	assume ((__trans == true) && (__pc == 34));
+	__pc := (if (mainRegion_Trace_Trace == _0) then 37 else 36);
+} or {
+	assume ((__trans == true) && (__pc == 37));
+	logs_Trace_Trace := Exit__0;
+	__pc := 36;
+} or {
+	assume ((__trans == true) && (__pc == 36));
+	_testControl__start_Out_Trace_Trace := true;
+	mainRegion_Trace_Trace := _1;
+	inputRegion_Trace_Trace := InputState;
+	logs_Trace_Trace := Entry_InputState;
+	__pc := 33;
+} or {
+	assume ((__trans == true) && (__pc == 35));
+	__pc := (if ((inputRegion_Trace_Trace == InputState) && testControl_start_In_Trace_Trace && inOutCycleVariable_Trace_Trace) then 38 else 33);
+} or {
+	assume ((__trans == true) && (__pc == 38));
+	__pc := (if (inputRegion_Trace_Trace == InputState) then 40 else 39);
+} or {
+	assume ((__trans == true) && (__pc == 40));
+	logs_Trace_Trace := Exit_InputState;
+	__pc := 39;
+} or {
+	assume ((__trans == true) && (__pc == 39));
+	_testControl__start_Out_Trace_Trace := true;
+	inputRegion_Trace_Trace := InputState;
+	logs_Trace_Trace := Entry_InputState;
+	__pc := 33;
+} or {
+	assume ((__trans == true) && (__pc == 33));
+	__pc := (if (inOutCycleRegion_Trace_Trace == InOutCycleState) then 42 else 41);
+} or {
+	assume ((__trans == true) && (__pc == 42));
+	__pc := (if (inOutCycleRegion_Trace_Trace == InOutCycleState) then 44 else 43);
+} or {
+	assume ((__trans == true) && (__pc == 44));
+	logs_Trace_Trace := Exit_InOutCycleState;
+	__pc := 43;
+} or {
+	assume ((__trans == true) && (__pc == 43));
+	inOutCycleVariable_Trace_Trace := (!(inOutCycleVariable_Trace_Trace));
+	inOutCycleRegion_Trace_Trace := InOutCycleState;
+	logs_Trace_Trace := Entry_InOutCycleState;
+	__pc := 41;
+} or {
+	assume ((__trans == true) && (__pc == 41));
+	testControl_start_In_Trace_Trace := false;
+	__pc := 29;
+} or {
+	assume ((__trans == true) && (__pc == 29));
+	__pc := (if _testControl__start_Out_Trace_Trace then 45 else 0);
+} or {
+	assume ((__trans == true) && (__pc == 45));
+	__pc := (if (sizeMasterTargetMessageQueueOfsystem < 4) then 47 else 46);
+} or {
+	assume ((__trans == true) && (__pc == 47));
+	master_TargetMessageQueueOfsystem[sizeMasterTargetMessageQueueOfsystem] := 1;
+	sizeMasterTargetMessageQueueOfsystem := (sizeMasterTargetMessageQueueOfsystem + 1);
+	__pc := 46;
+} or {
+	assume ((__trans == true) && (__pc == 46));
+	_testControl__start_Out_Trace_Trace := false;
+	__pc := 0;
+	__trans := false;
+} or {
+	assume ((__trans == false) && (__pc == 0));
+	__pc := (if (sizeMasterTraceMessageQueueOfTrace <= 0) then 2 else 1);
+} or {
+	assume ((__trans == false) && (__pc == 2));
+	eventId_master_TraceMessageQueueOfTrace_1503625684 := 0;
+	havoc eventId_master_TraceMessageQueueOfTrace_1503625684;
+	__pc := 3;
+} or {
+	assume ((__trans == false) && (__pc == 3));
+	__pc := (if ((0 < eventId_master_TraceMessageQueueOfTrace_1503625684) && (eventId_master_TraceMessageQueueOfTrace_1503625684 <= 1)) then 4 else 1);
+} or {
+	assume ((__trans == false) && (__pc == 4));
+	master_TraceMessageQueueOfTrace := eventId_master_TraceMessageQueueOfTrace_1503625684;
+	eventId_master_TraceMessageQueueOfTrace_1503625684 := 0;
+	sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace + 1);
+	__pc := 1;
+} or {
+	assume ((__trans == false) && (__pc == 1));
+	__pc := 0;
+	__trans := true;
 }
 init {
 	inOutCycleVariable_Trace_Trace := false;
 	mainRegion_Trace_Trace := __Inactive__;
 	inOutCycleRegion_Trace_Trace := __Inactive__;
+	inputRegion_Trace_Trace := __Inactive__;
+	testControl_start_In_Trace_Trace := false;
 	_testControl__start_Out_Trace_Trace := false;
-	log_system_Target := None;
 	main_system_Target := __Inactive__;
 	testControl_start_In_system_Target := false;
 	master_TargetMessageQueueOfsystem := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
@@ -72,14 +272,30 @@ init {
 	master_TraceMessageQueueOfTrace := 0;
 	sizeMasterTraceMessageQueueOfTrace := 0;
 	mainRegion_Trace_Trace := _0;
+	logs_Trace_Trace := InOutCycleInitialState___InOutCycleState;
 	inOutCycleRegion_Trace_Trace := InOutCycleState;
+	logs_system_Target := Initial___S1;
 	main_system_Target := S1;
+	if ((mainRegion_Trace_Trace == _0)) {
+		logs_Trace_Trace := Entry__0;
+	}
+	else {
+		if ((mainRegion_Trace_Trace == _1)) {
+			logs_Trace_Trace := Entry__1;
+			if ((inputRegion_Trace_Trace == InputState)) {
+				logs_Trace_Trace := Entry_InputState;
+			}
+		}
+	}
+	if ((inOutCycleRegion_Trace_Trace == InOutCycleState)) {
+		logs_Trace_Trace := Entry_InOutCycleState;
+	}
 	if ((main_system_Target == S1)) {
-		log_system_Target := S1_Entry;
+		logs_system_Target := Entry_S1;
 	}
 	else {
 		if ((main_system_Target == FS1)) {
-			log_system_Target := FS_Entry;
+			logs_system_Target := Entry_FS1;
 		}
 	}
 	if (_testControl__start_Out_Trace_Trace) {
@@ -97,9 +313,44 @@ init {
 		_testControl__start_Out_Trace_Trace := false;
 	}
 	if ((0 < sizeMasterTraceMessageQueueOfTrace)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer = master_TraceMessageQueueOfTrace;
+		local var eventId_master_TraceMessageQueueOfTrace_1503625684 : integer = master_TraceMessageQueueOfTrace;
 		master_TraceMessageQueueOfTrace := 0;
 		sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace - 1);
+		choice {
+			assume (eventId_master_TraceMessageQueueOfTrace_1503625684 == 0);
+		} or {
+			assume (eventId_master_TraceMessageQueueOfTrace_1503625684 == 1);
+			testControl_start_In_Trace_Trace := true;
+			_testControl__start_Out_Trace_Trace := false;
+			if (((mainRegion_Trace_Trace == _0) && inOutCycleVariable_Trace_Trace)) {
+				if ((mainRegion_Trace_Trace == _0)) {
+					logs_Trace_Trace := Exit__0;
+				}
+				_testControl__start_Out_Trace_Trace := true;
+				mainRegion_Trace_Trace := _1;
+				inputRegion_Trace_Trace := InputState;
+				logs_Trace_Trace := Entry_InputState;
+			}
+			else {
+				if (((inputRegion_Trace_Trace == InputState) && testControl_start_In_Trace_Trace && inOutCycleVariable_Trace_Trace)) {
+					if ((inputRegion_Trace_Trace == InputState)) {
+						logs_Trace_Trace := Exit_InputState;
+					}
+					_testControl__start_Out_Trace_Trace := true;
+					inputRegion_Trace_Trace := InputState;
+					logs_Trace_Trace := Entry_InputState;
+				}
+			}
+			if ((inOutCycleRegion_Trace_Trace == InOutCycleState)) {
+				if ((inOutCycleRegion_Trace_Trace == InOutCycleState)) {
+					logs_Trace_Trace := Exit_InOutCycleState;
+				}
+				inOutCycleVariable_Trace_Trace := (!(inOutCycleVariable_Trace_Trace));
+				inOutCycleRegion_Trace_Trace := InOutCycleState;
+				logs_Trace_Trace := Entry_InOutCycleState;
+			}
+			testControl_start_In_Trace_Trace := false;
+		}
 	}
 	if (_testControl__start_Out_Trace_Trace) {
 		if ((sizeMasterTargetMessageQueueOfsystem < 4)) {
@@ -110,12 +361,4 @@ init {
 	}
 }
 env {
-	if ((sizeMasterTraceMessageQueueOfTrace <= 0)) {
-		local var eventId_master_TraceMessageQueueOfTrace_1403294904 : integer;
-		havoc eventId_master_TraceMessageQueueOfTrace_1403294904;
-		if (((0 < eventId_master_TraceMessageQueueOfTrace_1403294904) && (eventId_master_TraceMessageQueueOfTrace_1403294904 <= 0))) {
-			master_TraceMessageQueueOfTrace := eventId_master_TraceMessageQueueOfTrace_1403294904;
-			sizeMasterTraceMessageQueueOfTrace := (sizeMasterTraceMessageQueueOfTrace + 1);
-		}
-	}
 }

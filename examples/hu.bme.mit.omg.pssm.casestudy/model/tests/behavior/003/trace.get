@@ -14,7 +14,6 @@ step {
 step {
 	act {
 		raise testControl.start
-		schedule component
 	}
 	assert { 
 		
@@ -24,7 +23,6 @@ step {
 step {
 	act {
 		raise control.anotherSignal
-		schedule component
 	}
 	assert { 
 		
