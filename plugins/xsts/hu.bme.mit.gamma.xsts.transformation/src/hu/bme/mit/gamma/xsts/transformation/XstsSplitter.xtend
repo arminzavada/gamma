@@ -142,6 +142,7 @@ class XstsSplitter {
  		this.xSts = result
 	 	// Add util vars
 	 	result.addSplitUtilVars
+	 	resetBranchPcVars()
 	 	// Add annotations
 	 	result.annotations += xstsFactory.createSplittedAnnotation
 		result.annotations += xstsFactory.createNoEnvAnnotation
@@ -404,7 +405,12 @@ class XstsSplitter {
 	 }
 	 
 	 var branchPcVarsCnt = 0
-	 val usableBranchPcVars = <VariableDeclaration>newHashSet
+	 val usableBranchPcVars = <VariableDeclaration>newLinkedHashSet
+	 
+	 def void resetBranchPcVars() {
+	 	branchPcVarsCnt = 0
+	 	usableBranchPcVars.clear
+	 }
 	 
 	 def void releaseBranchPcVar(VariableDeclaration branchPcVar) {
 	 	usableBranchPcVars += branchPcVar
@@ -421,7 +427,7 @@ class XstsSplitter {
 			 			value = BigInteger.valueOf(0)
 			 		]
 		 		]
-		 		addGlobalVar(xSts, newBranchPcVar)
+		 		addUtilGlobalVar(xSts, newBranchPcVar)
 		 		branchPcVars += newBranchPcVar
 	 		}
 	 		else {
