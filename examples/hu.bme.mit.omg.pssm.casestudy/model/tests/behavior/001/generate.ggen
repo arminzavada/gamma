@@ -1,0 +1,7 @@
+import trace "trace.get"
+
+trace-replay {
+	trace : Trace
+	system-file : "System"
+	environment-model : synchronous
+}

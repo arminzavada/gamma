@@ -1,0 +1,17 @@
+package target
+
+import "interfaces"
+
+statechart Target [
+	port testControl : requires TestControl
+] {	
+	region Main {
+		initial Initial
+		state S1 
+		state FS1 
+	}
+	
+	transition from Initial to S1
+	transition from S1 to FS1 when testControl.start
+	
+}

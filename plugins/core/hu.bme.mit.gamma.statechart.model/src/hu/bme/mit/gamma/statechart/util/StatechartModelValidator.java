@@ -33,7 +33,7 @@ import hu.bme.mit.gamma.action.model.AssignmentStatement;
 import hu.bme.mit.gamma.action.model.Branch;
 import hu.bme.mit.gamma.action.model.ExpressionStatement;
 import hu.bme.mit.gamma.action.model.ProcedureDeclaration;
-import hu.bme.mit.gamma.action.util.ActionModelValidator;
+import hu.bme.mit.gamma.activity.util.ActivityModelValidator;
 import hu.bme.mit.gamma.expression.model.ArgumentedElement;
 import hu.bme.mit.gamma.expression.model.ArrayTypeDefinition;
 import hu.bme.mit.gamma.expression.model.BooleanTypeDefinition;
@@ -128,7 +128,7 @@ import hu.bme.mit.gamma.statechart.statechart.Transition;
 import hu.bme.mit.gamma.statechart.statechart.TransitionIdAnnotation;
 import hu.bme.mit.gamma.statechart.statechart.TransitionPriority;
 
-public class StatechartModelValidator extends ActionModelValidator {
+public class StatechartModelValidator extends ActivityModelValidator {
 	// Singleton
 	public static final StatechartModelValidator INSTANCE = new StatechartModelValidator();
 	protected StatechartModelValidator() {

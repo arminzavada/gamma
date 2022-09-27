@@ -66,6 +66,7 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	public StatechartLanguageValidator() {
 		super.expressionModelValidator = statechartModelValidator;
 		super.actionModelValidator = statechartModelValidator;
+		super.activityModelValidator = statechartModelValidator;
 	}
 	
 	@Check

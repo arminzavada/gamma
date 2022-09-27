@@ -5,13 +5,14 @@
     modelName="Statechart" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     importerID="org.eclipse.emf.importer.ecore" complianceLevel="8.0" copyrightFields="false"
     editPluginID="hu.bme.mit.gamma.statechart.model.edit" editorPluginID="hu.bme.mit.gamma.statechart.model.editor"
-    usedGenPackages="../../hu.bme.mit.gamma.action.model/model/action.genmodel#//model ../../hu.bme.mit.gamma.expression.model/model/expression.genmodel#//model"
+    usedGenPackages="../../hu.bme.mit.gamma.action.model/model/action.genmodel#//model ../../hu.bme.mit.gamma.activity.model/model/activity.genmodel#//model ../../hu.bme.mit.gamma.expression.model/model/expression.genmodel#//model"
     operationReflection="true" importOrganizing="true">
   <foreignModel>composite.ecore</foreignModel>
   <foreignModel>contract.ecore</foreignModel>
   <foreignModel>interface.ecore</foreignModel>
   <foreignModel>phase.ecore</foreignModel>
   <foreignModel>statechart.ecore</foreignModel>
+  <foreignModel>activity.ecore</foreignModel>
   <genPackages prefix="CompositeModel" basePackage="hu.bme.mit.gamma.statechart" ecorePackage="composite.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="composite.ecore#//ControlFunction">
       <genEnumLiterals ecoreEnumLiteral="composite.ecore#//ControlFunction/RUN_ONCE"/>
@@ -22,12 +23,17 @@
       <genEnumLiterals ecoreEnumLiteral="composite.ecore#//DiscardStrategy/INCOMING"/>
       <genEnumLiterals ecoreEnumLiteral="composite.ecore#//DiscardStrategy/OLDEST"/>
     </genEnums>
+    <genClasses ecoreClass="composite.ecore#//StatefulComponent">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference composite.ecore#//StatefulComponent/variableDeclarations"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference composite.ecore#//StatefulComponent/timeoutDeclarations"/>
+    </genClasses>
     <genClasses ecoreClass="composite.ecore#//PrioritizedElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute composite.ecore#//PrioritizedElement/priority"/>
     </genClasses>
     <genClasses image="false" ecoreClass="composite.ecore#//CompositeComponent">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference composite.ecore#//CompositeComponent/portBindings"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference composite.ecore#//CompositeComponent/channels"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference composite.ecore#//CompositeComponent/activityConnections"/>
     </genClasses>
     <genClasses image="false" ecoreClass="composite.ecore#//SchedulableCompositeComponent">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference composite.ecore#//SchedulableCompositeComponent/initialExecutionList"/>
@@ -189,6 +195,7 @@
     <genClasses image="false" ecoreClass="interface.ecore#//EventSource"/>
     <genClasses ecoreClass="interface.ecore#//Port">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference interface.ecore#//Port/interfaceRealization"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference interface.ecore#//Port/annotations"/>
     </genClasses>
     <genClasses ecoreClass="interface.ecore#//InterfaceRealization">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute interface.ecore#//InterfaceRealization/realizationMode"/>
@@ -227,6 +234,7 @@
     <genClasses ecoreClass="interface.ecore#//SchedulingConstraintAnnotation">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference interface.ecore#//SchedulingConstraintAnnotation/schedulingConstraint"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="interface.ecore#//PortAnnotation"/>
   </genPackages>
   <genPackages prefix="PhaseModel" basePackage="hu.bme.mit.gamma.statechart" disposableProviderFactory="true"
       ecorePackage="phase.ecore#/">
@@ -281,13 +289,12 @@
       <genEnumLiterals ecoreEnumLiteral="statechart.ecore#//UnaryType/NOT"/>
     </genEnums>
     <genClasses ecoreClass="statechart.ecore#//StatechartDefinition">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//StatechartDefinition/variableDeclarations"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//StatechartDefinition/timeoutDeclarations"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//StatechartDefinition/transitions"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StatechartDefinition/schedulingOrder"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StatechartDefinition/orthogonalRegionSchedulingOrder"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StatechartDefinition/transitionPriority"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute statechart.ecore#//StatechartDefinition/guardEvaluation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//StatechartDefinition/activities"/>
     </genClasses>
     <genClasses ecoreClass="statechart.ecore#//SynchronousStatechartDefinition"/>
     <genClasses ecoreClass="statechart.ecore#//AsynchronousStatechartDefinition">
@@ -301,6 +308,7 @@
     <genClasses ecoreClass="statechart.ecore#//State">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//State/invariants"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//State/entryActions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//State/doActions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//State/exitActions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference statechart.ecore#//State/annotations"/>
     </genClasses>
@@ -370,5 +378,29 @@
     <genClasses image="false" ecoreClass="statechart.ecore#//StateAnnotation"/>
     <genClasses image="false" ecoreClass="statechart.ecore#//TransitionAnnotation"/>
     <genClasses ecoreClass="statechart.ecore#//TransitionIdAnnotation"/>
+  </genPackages>
+  <genPackages prefix="ActivityComposition" basePackage="hu.bme.mit.gamma.statechart"
+      disposableProviderFactory="true" ecorePackage="activity.ecore#/">
+    <genClasses ecoreClass="activity.ecore#//ActivityDefinition"/>
+    <genClasses ecoreClass="activity.ecore#//SynchronousActivityDefinition"/>
+    <genClasses ecoreClass="activity.ecore#//TriggerNode">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference activity.ecore#//TriggerNode/trigger"/>
+    </genClasses>
+    <genClasses ecoreClass="activity.ecore#//ActivityControllerPort">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference activity.ecore#//ActivityControllerPort/activity"/>
+    </genClasses>
+    <genClasses ecoreClass="activity.ecore#//InstanceActivityControllerPortReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference activity.ecore#//InstanceActivityControllerPortReference/instance"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference activity.ecore#//InstanceActivityControllerPortReference/port"/>
+    </genClasses>
+    <genClasses ecoreClass="activity.ecore#//ActivityControllerPortConnection">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference activity.ecore#//ActivityControllerPortConnection/provided"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference activity.ecore#//ActivityControllerPortConnection/required"/>
+    </genClasses>
+    <genClasses ecoreClass="activity.ecore#//RunActivityAction">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference activity.ecore#//RunActivityAction/activity"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="activity.ecore#//ActivityDerivedAnnotation"/>
+    <genClasses ecoreClass="activity.ecore#//ActivityControllerPortAnnotation"/>
   </genPackages>
 </genmodel:GenModel>

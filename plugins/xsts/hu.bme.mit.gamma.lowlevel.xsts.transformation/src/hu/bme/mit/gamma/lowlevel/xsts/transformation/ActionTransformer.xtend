@@ -30,6 +30,7 @@ import hu.bme.mit.gamma.xsts.model.Action
 import hu.bme.mit.gamma.xsts.model.XSTSModelFactory
 import hu.bme.mit.gamma.xsts.util.XstsActionUtil
 import java.util.Collection
+import hu.bme.mit.gamma.action.model.LogStatement
 
 class ActionTransformer {
 	// Model factories
@@ -41,6 +42,7 @@ class ActionTransformer {
 	// Needed for the transformation of assignment actions
 	protected final extension ExpressionTransformer expressionTransformer
 	protected final extension VariableDeclarationTransformer variableDeclarationTransformer
+	protected final extension LogStatementTransformer logStatementTransformer
 	// Trace
 	protected final Trace trace
 	
@@ -48,6 +50,7 @@ class ActionTransformer {
 		this.trace = trace
 		this.expressionTransformer = new ExpressionTransformer(this.trace)
 		this.variableDeclarationTransformer = new VariableDeclarationTransformer(this.trace)
+		this.logStatementTransformer = new LogStatementTransformer(this.trace)
 	}
 
 	def transformActions(Collection<? extends hu.bme.mit.gamma.action.model.Action> actions) {
@@ -65,6 +68,10 @@ class ActionTransformer {
 	
 	def dispatch Action transformAction(EmptyStatement action) {
 		return createEmptyAction
+	}
+	
+	def dispatch Action transformAction(LogStatement action) {
+		return action.transformLogStatement
 	}
 	
 	def dispatch Action transformAction(AssertionStatement action) {
@@ -130,6 +137,7 @@ class ActionTransformer {
 		return createChoiceAction(guards, actions)
 	}
 	
+		
 	protected def transformBranches(Collection<Branch> branches) {
 		var Action elseAction = createEmptyAction // If we found one in the collection, we change this
 		val expressions = newArrayList

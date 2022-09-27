@@ -1,0 +1,19 @@
+package mo_antivalchk
+
+import "Interface/Interfaces.gcd"
+import "Groundstation/GroundStation.gcd"
+
+cascade GroundStationWrapper [
+	port dataSource : requires DataSource
+	port pingSource : provides PingSource
+	port stationControl : provides StationControl
+] {
+	component groundStation : GroundStation
+	component receiveData : ReceiveData
+	
+	bind dataSource -> receiveData.dataSource
+	bind pingSource -> groundStation.pingSource
+	bind stationControl -> groundStation.stationControl
+	
+	//channel [ receiveData.controller ] -o)- [ groundStation.receiveDataController ]
+}

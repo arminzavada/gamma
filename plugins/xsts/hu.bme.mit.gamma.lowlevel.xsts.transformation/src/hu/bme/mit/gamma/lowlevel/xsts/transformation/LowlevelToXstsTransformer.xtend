@@ -46,6 +46,7 @@ import hu.bme.mit.gamma.xsts.model.VariableGroup
 import hu.bme.mit.gamma.xsts.model.XSTS
 import hu.bme.mit.gamma.xsts.model.XSTSModelFactory
 import hu.bme.mit.gamma.xsts.util.XstsActionUtil
+import hu.bme.mit.gamma.xsts.util.XstsUtils
 import java.util.AbstractMap.SimpleEntry
 import java.util.Set
 import org.eclipse.viatra.query.runtime.api.ViatraQueryEngine
@@ -62,6 +63,7 @@ import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionMo
 import static extension hu.bme.mit.gamma.statechart.lowlevel.derivedfeatures.LowlevelStatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.XstsNamings.*
+import hu.bme.mit.gamma.statechart.lowlevel.model.Component
 
 class LowlevelToXstsTransformer {
 	// Transformation-related extensions
@@ -119,6 +121,8 @@ class LowlevelToXstsTransformer {
 	protected final boolean optimize
 	protected Set<EventDeclaration> referredEvents
 	protected Set<VariableDeclaration> referredVariables
+	
+	protected final extension XstsUtils xstsUtils = XstsUtils.INSTANCE
 	
 	new(Package _package) {
 		this(_package, false)
@@ -191,6 +195,14 @@ class LowlevelToXstsTransformer {
 		getFirstChoiceTransitionsRule.fireAllCurrent
 		getInEventEnvironmentalActionRule.fireAllCurrent
 		getOutEventEnvironmentalActionRule.fireAllCurrent
+				
+		for (Component component : _package.components) {
+			if (trace.isTraced(component)) {
+				xSts.typeDeclarations += trace.getType(component)
+				xSts.variableDeclarations += trace.getXStsVariable(component)
+			}
+		}
+		
 		mergeTransitions
 		xSts.optimizeXSts
 		xSts.fillNullTransitions
@@ -208,41 +220,6 @@ class LowlevelToXstsTransformer {
 			!lowlevelVariable.final // Constants are never transformed
 	}
 		
-	protected def getVariableInitializingAction() {
-		if (xSts.variableInitializingTransition === null) {
-			xSts.variableInitializingTransition = createSequentialAction.wrap
-		}
-		return xSts.variableInitializingTransition.action
-	}
-	
-	protected def getConfigurationInitializingAction() {
-		if (xSts.configurationInitializingTransition === null) {
-			xSts.configurationInitializingTransition = createSequentialAction.wrap
-		}
-		return xSts.configurationInitializingTransition.action
-	}
-	
-	protected def getEntryEventAction() {
-		if (xSts.entryEventTransition === null) {
-			xSts.entryEventTransition = createSequentialAction.wrap
-		}
-		return xSts.entryEventTransition.action
-	}
-	
-	protected def getInEventAction() {
-		if (xSts.inEventTransition === null) {
-			xSts.inEventTransition = createSequentialAction.wrap
-		}
-		return xSts.inEventTransition.action
-	}
-	
-	protected def getOutEventAction() {
-		if (xSts.outEventTransition === null) {
-			xSts.outEventTransition = createSequentialAction.wrap
-		}
-		return xSts.outEventTransition.action
-	}
-
 	protected def getTypeDeclarationsRule() {
 		if (typeDeclarationsRule === null) {
 			typeDeclarationsRule = createRule(TypeDeclarations.instance).action [
@@ -321,7 +298,7 @@ class LowlevelToXstsTransformer {
 			topRegionInitializationRule = createRule(Statecharts.instance).action [
 				val lowlevelStatechart = it.statechart
 				val regionInitializingAction = createParallelAction // Each region at the same time
-				configurationInitializingAction as SequentialAction => [
+				xSts.configurationInitializingAction => [
 					it.actions += regionInitializingAction
 				]
 				for (lowlevelTopRegion : lowlevelStatechart.regions) {
@@ -329,7 +306,7 @@ class LowlevelToXstsTransformer {
 						lowlevelTopRegion.createRecursiveXStsRegionAndSubregionActivatingAction
 				}
 				val entryEventInitializingAction = createParallelAction // Each region at the same time
-				entryEventAction as SequentialAction => [
+				xSts.entryEventAction => [
 					it.actions += entryEventInitializingAction
 				]
 				for (lowlevelTopRegion : lowlevelStatechart.regions) {
@@ -536,7 +513,7 @@ class LowlevelToXstsTransformer {
 		// Note that optimization is NOT needed here, as these are already XSTS variables
 		for (xStsVariable : xStsVariables) {
 			// variableInitializingAction as it must be set before setting the configuration
-			variableInitializingAction as SequentialAction => [
+			xSts.variableInitializingAction as SequentialAction => [
 				it.actions += xStsVariable.createAssignmentAction(xStsVariable.initialValue)
 			]
 		}
@@ -620,7 +597,7 @@ class LowlevelToXstsTransformer {
 			inEventEnvironmentalActionRule = createRule(InEvents.instance).action [
 				val lowlevelEvent = it.event
 				if (lowlevelEvent.notOptimizable && !lowlevelEvent.internal) {
-					val lowlevelEnvironmentalAction = inEventAction as SequentialAction
+					val lowlevelEnvironmentalAction = xSts.inEventAction as SequentialAction
 					val xStsEventVariable = trace.getXStsVariable(lowlevelEvent)
 					
 					// In event variable
@@ -663,7 +640,7 @@ class LowlevelToXstsTransformer {
 			outEventEnvironmentalActionRule = createRule(OutEvents.instance).action [
 				val lowlevelEvent = it.event
 				if (lowlevelEvent.notOptimizable && !lowlevelEvent.internal) {
-					val lowlevelEnvironmentalAction = outEventAction as SequentialAction
+					val lowlevelEnvironmentalAction = xSts.outEventAction as SequentialAction
 					val xStsEventVariable = trace.getXStsVariable(lowlevelEvent)
 					lowlevelEnvironmentalAction.actions += xStsEventVariable
 							.createAssignmentAction(createFalseExpression)

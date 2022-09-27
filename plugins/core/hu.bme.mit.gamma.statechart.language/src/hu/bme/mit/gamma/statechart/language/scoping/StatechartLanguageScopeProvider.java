@@ -32,6 +32,8 @@ import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ExpressionModelPackage;
 import hu.bme.mit.gamma.expression.model.FieldDeclaration;
 import hu.bme.mit.gamma.expression.model.ParametricElement;
+import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityCompositionPackage;
+import hu.bme.mit.gamma.statechart.ActivityComposition.InstanceActivityControllerPortReference;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousAdapter;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousComponent;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousComponentInstance;
@@ -43,6 +45,7 @@ import hu.bme.mit.gamma.statechart.composite.ControlSpecification;
 import hu.bme.mit.gamma.statechart.composite.InstancePortReference;
 import hu.bme.mit.gamma.statechart.composite.MessageQueue;
 import hu.bme.mit.gamma.statechart.composite.ScheduledAsynchronousCompositeComponent;
+import hu.bme.mit.gamma.statechart.composite.StatefulComponent;
 import hu.bme.mit.gamma.statechart.composite.SynchronousComponent;
 import hu.bme.mit.gamma.statechart.composite.SynchronousComponentInstance;
 import hu.bme.mit.gamma.statechart.contract.AdaptiveContractAnnotation;
@@ -227,6 +230,21 @@ public class StatechartLanguageScopeProvider extends AbstractStatechartLanguageS
 								.forEach(it -> ports.addAll(it));
 				return Scopes.scopeFor(ports); 
 			}
+			if (context instanceof InstanceActivityControllerPortReference && reference == ActivityCompositionPackage.Literals.INSTANCE_ACTIVITY_CONTROLLER_PORT_REFERENCE__PORT) {
+				InstanceActivityControllerPortReference portInstance = (InstanceActivityControllerPortReference) context;
+				ComponentInstance instance = portInstance.getInstance();
+				Component type = (instance instanceof SynchronousComponentInstance) ? 
+						((SynchronousComponentInstance) instance).getType() : 
+							((AsynchronousComponentInstance) instance).getType();
+				if (type == null) {
+					return super.getScope(context, reference); 
+				}
+				if (type instanceof StatechartDefinition == false) {
+					return super.getScope(context, reference); 
+				} 
+				StatechartDefinition statechart = (StatechartDefinition) type;
+				return Scopes.scopeFor(statechart.getActivities());
+			}
 			// Types
 			if (context instanceof SynchronousComponentInstance && reference == CompositeModelPackage.Literals.SYNCHRONOUS_COMPONENT_INSTANCE__TYPE) {
 				Package _package = StatechartModelDerivedFeatures.getContainingPackage(context);
@@ -289,14 +307,13 @@ public class StatechartLanguageScopeProvider extends AbstractStatechartLanguageS
 				ParametricElement element = ecoreUtil.getSelfOrContainerOfType(context, ParametricElement.class);
 				if (element != null) {
 					IScope parentScope = super.getScope(context, reference); // Parameters and constants
-					if (element instanceof StatechartDefinition) {
-						StatechartDefinition statechart = (StatechartDefinition) element;
+					if (element instanceof StatefulComponent) {
+						StatefulComponent statechart = (StatefulComponent) element;
 						Collection<Declaration> declarations = new ArrayList<Declaration>();
 						declarations.addAll(statechart.getVariableDeclarations());
 						declarations.addAll(statechart.getFunctionDeclarations());
 						scope = Scopes.scopeFor(declarations, parentScope);
-					}
-					else {
+					} else {
 						scope = parentScope;
 					}
 				}

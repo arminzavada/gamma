@@ -15,7 +15,6 @@ import hu.bme.mit.gamma.expression.model.Expression
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory
 import hu.bme.mit.gamma.expression.model.TypeReference
 import hu.bme.mit.gamma.expression.util.ExpressionEvaluator
-import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelToXstsTransformer
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.TransitionMerging
 import hu.bme.mit.gamma.statechart.composite.AbstractAsynchronousCompositeComponent
 import hu.bme.mit.gamma.statechart.composite.AbstractSynchronousCompositeComponent
@@ -56,6 +55,10 @@ import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeature
 import static extension hu.bme.mit.gamma.xsts.transformation.util.Namings.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.QueueNamings.*
 import static extension java.lang.Math.*
+import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDefinition
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelActivityToXstsTransformer
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelToXstsTransformer
+import hu.bme.mit.gamma.transformation.util.preprocessor.StatechartPreprocessor
 
 class ComponentTransformer {
 	// This gammaToLowlevelTransformer must be the same during this transformation cycle due to tracing
@@ -644,10 +647,7 @@ class ComponentTransformer {
 		
 		wrappedType.extractParameters(wrappedInstance.arguments) 
 		val xSts = wrappedType.transform(lowlevelPackage)
-		if (wrappedType.statechart) {
-			// Customize names as the type can be a statechart (before setting the new in event)
-			xSts.customizeDeclarationNames(wrappedInstance)
-		}
+		xSts.customizeDeclarationNames(wrappedInstance)
 		
 		// Resetting out and events manually as a "schedule" call in the code does that
 		xSts.resetOutEventsBeforeMergedAction(wrappedType)
@@ -890,12 +890,34 @@ class ComponentTransformer {
 		logger.log(Level.INFO, "Transforming statechart " + statechart.name)
 		/* Note that the package is already transformed and traced because of
 		   the "val lowlevelPackage = gammaToLowlevelTransformer.transform(_package)" call */
+		val preprocessor = new StatechartPreprocessor(statechart)
+		preprocessor.execute
 		val lowlevelStatechart = gammaToLowlevelTransformer.transform(statechart)
 		lowlevelPackage.components += lowlevelStatechart
 		val lowlevelToXSTSTransformer = new LowlevelToXstsTransformer(
-			lowlevelPackage, optimize, transitionMerging)
+			lowlevelPackage, optimize, transitionMerging) 
 		val xStsEntry = lowlevelToXSTSTransformer.execute
 		lowlevelPackage.components -= lowlevelStatechart // So that next time the matches do not return elements from this statechart
+		val xSts = xStsEntry.key
+		
+		// 0-ing all variable declaration initial expression, the normal ones are in the init action
+		for (variable : xSts.variableDeclarations) {
+			variable.expression = variable.defaultExpression
+		}
+		
+		return xSts
+	}
+	
+	def dispatch XSTS transform(ActivityDefinition activity, Package lowlevelPackage) {
+		logger.log(Level.INFO, "Transforming activity " + activity.name)
+		/* Note that the package is already transformed and traced because of
+		   the "val lowlevelPackage = gammaToLowlevelTransformer.transform(_package)" call */
+		val lowlevelActivity = gammaToLowlevelTransformer.transform(activity)
+		lowlevelPackage.components += lowlevelActivity
+		val lowlevelToXSTSTransformer = new LowlevelActivityToXstsTransformer(
+			lowlevelPackage, optimize, transitionMerging)
+		val xStsEntry = lowlevelToXSTSTransformer.execute
+		lowlevelPackage.components -= lowlevelActivity // So that next time the matches do not return elements from this component
 		val xSts = xStsEntry.key
 		
 		// 0-ing all variable declaration initial expression, the normal ones are in the init action
@@ -998,6 +1020,12 @@ class ComponentTransformer {
 			for (regionType : xSts.variableGroups.filter[it.annotation instanceof RegionGroup]
 					.map[it.variables].flatten.map[it.type].filter(TypeReference).map[it.reference]) {
 				regionType.name = regionType.customizeRegionTypeName(type)
+			}
+		}
+		else if (type instanceof ActivityDefinition) {
+			// Customizing every variable name
+			for (variable : xSts.variableDeclarations) {
+				variable.name = variable.getCustomizedName(instance)
 			}
 		}
 	}

@@ -1,0 +1,30 @@
+import "target"
+
+trace Trace of Target
+
+step {
+	act {
+		reset
+	}
+	assert { 
+		
+	}
+}
+
+step {
+	act {
+		raise testControl.start
+	}
+	assert { 
+		
+	}
+}
+
+step {
+	act {
+		raise control.anotherSignal
+	}
+	assert { 
+		
+	}
+}

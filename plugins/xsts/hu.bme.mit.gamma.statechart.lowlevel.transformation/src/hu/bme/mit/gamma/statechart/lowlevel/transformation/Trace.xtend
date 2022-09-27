@@ -10,6 +10,9 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.statechart.lowlevel.transformation
 
+import hu.bme.mit.gamma.activity.model.ActivityNode
+import hu.bme.mit.gamma.activity.model.Flow
+import hu.bme.mit.gamma.activity.model.Pin
 import hu.bme.mit.gamma.expression.model.FunctionAccessExpression
 import hu.bme.mit.gamma.expression.model.ParameterDeclaration
 import hu.bme.mit.gamma.expression.model.TypeDeclaration
@@ -36,6 +39,7 @@ import static com.google.common.base.Preconditions.checkNotNull
 import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.statechart.derivedfeatures.StatechartModelDerivedFeatures.*
+import hu.bme.mit.gamma.statechart.composite.StatefulComponent
 
 class Trace {
 
@@ -66,6 +70,11 @@ class Trace {
 	final Set<Transition> elseGuardedTransitions = newHashSet
 	// Function return variables
 	final Map<FunctionAccessExpression, List<VariableDeclaration>> returnVariableMappings = newHashMap
+	// Activity variables
+	final Map<Pin, VariableDeclaration> pinMappings = newHashMap
+	final Map<Flow, hu.bme.mit.gamma.statechart.lowlevel.model.Succession> flowMappings = newHashMap
+	final Map<ActivityNode, hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode> activityNodeMappings = newHashMap
+	final Map<StatefulComponent, VariableDeclaration> logVariableMapping = newHashMap
 	
 	// Package
 	def put(Package gammaPackage, hu.bme.mit.gamma.statechart.lowlevel.model.Package lowlevelPackage) {
@@ -527,6 +536,72 @@ class Trace {
 	def get(FunctionAccessExpression functionAccessExpression) {
 		checkNotNull(functionAccessExpression)
 		returnVariableMappings.get(functionAccessExpression)
+	}
+	
+	// Activity 
+	
+	def put(Pin pin, VariableDeclaration lowlevelPin) {
+		checkNotNull(pin)
+		checkNotNull(lowlevelPin)
+		pinMappings.put(pin, lowlevelPin)
+	}
+		
+	def isPinMapped(Pin pin) {
+		checkNotNull(pin)
+		return pinMappings.containsKey(pin)
+	}
+	
+	def getPin(Pin pin) {
+		checkNotNull(pin)
+		return pinMappings.get(pin)
+	}
+
+	def put(Flow flow, hu.bme.mit.gamma.statechart.lowlevel.model.Succession lowlevelFlow) {
+		checkNotNull(flow)
+		checkNotNull(lowlevelFlow)
+		flowMappings.put(flow, lowlevelFlow)
+	}	
+	
+	def isFlowMapped(Flow flow) {
+		checkNotNull(flow)
+		return flowMappings.containsKey(flow)
+	}
+	
+	def getFlow(Flow flow) {
+		checkNotNull(flow)
+		return flowMappings.get(flow)
+	}
+	
+	def putActivityNode(ActivityNode node, hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode lowlevelNode) {
+		checkNotNull(node)
+		checkNotNull(lowlevelNode)
+		activityNodeMappings.put(node, lowlevelNode)
+	}	
+	
+	def isActivityNodeMapped(ActivityNode node) {
+		checkNotNull(node)
+		return activityNodeMappings.containsKey(node)
+	}
+
+	def getActivityNode(ActivityNode node) {
+		checkNotNull(node)
+		return activityNodeMappings.get(node)
+	}
+	
+	def putLogVariable(StatefulComponent component, VariableDeclaration variable) {
+		checkNotNull(component)
+		checkNotNull(variable)
+		logVariableMapping.put(component, variable)
+	}	
+	
+	def isLogVariableMapped(StatefulComponent component) {
+		checkNotNull(component)
+		return logVariableMapping.containsKey(component)
+	}
+
+	def getLogVariable(StatefulComponent component) {
+		checkNotNull(component)
+		return logVariableMapping.get(component)
 	}
 	
 }

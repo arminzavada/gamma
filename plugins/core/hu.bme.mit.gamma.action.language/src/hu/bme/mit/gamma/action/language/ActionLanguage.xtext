@@ -21,7 +21,8 @@ Action returns ActionModel::Action:
 
 @Override
 FunctionDeclaration returns ConstraintModel::FunctionDeclaration:
-	LambdaDeclaration | ProcedureDeclaration
+	super | 
+	ProcedureDeclaration
 ;
 
 ProcedureDeclaration returns ActionModel::ProcedureDeclaration:
@@ -54,7 +55,8 @@ InlineStatement returns ActionModel::Statement:
 	 
 	AssertionStatement |
 	ExpressionStatement |
-	EmptyStatement
+	EmptyStatement |
+	LogStatement
 	
 	)
 	
@@ -83,6 +85,10 @@ ExpressionStatement returns ActionModel::ExpressionStatement:
 
 EmptyStatement returns ActionModel::EmptyStatement:
 	{ActionModel::EmptyStatement} 'no' 'operation'
+;
+
+LogStatement returns ActionModel::LogStatement: 
+	"log" text=STRING
 ;
 
 IfBranch returns ActionModel::Branch:

@@ -19,6 +19,8 @@ import hu.bme.mit.gamma.expression.model.ParameterDeclaration
 import hu.bme.mit.gamma.expression.model.TypeDeclaration
 import hu.bme.mit.gamma.expression.model.TypeReference
 import hu.bme.mit.gamma.expression.model.VariableDeclaration
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.ActivityNodeTrace
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.ActivityNodeTransitionTrace
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.ChoiceTransitionTrace
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.EventTrace
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.ForkTransitionTrace
@@ -61,6 +63,10 @@ import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension java.lang.Math.abs
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode
+import hu.bme.mit.gamma.statechart.lowlevel.model.Succession
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns.SuccessionTrace
+import hu.bme.mit.gamma.statechart.lowlevel.model.Component
 
 package class Trace {
 	// Trace model
@@ -78,6 +84,8 @@ package class Trace {
 	protected final Map<Transition, List<Expression>> guards = newHashMap // Guars of transitions leaving states - also negated due to priority
 	protected final Map<Transition, List<Expression>> choiceGuards = newHashMap // Guards of transitions leaving choices - also negated due to priority
 	protected final Map<State, List<Expression>> stateReferenceExpressions = newHashMap
+	protected final Map<Component, VariableDeclaration> logVariable = newHashMap
+	protected final Map<Component, TypeDeclaration> logType = newHashMap
 	
 	new(Package _package, XSTS xSts) {
 		this.trace = createL2STrace => [
@@ -225,20 +233,20 @@ package class Trace {
 			it.XStsParameter = xStsParameter
 		]
 	}
-	
+
 	def hasXStsParameter(ParameterDeclaration lowlevelParameter) {
 		checkArgument(lowlevelParameter !== null)
 		val traces = trace.traces.filter(ParameterTrace).filter[it.lowlevelParameter === lowlevelParameter]
 		return !traces.isEmpty
 	}
-	
+
 	def getXStsParameterTrace(ParameterDeclaration lowlevelParameter) {
 		checkArgument(lowlevelParameter !== null)
 		val traces = trace.traces.filter(ParameterTrace).filter[it.lowlevelParameter === lowlevelParameter]
 		checkState(traces.size == 1)
 		return traces.head
 	}
-	
+
 	def getXStsParameter(ParameterDeclaration lowlevelParameter) {
 		val xStsParameter = lowlevelParameter.XStsParameterTrace.XStsParameter
 		checkState(xStsParameter !== null)
@@ -616,6 +624,127 @@ package class Trace {
 	
 	def getTrace() {
 		return trace;
+	}
+	
+	// ActivityNode - variable
+	def put(ActivityNode activityNode, VariableDeclaration xStsVariable) {
+		checkArgument(activityNode !== null)
+		checkArgument(xStsVariable !== null)
+		trace.traces += createActivityNodeTrace => [
+			it.activityNode = activityNode
+			it.XStsVariable = xStsVariable
+		]
+	}
+	
+	def isTraced(ActivityNode activityNode) {
+		checkArgument(activityNode !== null)
+		return ActivityNodeTrace.Matcher.on(tracingEngine).hasMatch(activityNode, null)
+	}
+	
+	def getXStsVariable(ActivityNode activityNode) {
+		checkArgument(activityNode !== null)
+		val matches = ActivityNodeTrace.Matcher.on(tracingEngine).getAllValuesOfxStsVariable(activityNode)
+		checkState(matches.size == 1, matches.size)
+		return matches.head
+	}
+	
+	def getActivityNode(VariableDeclaration xStsVariable) {
+		checkArgument(xStsVariable !== null)
+		val matches = ActivityNodeTrace.Matcher.on(tracingEngine).getAllValuesOfactivityNode(xStsVariable)
+		checkState(matches.size == 1, matches.size)
+		return matches.head
+	}
+	
+	// ActivityNode - transition
+	def put(ActivityNode activityNode, NonDeterministicAction xStsAction) {
+		checkArgument(activityNode !== null)
+		checkArgument(xStsAction !== null)
+		trace.traces += createActivityNodeTransitionTrace => [
+			it.activityNode = activityNode
+			it.XStsAction = xStsAction
+		]
+	}
+	
+	def isTransitionTraced(ActivityNode activityNode) {
+		checkArgument(activityNode !== null)
+		return ActivityNodeTransitionTrace.Matcher.on(tracingEngine).hasMatch(activityNode, null)
+	}
+	
+	def getXStsAction(ActivityNode activityNode) {
+		checkArgument(activityNode !== null)
+		val matches = ActivityNodeTransitionTrace.Matcher.on(tracingEngine).getAllValuesOfxStsAction(activityNode)
+		checkState(matches.size == 1, matches.size)
+		return matches.head
+	}
+	
+	def getActivityNode(NonDeterministicAction xStsAction) {
+		checkArgument(xStsAction !== null)
+		val matches = ActivityNodeTransitionTrace.Matcher.on(tracingEngine).getAllValuesOfactivityNode(xStsAction)
+		checkState(matches.size == 1, matches.size)
+		return matches.head
+	}
+	
+	// Succession - variable
+	def put(Succession succession, VariableDeclaration xStsVariable) {
+		checkArgument(succession !== null)
+		checkArgument(xStsVariable !== null)
+		trace.traces += createSuccessionTrace => [
+			it.succession = succession
+			it.XStsVariable = xStsVariable
+		]
+	}
+	
+	def isTraced(Succession flow) {
+		checkArgument(flow !== null)
+		return SuccessionTrace.Matcher.on(tracingEngine).hasMatch(flow, null)
+	}
+	
+	def getXStsVariable(Succession flow) {
+		checkArgument(flow !== null)
+		val matches = SuccessionTrace.Matcher.on(tracingEngine).getAllValuesOfxStsVariable(flow)
+		checkState(matches.size == 1, matches.size)
+		return matches.head
+	}
+	
+	def getSuccession(VariableDeclaration xStsVariable) {
+		checkArgument(xStsVariable !== null)
+		val matches = SuccessionTrace.Matcher.on(tracingEngine).getAllValuesOfsuccession(xStsVariable)
+		checkState(matches.size == 1, matches.size)
+		return matches.head
+	}
+	
+	// Log variable
+	def put(Component component, VariableDeclaration xStsVariable) {
+		checkArgument(component !== null)
+		checkArgument(xStsVariable !== null)
+		logVariable.put(component, xStsVariable)
+	}
+	
+	def isTraced(Component component) {
+		checkArgument(component !== null)
+		return logVariable.containsKey(component)
+	}
+	
+	def getXStsVariable(Component component) {
+		checkArgument(component !== null)
+		return logVariable.get(component)
+	}
+	
+	// Log type
+	def put(Component component, TypeDeclaration type) {
+		checkArgument(component !== null)
+		checkArgument(type !== null)
+		logType.put(component, type)
+	}
+	
+	def isTypeTraced(Component component) {
+		checkArgument(component !== null)
+		return logType.containsKey(component)
+	}
+	
+	def getType(Component component) {
+		checkArgument(component !== null)
+		return logType.get(component)
 	}
 	
 }

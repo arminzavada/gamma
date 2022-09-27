@@ -1,0 +1,42 @@
+package target
+
+import "interfaces"
+import "common"
+
+async Target [
+	port testControl : requires TestControl
+	port control : requires SUTControl
+] {
+	component sc : SC
+	component act : DoActivity
+	
+	bind testControl -> sc.testControl
+	bind control -> sc.control
+	
+	channel [ act.controller ] -o)- [ sc.doActivityController ]
+}
+
+@Asynchronous
+statechart SC [
+	port testControl : requires TestControl
+	port control : requires SUTControl
+	
+	port doActivityController : requires ActivityControllerInterface
+] {
+	
+	region Main {
+		initial Initial
+		state Wait
+		state S1 {
+			entry / raise doActivityController.control(true);
+			exit / raise doActivityController.control(false);
+		}
+		state Error
+		state FS1
+	}
+	
+	transition from Initial to Wait
+	transition from Wait to S1 when testControl.start
+	transition from S1 to Error when doActivityController.done
+	transition from S1 to FS1 when control.anotherSignal
+}

@@ -10,6 +10,9 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.xsts.transformation.util
 
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode
+import hu.bme.mit.gamma.statechart.lowlevel.model.Succession
+
 class XstsNamings {
 	
 	static def String getTypeName(String lowlevelName) '''«lowlevelName»'''
@@ -20,6 +23,9 @@ class XstsNamings {
 	static def String getStateInactiveHistoryEnumLiteralName(String lowlevelName) '''«lowlevelName»_Inactive_'''
 	static def String getRegionTypeName(String lowlevelName) '''«lowlevelName.toFirstUpper»'''
 	static def String getRegionVariableName(String lowlevelName) '''«lowlevelName.toFirstLower»'''
+	
+	static def String getActivityNodeVariableName(ActivityNode node) '''«node.name»'''	
+	static def String getSuccessionVariableName(Succession succession) '''«succession.sourceNode.name»_to_«succession.targetNode.name»'''
 	
 	// Split
 	public static val String PC_VAR_NAME = "__pc"

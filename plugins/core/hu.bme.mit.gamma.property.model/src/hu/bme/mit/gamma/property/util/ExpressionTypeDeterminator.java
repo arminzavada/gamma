@@ -10,16 +10,16 @@
  ********************************************************************************/
 package hu.bme.mit.gamma.property.util;
 
+import hu.bme.mit.gamma.activity.util.ActivityExpressionTypeDeterminator;
 import hu.bme.mit.gamma.expression.model.Expression;
 import hu.bme.mit.gamma.expression.model.ParameterDeclaration;
 import hu.bme.mit.gamma.expression.model.Type;
 import hu.bme.mit.gamma.expression.model.VariableDeclaration;
-import hu.bme.mit.gamma.expression.util.ExpressionTypeDeterminator2;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstanceElementReferenceExpression;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstanceEventParameterReferenceExpression;
 import hu.bme.mit.gamma.statechart.composite.ComponentInstanceVariableReferenceExpression;
 
-public class ExpressionTypeDeterminator extends ExpressionTypeDeterminator2 {
+public class ExpressionTypeDeterminator extends ActivityExpressionTypeDeterminator {
 	// Singleton
 	public static final ExpressionTypeDeterminator INSTANCE = new ExpressionTypeDeterminator();
 	protected ExpressionTypeDeterminator() {}

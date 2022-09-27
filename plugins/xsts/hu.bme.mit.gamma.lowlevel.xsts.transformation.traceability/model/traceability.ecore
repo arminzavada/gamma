@@ -82,4 +82,22 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="xStsTypeDeclaration" lowerBound="1"
         eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//TypeDeclaration"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActivityNodeTrace" eSuperTypes="#//AbstractTrace">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="activityNode" lowerBound="1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.statechart.lowlevel.model/model/model.ecore#//ActivityNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="xStsVariable" lowerBound="1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//VariableDeclaration"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SuccessionTrace" eSuperTypes="#//AbstractTrace">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="xStsVariable" lowerBound="1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//VariableDeclaration"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="succession" lowerBound="1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.statechart.lowlevel.model/model/model.ecore#//Succession"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActivityNodeTransitionTrace" eSuperTypes="#//AbstractTrace">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="activityNode" lowerBound="1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.statechart.lowlevel.model/model/model.ecore#//ActivityNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="xStsAction" lowerBound="1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.xsts.model/model/model.ecore#//NonDeterministicAction"/>
+  </eClassifiers>
 </ecore:EPackage>

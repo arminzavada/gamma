@@ -22,6 +22,11 @@ import java.util.stream.Collectors;
 import org.eclipse.emf.ecore.EObject;
 
 import hu.bme.mit.gamma.action.derivedfeatures.ActionModelDerivedFeatures;
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityControllerEventAnnotation;
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityDefinition;
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityDerivedAnnotation;
+import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode;
+import hu.bme.mit.gamma.statechart.lowlevel.model.Component;
 import hu.bme.mit.gamma.statechart.lowlevel.model.CompositeElement;
 import hu.bme.mit.gamma.statechart.lowlevel.model.DeepHistoryState;
 import hu.bme.mit.gamma.statechart.lowlevel.model.EventDeclaration;
@@ -45,10 +50,32 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 	}
 	
 
+	public static ActivityDefinition getActivity(EObject object) {
+		if (object instanceof ActivityDefinition) {
+			return (ActivityDefinition) object;
+		}
+		return getActivity(object.eContainer());
+	}
+
+	public static Component getComponent(EObject object) {
+		if (object instanceof Component) {
+			return (Component) object;
+		}
+		return getComponent(object.eContainer());
+	} 
+	
 	public static boolean isInternal(EventDeclaration lowlevelEventDeclaration) {
 		StatechartDefinition statechart = getStatechart(lowlevelEventDeclaration);
 		List<EventDeclaration> internalEventDeclarations = statechart.getInternalEventDeclarations();
 		return internalEventDeclarations.contains(lowlevelEventDeclaration);
+	}
+	
+	public static boolean isActivityDerivedEvent(EventDeclaration lowlevelEventDeclaration) {
+		return lowlevelEventDeclaration.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityDerivedAnnotation);
+	}
+	
+	public static boolean isActivityControllerEvent(EventDeclaration lowlevelEventDeclaration) {
+		return lowlevelEventDeclaration.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityControllerEventAnnotation);
 	}
 	
 	public static EventDeclaration getInternalEventPair(EventDeclaration lowlevelEventDeclaration) {
@@ -69,7 +96,6 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 			return inEventDeclarations.get(outIndex);
 		}
 	}
-	
 	
 	public static boolean hasOrthogonalRegion(Region lowlevelRegion) {
 		return !getOrthogonalRegions(lowlevelRegion).isEmpty();
@@ -305,5 +331,17 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 		}
 		return priorites.size() == 1;
 	}
+	
+	public static EventDeclaration getActivityControllerEvent(ActivityDefinition activity) {
+		return activity.getEventDeclarations().stream().filter(event -> isActivityControllerEvent(event)).findFirst().orElseThrow();
+	}
+	
+	public static List<ActivityNode> getPredecessors(ActivityNode node) {
+		return node.getIncoming().stream().map(s -> s.getSourceNode()).toList();
+	}
+	
+	public static List<ActivityNode> getSuccessors(ActivityNode node) {
+		return node.getOutgoing().stream().map(s -> s.getTargetNode()).toList();
+	}	
 	
 }

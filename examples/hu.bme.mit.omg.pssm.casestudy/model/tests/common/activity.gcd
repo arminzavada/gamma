@@ -1,0 +1,46 @@
+package common
+
+import "interfaces"
+
+activity Activity [
+	@ActivityController
+	port controller : provides ActivityControllerInterface
+	port control : requires SUTControl
+] {
+	
+	initial init
+	
+	action Part1 {
+		log "S1_doActivityPartI";
+	}
+	
+	trigger Wait when control.continue
+	
+	action Part2 {
+		log "S1_doActivityPartII";
+	}
+	
+	action end {
+		raise controller.done;
+	}
+	
+	final fin
+	
+	succession from init to Part1
+	succession from Part1 to Wait
+	succession from Wait to Part2
+	succession from Part2 to end
+	succession from end to fin
+	
+}
+
+adapter DoActivity of component act : Activity {	
+	when any / run
+	
+	queue controllerMessages(priority = 1, capacity = 1) {
+		controller.any
+	}
+	queue controlMessages(priority = 2, capacity = 1) {
+		control.any
+	}
+}

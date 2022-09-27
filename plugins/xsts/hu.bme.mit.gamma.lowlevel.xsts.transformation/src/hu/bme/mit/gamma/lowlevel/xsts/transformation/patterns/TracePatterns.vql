@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-1.0
  ********************************************************************************/
 package hu.bme.mit.gamma.lowlevel.xsts.transformation.patterns
-
+ 
 import epackage "http://www.mit.bme.hu/gamma/lowlevel/xsts/transformation/traceability"
 import epackage "http://www.mit.bme.hu/gamma/xSTS/Model"
 import epackage "http://www.mit.bme.hu/gamma/statechart/lowlevel/Model"
@@ -38,6 +38,21 @@ pattern regionTrace(lowlevelRegion : Region, xStsVariable : VariableDeclaration)
 pattern stateTrace(lowlevelState : State, xStsEnumLiteral : EnumerationLiteralDefinition) {
 	StateTrace.lowlevelState(trace, lowlevelState);
 	StateTrace.xStsEnumLiteral(trace, xStsEnumLiteral);
+}
+
+pattern activityNodeTrace(activityNode : ActivityNode, xStsVariable : VariableDeclaration) {
+	ActivityNodeTrace.activityNode(trace, activityNode);
+	ActivityNodeTrace.xStsVariable(trace, xStsVariable);
+}
+
+pattern activityNodeTransitionTrace(activityNode : ActivityNode, xStsAction : NonDeterministicAction) {
+	ActivityNodeTransitionTrace.activityNode(trace, activityNode);
+	ActivityNodeTransitionTrace.xStsAction(trace, xStsAction);
+}
+
+pattern successionTrace(succession : Succession, xStsVariable : VariableDeclaration) {
+	SuccessionTrace.succession(trace, succession);
+	SuccessionTrace.xStsVariable(trace, xStsVariable);
 }
 
 pattern stateHistoryTrace(stateTrace : StateTrace,

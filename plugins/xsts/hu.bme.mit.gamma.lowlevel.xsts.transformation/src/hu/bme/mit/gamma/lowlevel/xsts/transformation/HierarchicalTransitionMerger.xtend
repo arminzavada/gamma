@@ -79,7 +79,7 @@ class HierarchicalTransitionMerger extends AbstractTransitionMerger {
 		// The many transitions are now replaced by a single merged transition
 		xSts.changeTransitions(xStsMergedAction.wrap)
 	}
-	
+		
 	private def Action mergeAllTransitionsOfRegion(CompositeElement element,
 			Map<Region, ? extends Action> regionActions) {
 		val lowlevelRegions = element.regions

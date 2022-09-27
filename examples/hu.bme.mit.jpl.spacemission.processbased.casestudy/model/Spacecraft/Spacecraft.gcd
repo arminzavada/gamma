@@ -1,0 +1,125 @@
+package spacecraft
+import "Interface/Interfaces.gcd"
+
+activity TransmitData [
+	port connection : provides TransmitDataActivityInterface
+] {
+	timeout transmitTimeout
+	timeout consumeTimeout
+	
+	initial Initial
+	
+	fork Fork
+	
+	merge TransmitMerge
+	decision TransmitDecision
+	atomic action SetTransmitWait {
+		set transmitTimeout := 1s;
+	}
+	trigger TransmitWait when timeout transmitTimeout
+	atomic action TransmitData {		
+		raise connection.sendData;
+	}
+	
+	merge ConsumeMerge
+	atomic action SetConsumeWait {
+		set consumeTimeout := 1s;
+	}
+	trigger ConsumeWait when timeout consumeTimeout
+	atomic action ConsumeEnergy {
+		raise connection.consumeEnergy;
+	}
+	
+	succession from Initial to Fork
+	
+	succession from Fork to TransmitMerge
+	succession from TransmitMerge to SetTransmitWait
+	succession from SetTransmitWait to TransmitWait
+	succession from TransmitWait to TransmitData
+	succession from TransmitData to TransmitMerge
+	
+	succession from Fork to ConsumeMerge
+	succession from ConsumeMerge to SetConsumeWait
+	succession from SetConsumeWait to ConsumeWait
+	succession from ConsumeWait to ConsumeEnergy
+	succession from ConsumeEnergy to ConsumeMerge
+}
+
+activity RechargeBattery [
+	port connection : provides RechargeBatteryActivityInterface
+] {
+	timeout rechargeTimeout
+	
+	initial Initial
+	
+	merge Merge
+	atomic action SetWait {
+		set rechargeTimeout := 10s;
+	}
+	trigger Wait when timeout rechargeTimeout
+	atomic action Charge {		
+		raise connection.chargeBattery;
+	}
+	
+	succession from Initial to Merge
+	succession from Merge to SetWait
+	succession from SetWait to Wait
+	succession from Wait to Charge
+	succession from Charge to Merge
+}
+
+@RegionSchedule = bottom-up
+statechart Spacecraft [
+	port pingSource : requires PingSource
+	port dataSource : provides DataSource
+	
+	port transmitDataActivityInterface : requires TransmitDataActivityInterface
+	port rechargeBatteryActivityInterface : requires RechargeBatteryActivityInterface
+	
+	activity-port transmitData : TransmitData
+	activity-port rechargeBattery : RechargeBattery
+] {
+	var data : integer := 100
+	var batteryValue : integer := 100
+	
+	region Communication { 
+		initial CommunicationEntry
+		state WaitingPing
+		state Transmitting {
+			do / run transmitData;
+		}
+	}
+	region Battery {
+		initial BatteryEntry
+		state NotRecharging
+		state Recharging {
+			do / run rechargeBattery;
+		}
+	}
+	
+	region TransmitDataActivityLogic {
+		initial TransmitDataActivityInit
+		state TransmitDataActivityLogic
+	}
+	region RechargeBatteryActivityLogic {
+		initial RechargeBatteryActivityInit
+		state RechargeBatteryActivityLogic
+	}
+	
+	transition from CommunicationEntry to WaitingPing
+	transition from WaitingPing to Transmitting when pingSource.ping [in-state(Battery.NotRecharging) and data > 0]
+	transition from Transmitting to WaitingPing when transmitDataActivityInterface.sendData [data == 100]
+	transition from Transmitting to WaitingPing when transmitDataActivityInterface.consumeEnergy [batteryValue <= 40]
+	
+	transition from BatteryEntry to NotRecharging	
+	transition from NotRecharging to Recharging when transmitDataActivityInterface.sendData [batteryValue < 80]
+	transition from Recharging to NotRecharging when rechargeBatteryActivityInterface.chargeBattery [batteryValue >= 100]
+	
+	transition from TransmitDataActivityInit to TransmitDataActivityLogic
+	transition from TransmitDataActivityLogic to TransmitDataActivityLogic when transmitDataActivityInterface.consumeEnergy / batteryValue := batteryValue - 1;
+	transition from TransmitDataActivityLogic to TransmitDataActivityLogic when transmitDataActivityInterface.sendData / data := data - 1; raise dataSource.data;
+	
+	transition from RechargeBatteryActivityInit to RechargeBatteryActivityLogic
+	transition from RechargeBatteryActivityLogic to RechargeBatteryActivityLogic when rechargeBatteryActivityInterface.chargeBattery / batteryValue := batteryValue + 1;
+	
+}

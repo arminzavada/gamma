@@ -38,7 +38,8 @@ class PropertyLanguageScopeProvider extends AbstractPropertyLanguageScopeProvide
 			}
 		}
 		val root = ecoreUtil.getSelfOrContainerOfType(context, PropertyPackage)
-		val component = root.component
+		val component = root.component	
+			
 		if (reference == ExpressionModelPackage.Literals.TYPE_REFERENCE__REFERENCE) {
 			// Util override is crucial because of this
 			val packages = root.imports

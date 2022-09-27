@@ -3,12 +3,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="statechart" nsURI="http://www.mit.bme.hu/gamma/statechart/Model/Statechart"
     nsPrefix="hu.bme.mit.gamma.statechart">
   <eClassifiers xsi:type="ecore:EClass" name="StatechartDefinition" abstract="true"
-      eSuperTypes="interface.ecore#//Component #//CompositeElement">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="variableDeclarations" upperBound="-1"
-        eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//VariableDeclaration"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="timeoutDeclarations" upperBound="-1"
-        eType="#//TimeoutDeclaration" containment="true"/>
+      eSuperTypes="#//CompositeElement composite.ecore#//StatefulComponent">
     <eStructuralFeatures xsi:type="ecore:EReference" name="transitions" upperBound="-1"
         eType="#//Transition" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="schedulingOrder" lowerBound="1"
@@ -19,6 +14,8 @@
         eType="#//TransitionPriority" defaultValueLiteral="OFF"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="guardEvaluation" lowerBound="1"
         eType="#//GuardEvaluation" defaultValueLiteral="ON_THE_FLY"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="activities" upperBound="-1"
+        eType="ecore:EClass activity.ecore#//ActivityControllerPort" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SynchronousStatechartDefinition" eSuperTypes="#//StatechartDefinition composite.ecore#//SynchronousComponent"/>
   <eClassifiers xsi:type="ecore:EClass" name="AsynchronousStatechartDefinition" eSuperTypes="#//StatechartDefinition composite.ecore#//AsynchronousComponent">
@@ -53,6 +50,9 @@
         eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//Expression"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="entryActions" upperBound="-1"
+        eType="ecore:EClass ../../hu.bme.mit.gamma.action.model/model/action.ecore#//Action"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="doActions" upperBound="-1"
         eType="ecore:EClass ../../hu.bme.mit.gamma.action.model/model/action.ecore#//Action"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="exitActions" upperBound="-1"
