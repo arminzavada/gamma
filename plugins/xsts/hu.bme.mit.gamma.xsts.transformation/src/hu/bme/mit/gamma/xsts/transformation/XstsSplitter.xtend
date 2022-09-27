@@ -97,6 +97,8 @@ class XstsSplitter {
  	protected static final XstsActionUtil actionUtil = XstsActionUtil.INSTANCE
  	protected static final ExpressionUtil exprUtil = ExpressionUtil.INSTANCE
 	
+	var XSTS xSts = null
+	
 	var VariableDeclaration _pc = null
 	var VariableDeclaration _trans = null
 	var VariableDeclaration _init = null
@@ -121,6 +123,10 @@ class XstsSplitter {
 		
 		return newId
 	}
+	def void resetId(VariableDeclaration v) {
+		_idMap.remove(v)
+		idShouldRevertMap.remove(v)
+	}
 	
 	val Set<VariableDeclarationAction> localVarDecls = newHashSet
  	val Map<XstsSlice, XTransition> sliceOriginalTranMap = newHashMap
@@ -133,6 +139,7 @@ class XstsSplitter {
 	def XSTS split(XSTS input) {
 		// Clone
  		val result = ecoreUtil.clone(input)
+ 		this.xSts = result
 	 	// Add util vars
 	 	result.addSplitUtilVars
 	 	// Add annotations
@@ -341,6 +348,7 @@ class XstsSplitter {
 	 	val forkSlice = new XstsSlice(origin, beginIds, ownPc)
 	 	// Set all used branch pc vars to 1
 	 	for (branchPcVar : branchPcVars) {
+	 		nextId(branchPcVar) // 1 must not be used later
 	 		forkSlice.actions += createAssignment(branchPcVar, 1)
 	 	}
 	 	forkSlice.end(forkEndId)
@@ -350,7 +358,8 @@ class XstsSplitter {
 	 	for (var i = 0; i < numberOfBranches; i++) {
 	 		val branch = par.actions.get(i)
 	 		val branchPcVar = branchPcVars.get(i)
-	 		val branchBeginIds = getNewBeginIds(beginIds, branchPcVar, 1)
+	 		val branchBeginIds = getNewBeginIds(beginIds, ownPc, forkEndId)
+	 		branchBeginIds += branchPcVar -> 1
 	 		slices += branch.sliceOrWrapToSingleSlice(origin, branchBeginIds, branchPcVar, 0)
 	 	}
 	 	
@@ -399,6 +408,7 @@ class XstsSplitter {
 	 
 	 def void releaseBranchPcVar(VariableDeclaration branchPcVar) {
 	 	usableBranchPcVars += branchPcVar
+	 	branchPcVar.resetId
 	 }
 	 def List<VariableDeclaration> getBranchPcVars(int num) {
 	 	val branchPcVars = <VariableDeclaration>newArrayList
@@ -411,10 +421,13 @@ class XstsSplitter {
 			 			value = BigInteger.valueOf(0)
 			 		]
 		 		]
+		 		addGlobalVar(xSts, newBranchPcVar)
 		 		branchPcVars += newBranchPcVar
 	 		}
 	 		else {
-	 			branchPcVars += usableBranchPcVars.get(0)
+	 			val usableBranchPcVar = usableBranchPcVars.get(0)
+	 			branchPcVars += usableBranchPcVar
+	 			usableBranchPcVars -= usableBranchPcVar
 	 		}
 	 	}
 	 	return branchPcVars
