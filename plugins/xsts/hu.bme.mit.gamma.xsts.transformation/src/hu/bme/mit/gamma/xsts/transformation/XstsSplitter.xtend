@@ -33,6 +33,7 @@ import hu.bme.mit.gamma.xsts.model.IfAction
 import hu.bme.mit.gamma.xsts.model.EmptyAction
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 import hu.bme.mit.gamma.xsts.model.MultiaryAction
+import hu.bme.mit.gamma.expression.model.BooleanExpression
 
 class XstsSplitter {
 	static enum XstsTransitionOrigin {
@@ -44,15 +45,18 @@ class XstsSplitter {
 		
 		List<Action> actions = newArrayList
 		val XstsTransitionOrigin origin
+		val VariableDeclaration ownPc
 		
-		new(XstsTransitionOrigin origin, int beginId) {
-			this.origin = origin
-	 		actions += xStsSplitter.create_pcAssumption(origin, beginId);
-		}
-		new(XstsTransitionOrigin origin, Action action, int beginId, int endId) {
-			this(origin, beginId)
+		new(XstsTransitionOrigin origin, Map<VariableDeclaration, Integer> beginIds,
+			VariableDeclaration ownPc, int ownPcEndId, Action action) {
+			this(origin, beginIds, ownPc)
 			add(action)
-			end(endId)
+			end(ownPcEndId)
+		}
+		new(XstsTransitionOrigin origin, Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc) {
+			this.origin = origin
+			this.ownPc = ownPc
+	 		actions += xStsSplitter.createComplexAssumption(origin, beginIds);
 		}
 		def add(Action action) {
 			actions += action
@@ -65,7 +69,7 @@ class XstsSplitter {
 			return actions.size
 		}
 		def end(int endId) {
-			actions += xStsSplitter.create_pcAssignment(endId)
+			actions += xStsSplitter.createAssignment(ownPc, endId)
 		}
 		def endChangeTranSet() {
 			actions += xStsSplitter.createChangeTranSetActions(origin)
@@ -75,10 +79,11 @@ class XstsSplitter {
 		 	seq.actions.addAll(actions)
 		 	return actionUtil.wrap(seq)
 		}
-		def isEndSlice(int endId) {
+		def isEndSlice(VariableDeclaration pc, int endId) {
+			// It returns false for 'conditionally' end slices, e.g.: __pc := if (...) then 0 else ...
 			return (actions.last instanceof AssignmentAction &&
 				(actions.last as AssignmentAction).lhs instanceof DirectReferenceExpression &&
-				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == xStsSplitter._pc &&
+				((actions.last as AssignmentAction).lhs as DirectReferenceExpression).declaration == pc &&
 				(actions.last as AssignmentAction).rhs instanceof IntegerLiteralExpression &&
 				((actions.last as AssignmentAction).rhs as IntegerLiteralExpression).value.intValue == endId)
 		}
@@ -95,19 +100,26 @@ class XstsSplitter {
 	var VariableDeclaration _pc = null
 	var VariableDeclaration _trans = null
 	var VariableDeclaration _init = null
-	int _id = 0
-	int idShouldRevert = 0
-	def resetIdRevert() {
-		idShouldRevert = 0
+	
+	val _idMap = <VariableDeclaration, Integer>newHashMap
+	val idShouldRevertMap = <VariableDeclaration, Integer>newHashMap
+	def resetIdRevert(VariableDeclaration v) {
+		idShouldRevertMap += v -> 0
 	}
-	def revertId() {
-		_id -= idShouldRevert
-		resetIdRevert()
+	def revertId(VariableDeclaration v) {
+		_idMap += v -> (_idMap.get(v) - idShouldRevertMap.get(v))
+		resetIdRevert(v)
 	}
-	def int nextId() {
-		_id++
-		idShouldRevert++
-		return _id
+	def int nextId(VariableDeclaration v) {
+		val oldId = _idMap.containsKey(v) ? _idMap.get(v) : 0
+		val newId = oldId + 1
+		_idMap += v -> newId
+		
+		val oldRevert = idShouldRevertMap.containsKey(v) ? idShouldRevertMap.get(v) : 0
+		val newRevert = oldRevert + 1
+		idShouldRevertMap += v -> newRevert
+		
+		return newId
 	}
 	
 	val Set<VariableDeclarationAction> localVarDecls = newHashSet
@@ -151,9 +163,9 @@ class XstsSplitter {
 	 	
 	 	for (tran : transitionsToSplit) {
 	 		// Every transition starts and ends with assuming/setting __pc = 0
-	 		val slices = tran.action.slice(origin, 0, 0)
+	 		val slices = tran.action.slice(origin, newHashMap(_pc -> 0), _pc, 0)
 	 		
-	 		var endSlices = slices.getEndSlices(0)
+	 		var endSlices = slices.getEndSlices(_pc, 0)
 	 		tranEndSlices += (tran -> endSlices)
 	 		for (endSlice : endSlices) {
 	 			endSlice.endChangeTranSet
@@ -190,45 +202,55 @@ class XstsSplitter {
 	 	xSts.transitions -= toRemove
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(Action action, XstsTransitionOrigin origin, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(Action action, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	throw new IllegalArgumentException("Not known action: " + action)
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(AtomicAction atomic, XstsTransitionOrigin origin, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(AtomicAction atomic, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	return null
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(LoopAction loop, XstsTransitionOrigin origin, int beginId, int endId) {
-	 	val slice = new XstsSlice(origin, loop.action, beginId, endId)
+	 def dispatch List<XstsSlice> slice(LoopAction loop, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
+	 	val slice = new XstsSlice(origin, beginIds, ownPc, ownPcEndId, loop.action)
 	 	return newArrayList(slice)
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(SequentialAction seq, XstsTransitionOrigin origin, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(SequentialAction seq, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	println("---seq:")
 	 	seq.print
 	 	val List<XstsSlice> slices = newArrayList
 	 	var XstsSlice slice = null
-	 	var int sliceBeginId = beginId
+	 	var int sliceBeginId = beginIds.get(ownPc)
 	 	
 	 	for (action : seq.actions) {
-	 		resetIdRevert()
+	 		resetIdRevert(ownPc)
 	 		val last = (action == seq.actions.last)
 	 		if (slice !== null)
-	 			sliceBeginId = nextId()
-	 		val sliceEndId = last ? endId : nextId()
-	 		val subslices = action.slice(origin, sliceBeginId, sliceEndId)
+	 			sliceBeginId = nextId(ownPc)
+	 		val sliceEndId = last ? ownPcEndId : nextId(ownPc)
+	 		
+	 		val subsliceBeginIds = getNewBeginIds(beginIds, ownPc, sliceBeginId)
+	 		val subslices = action.slice(origin, subsliceBeginIds, ownPc, sliceEndId)
 	 		if (subslices === null) {// No slicing
 	 			if (slice === null)
-	 				slice = new XstsSlice(origin, sliceBeginId)
+	 				slice = new XstsSlice(origin, subsliceBeginIds, ownPc)
  				
 	 			slice += action
 //	 			registerVarSliceRelations(action, slice)
 	 			
 	 			if (last) {
-	 				slice.end(endId)
+	 				slice.end(ownPcEndId)
 	 				slices += slice
  				}
- 				revertId()
+ 				revertId(ownPc)
 	 		}
 	 		else {// Slicing
 	 			if (slice !== null) {
@@ -245,32 +267,36 @@ class XstsSplitter {
  		return slices
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, XstsTransitionOrigin origin, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(NonDeterministicAction choice, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	val List<XstsSlice> slices = newArrayList
 	 	for (subaction : choice.actions) {
-	 		slices += subaction.sliceOrWrapToSingleSlice(origin, beginId, endId)
+	 		slices += subaction.sliceOrWrapToSingleSlice(origin, beginIds, ownPc, ownPcEndId)
 	 	}
-	 	registerCompositeActionRelations(choice, slices, endId)
+	 	registerCompositeActionRelations(choice, slices, ownPc, ownPcEndId)
 	 	return slices
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(IfAction ifAction, XstsTransitionOrigin origin, int beginId, int endId) {
+	 def dispatch List<XstsSlice> slice(IfAction ifAction, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	println("---ifAction:")
 	 	ifAction.print
 	 	val List<XstsSlice> slices = newArrayList
-	 	val thenId = nextId()
+	 	val thenId = nextId(ownPc)
 	 	val elseExists = ifAction.^else !== null && !(ifAction.^else instanceof EmptyAction)
-	 	val elseId = elseExists ? nextId() : endId
+	 	val elseId = elseExists ? nextId(ownPc) : ownPcEndId
 	 	// Condition
-	 	val conditionSlice = new XstsSlice(origin, beginId)
+	 	val conditionSlice = new XstsSlice(origin, beginIds, ownPc)
 	 	slices += conditionSlice
-	 	conditionSlice.add(createAssignment(_pc, exprFactory.createIfThenElseExpression => [
+	 	conditionSlice.add(createAssignment(ownPc, exprFactory.createIfThenElseExpression => [
 	 		it.condition = ifAction.condition
 	 		it.then = createIntegerLiteralExpr(thenId)
 	 		it.^else = createIntegerLiteralExpr(elseId) 
 	 	]))
 	 	// Handle if this IfAction is the last action of the transition set
-	 	if (!elseExists && elseId == 0) {
+	 	if (!elseExists && ownPc == _pc && elseId == 0) {
 	 		conditionSlice.add(xstsFactory.createIfAction => [
 	 			condition = exprFactory.createEqualityExpression => [
 					leftOperand = createDirectReference(_pc)
@@ -282,25 +308,66 @@ class XstsSplitter {
 	 		])
 	 	}
 	 	// Then
-	 	slices += ifAction.then.sliceOrWrapToSingleSlice(origin, thenId, endId)
+	 	val thenBeginIds = getNewBeginIds(beginIds, ownPc, thenId)
+	 	slices += ifAction.then.sliceOrWrapToSingleSlice(origin, thenBeginIds, ownPc, ownPcEndId)
 	 	// Else
 	 	if (elseExists) {
-	 		slices += ifAction.^else.sliceOrWrapToSingleSlice(origin, elseId, endId)
+	 		val elseBeginIds = getNewBeginIds(beginIds, ownPc, elseId)
+	 		slices += ifAction.^else.sliceOrWrapToSingleSlice(origin, elseBeginIds, ownPc, ownPcEndId)
 	 	}
 	 	//
-	 	registerCompositeActionRelations(ifAction, slices, endId)
+	 	registerCompositeActionRelations(ifAction, slices, ownPc, ownPcEndId)
 	 	println("***slices:")
 	 	slices.print
 	 	return slices
 	 }
 	 
-	 //TODO Support ort and par
-	 def dispatch List<XstsSlice> slice(OrthogonalAction ort, XstsTransitionOrigin origin, int beginId, int endId) {
+	 //TODO Support ort
+	 def dispatch List<XstsSlice> slice(OrthogonalAction ort, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	throw new IllegalArgumentException("ort is currently not supported")
 	 }
 	 
-	 def dispatch List<XstsSlice> slice(ParallelAction par, XstsTransitionOrigin origin, int beginId, int endId) {
-	 	throw new IllegalArgumentException("par is currently not supported")
+	 def dispatch List<XstsSlice> slice(ParallelAction par, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
+	 	// TODO Remove empty branches, if any exists
+	 	val List<XstsSlice> slices = newArrayList
+	 	val numberOfBranches = par.actions.size
+	 	val branchPcVars = getBranchPcVars(numberOfBranches)
+	 	val forkEndId = nextId(ownPc)
+	 	
+	 	val forkSlice = new XstsSlice(origin, beginIds, ownPc)
+	 	// Set all used branch pc vars to 1
+	 	for (branchPcVar : branchPcVars) {
+	 		forkSlice.actions += createAssignment(branchPcVar, 1)
+	 	}
+	 	forkSlice.end(forkEndId)
+	 	slices += forkSlice
+	 	
+	 	// Slice every branch
+	 	for (var i = 0; i < numberOfBranches; i++) {
+	 		val branch = par.actions.get(i)
+	 		val branchPcVar = branchPcVars.get(i)
+	 		val branchBeginIds = getNewBeginIds(beginIds, branchPcVar, 1)
+	 		slices += branch.sliceOrWrapToSingleSlice(origin, branchBeginIds, branchPcVar, 0)
+	 	}
+	 	
+	 	// Assume all used branch pc vars == 0
+	 	val joinBeginIds = getNewBeginIds(beginIds, ownPc, forkEndId)
+	 	for (branchPcVar : branchPcVars) {
+	 		joinBeginIds += branchPcVar -> 0
+	 	}
+	 	val joinSlice = new XstsSlice(origin, joinBeginIds, ownPc)
+	 	// Release all used branch pc vars
+	 	for (branchPcVar : branchPcVars) {
+	 		releaseBranchPcVar(branchPcVar)
+	 	}
+	 	joinSlice.end(ownPcEndId)
+	 	slices += joinSlice
+	 	
+	 	return slices
 	 }
 	 
 	 //TODO temp
@@ -318,18 +385,57 @@ class XstsSplitter {
 	 }
 	 
 	 // Util
-	 def List<XstsSlice> sliceOrWrapToSingleSlice(Action action, XstsTransitionOrigin origin, int beginId, int endId) {
+	 def Map<VariableDeclaration, Integer> getNewBeginIds(
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int newBeginId
+	 ) {
+	 	val newBeginIds = newHashMap
+	 	newBeginIds += beginIds
+	 	newBeginIds += ownPc -> newBeginId
+	 	return newBeginIds
+	 }
+	 
+	 var branchPcVarsCnt = 0
+	 val usableBranchPcVars = <VariableDeclaration>newHashSet
+	 
+	 def void releaseBranchPcVar(VariableDeclaration branchPcVar) {
+	 	usableBranchPcVars += branchPcVar
+	 }
+	 def List<VariableDeclaration> getBranchPcVars(int num) {
+	 	val branchPcVars = <VariableDeclaration>newArrayList
+	 	for (var i = 0; i < num; i++) {
+	 		if (usableBranchPcVars.isNullOrEmpty) {
+	 			val newBranchPcVar = exprFactory.createVariableDeclaration => [
+			 		name = XstsNamings.BRANCH_PC_VAR_NAME + branchPcVarsCnt++
+			 		type = exprFactory.createIntegerTypeDefinition
+			 		expression = exprFactory.createIntegerLiteralExpression => [
+			 			value = BigInteger.valueOf(0)
+			 		]
+		 		]
+		 		branchPcVars += newBranchPcVar
+	 		}
+	 		else {
+	 			branchPcVars += usableBranchPcVars.get(0)
+	 		}
+	 	}
+	 	return branchPcVars
+	 }
+	 
+	 def List<XstsSlice> sliceOrWrapToSingleSlice(Action action, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
 	 	val List<XstsSlice> slices = newArrayList
-	 	val subslices = action.slice(origin, beginId, endId)
+	 	val subslices = action.slice(origin, beginIds, ownPc, ownPcEndId)
 	 	if (subslices === null)
-	 		slices += new XstsSlice(origin, action, beginId, endId)
+	 		slices += new XstsSlice(origin, beginIds, ownPc, ownPcEndId, action)
  		else
  			slices += subslices
 		return slices
 	 }
 	 
-	 def void registerCompositeActionRelations(CompositeAction action, List<XstsSlice> slices, int endId) {
-	 	compositeActionEndSlices += (action -> slices.getEndSlices(endId))
+	 def void registerCompositeActionRelations(CompositeAction action, List<XstsSlice> slices,
+	 	VariableDeclaration ownPc, int ownPcEndId
+	 ) {
+	 	compositeActionEndSlices += (action -> slices.getEndSlices(ownPc, ownPcEndId))
 	 	for (slice : slices) {
 	 		sliceCompositeActionMap += (slice -> action)
 	 	}
@@ -376,16 +482,16 @@ class XstsSplitter {
 	 	xSts.variableDeclarations += varDecl
 	 }
 	 
-	 def Set<XstsSlice> getEndSlices(Collection<XstsSlice> slices, int endId) {
+	 def Set<XstsSlice> getEndSlices(Collection<XstsSlice> slices, VariableDeclaration ownPc, int ownPcEndId) {
 	 	var Set<XstsSlice> ret = newHashSet
 	 	for (var i = 0; i < slices.size; i++) {
-	 		if (slices.get(i).isEndSlice(endId)) {
+	 		if (slices.get(i).isEndSlice(ownPc, ownPcEndId)) {
 	 			ret += slices.get(i)
 	 		}
 	 	}
 	 	
 	 	return slices.stream
-		 	.filter[s | s.isEndSlice(endId)]
+		 	.filter[s | s.isEndSlice(ownPc, ownPcEndId)]
 		 	.collect(Collectors.toSet)
 	 }
 	 
@@ -441,7 +547,8 @@ class XstsSplitter {
 	 }
 	
 	def init() {
-		_id = 0
+		_idMap.clear
+		idShouldRevertMap.clear
 		localVarDecls.clear
 		sliceOriginalTranMap.clear
 		tranEndSlices.clear
@@ -459,32 +566,39 @@ class XstsSplitter {
 	 	}
 		actions += create_transAssignment(origin == XstsTransitionOrigin.ENV)
 		return actions
- }
-	 def create_pcAssumption(XstsTransitionOrigin origin, int value) {
-	 	val init = origin == XstsTransitionOrigin.INIT
-	 	val trans = origin == XstsTransitionOrigin.TRANS
-	 	xstsFactory.createAssumeAction => [
+ 	}
+ 	def createComplexAssumption(XstsTransitionOrigin origin, Map<VariableDeclaration, Integer> ids) {
+ 		return xstsFactory.createAssumeAction => [
 	 		assumption = exprFactory.createAndExpression => [
-	 			operands += exprFactory.createEqualityExpression => [
-	 				leftOperand = createDirectReference(_init)
-	 				rightOperand = createBooleanLiteralExpr(init)
-	 			]
-	 			if (!init) {
+	 			operands += getTransSetAssumptionExpr(origin)
+	 			for (entry : ids.entrySet) {
 	 				operands += exprFactory.createEqualityExpression => [
-		 				leftOperand = createDirectReference(_trans)
-		 				rightOperand = createBooleanLiteralExpr(trans)
+		 				leftOperand = createDirectReference(entry.key)
+		 				rightOperand = createIntegerLiteralExpr(entry.value)
 		 			]
 	 			}
-	 			operands += exprFactory.createEqualityExpression => [
-					leftOperand = createDirectReference(_pc)
-					rightOperand = createIntegerLiteralExpr(value)
-				]
-	 		]
+ 			]
+		]
+ 	}
+	 def getTransSetAssumptionExpr(XstsTransitionOrigin origin) {
+	 	val init = origin == XstsTransitionOrigin.INIT
+	 	val trans = origin == XstsTransitionOrigin.TRANS
+	 	return exprFactory.createAndExpression => [
+ 			operands += exprFactory.createEqualityExpression => [
+ 				leftOperand = createDirectReference(_init)
+ 				rightOperand = createBooleanLiteralExpr(init)
+ 			]
+ 			if (!init) {
+ 				operands += exprFactory.createEqualityExpression => [
+	 				leftOperand = createDirectReference(_trans)
+	 				rightOperand = createBooleanLiteralExpr(trans)
+	 			]
+ 			}
 		]
 	 }
-	 def create_pcAssignment(int value) {
+	 /*def create_pcAssignment(int value) {
 	 	createAssignment(_pc, value)
-	 }
+	 }*/
 	 def create_transAssignment(boolean value) {
 	 	createAssignment(_trans, createBooleanLiteralExpr(value))
 	 }
