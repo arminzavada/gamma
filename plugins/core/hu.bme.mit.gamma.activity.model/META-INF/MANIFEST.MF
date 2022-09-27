@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Gamma Activity Langauge Metamodel
+Bundle-Name: %pluginName
 Bundle-SymbolicName: hu.bme.mit.gamma.activity.model;singleton:=true
 Automatic-Module-Name: hu.bme.mit.gamma.activity.model
 Bundle-Version: 2.7.0.qualifier
@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport,
  hu.bme.mit.gamma.action.model;visibility:=reexport,
  hu.bme.mit.gamma.expression.model;visibility:=reexport
 Bundle-ActivationPolicy: lazy
-Bundle-Vendor: BME-FTSRG
+Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: hu.bme.mit.gamma.activity.derivedfeatures,
