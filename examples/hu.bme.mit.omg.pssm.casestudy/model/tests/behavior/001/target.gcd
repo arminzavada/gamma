@@ -1,17 +1,112 @@
 package target
 
 import "interfaces"
+ 
+scheduled-async System {
+	
+	component tester : Tester
+	component target : Target
+	component scheduler : Scheduler
+	
+	// Tester controlling - next, end
+	channel [ scheduler.testerControl ] -o)- [ tester.testerControl ]
+	
+	// Actual target data propagation
+	channel [ tester.data ] -o)- [ scheduler.inputData ]
+	channel [ scheduler.outputData ] -o)- [ target.data ]
+	
+	// Scheduler controlling - ready, ignore
+	channel [ target.schedulerControl ] -o)- [ scheduler.schedulerControl ]
 
-statechart Target [
-	port testControl : requires TestControl
-] {	
+	initial execute target
+
+}
+
+@Asynchronous
+statechart Tester [
+	port testerControl : requires TesterControl
+	
+	port data : provides Data
+] {
+	
 	region Main {
 		initial Initial
-		state S1 
-		state FS1 
+		state Test {
+			region Sequence {
+				initial SequenceInitial
+				state _0
+				state _1
+			}
+		}
+		state End
 	}
 	
+	transition from Initial to Test
+	transition from Test to End when testerControl.end
+	
+	transition from SequenceInitial to _0
+	transition from _0 to _1 when testerControl.next / raise data.start;
+	
+}
+
+@Asynchronous
+@RegionSchedule=bottom-up
+statechart Target [
+	port data : requires Data
+	
+	port schedulerControl : provides SchedulerControl
+] {	
+	
+	region Ignore {
+		initial IgnoreInitial
+		state MainFunction {
+			region Main {
+				initial Initial
+				state S1  {
+					entry / raise schedulerControl.ready;
+				}
+				state Final
+			}
+		}
+	}
+	
+	transition from IgnoreInitial to MainFunction
+	transition from MainFunction to MainFunction when data.any / raise schedulerControl.ignore;
+	
 	transition from Initial to S1
-	transition from S1 to FS1 when testControl.start
+	transition from S1 to Final when data.start / raise schedulerControl.end;
+	
+}
+
+@Asynchronous
+statechart Scheduler [
+	port testerControl : provides TesterControl
+	port inputData : requires Data
+	
+	port schedulerControl : requires SchedulerControl
+	port outputData : provides Data
+] {
+	
+	region Main {
+		initial Initial
+		state WaitingForTarget {
+			region Sent {
+				initial SentInitial
+				state SentNone
+				state SentStart
+				state SentAnotherSignal
+			}
+		}
+		state WaitingForTester
+	}
+	
+	transition from Initial to WaitingForTarget
+	
+	transition from WaitingForTarget to WaitingForTester when schedulerControl.any / raise testerControl.next;
+	
+	transition from WaitingForTester to SentStart when inputData.start / raise outputData.start;
+	transition from WaitingForTester to SentAnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal;
+	
+	transition from SentInitial to SentNone // ignored
 	
 }

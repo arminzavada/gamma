@@ -2,41 +2,149 @@ package target
 
 import "interfaces"
 import "common"
+ 
+scheduled-async System {
+	
+	component tester : Tester
+	component target : Target
+	component scheduler : Scheduler
+	component doActivity : DoActivity
+	
+	// Tester controlling - next, end
+	channel [ scheduler.testerControl ] -o)- [ tester.testerControl ]
+	
+	// Actual target data propagation
+	channel [ tester.data ] -o)- [ scheduler.inputData ]
+	channel [ scheduler.outputData_0 ] -o)- [ target.data ]
+	channel [ scheduler.outputData_1 ] -o)- [ doActivity.data ]
+	
+	// Scheduler controlling - ready, ignore
+	channel [ target.schedulerControl ] -o)- [ scheduler.schedulerControl_0 ]
+	channel [ doActivity.schedulerControl ] -o)- [ scheduler.schedulerControl_1 ]
 
-async Target [
-	port testControl : requires TestControl
-	port control : requires SUTControl
-] {
-	component sc : SC
-	component act : DoActivity
-	
-	bind testControl -> sc.testControl
-	bind control -> sc.control
-	
-	channel [ act.controller ] -o)- [ sc.doActivityController ]
+	channel [ doActivity.controller ] -o)- [ target.activityControl ]
+
+	initial execute target
+
 }
 
 @Asynchronous
-statechart SC [
-	port testControl : requires TestControl
-	port control : requires SUTControl
+statechart Tester [
+	port testerControl : requires TesterControl
 	
-	port doActivityController : requires ActivityControllerInterface
+	port data : provides Data
 ] {
 	
 	region Main {
 		initial Initial
-		state Wait
-		state S1 {
-			entry / raise doActivityController.control(true);
-			exit / raise doActivityController.control(false);
+		state Test {
+			region Sequence {
+				initial SequenceInitial
+				state _0
+				state _1
+				state _2
+			}
 		}
-		state Error
-		state FS1
+		state End
 	}
 	
+	transition from Initial to Test
+	transition from Test to End when testerControl.end
+	
+	transition from SequenceInitial to _0
+	transition from _0 to _1 when testerControl.next / raise data.start;
+	transition from _1 to _2 when testerControl.next / raise data.anotherSignal;
+	
+}
+
+@Asynchronous
+@RegionSchedule=bottom-up
+statechart Target [
+	port data : requires Data
+	
+	port schedulerControl : provides SchedulerControl
+	
+	port activityControl : requires ActivityControllerInterface
+] {	
+	
+	region Ignore {
+		initial IgnoreInitial
+		state MainFunction {
+			region Main {
+				initial Initial
+				state Wait {
+					entry / raise schedulerControl.ready;
+				}
+				state S1 {
+					entry / raise schedulerControl.ready;
+				}
+				state Final
+			}
+		}
+	}
+	
+	transition from IgnoreInitial to MainFunction
+	transition from MainFunction to MainFunction when data.any / raise schedulerControl.ignore;
+	
 	transition from Initial to Wait
-	transition from Wait to S1 when testControl.start
-	transition from S1 to Error when doActivityController.done
-	transition from S1 to FS1 when control.anotherSignal
+	transition from Wait to S1 when data.start
+	transition from S1 to Final when data.anotherSignal / raise schedulerControl.end;
+	transition from S1 to Final when activityControl.done / log "error"; raise schedulerControl.end;
+	
+}
+
+@Asynchronous
+statechart Scheduler [
+	port testerControl : provides TesterControl
+	port inputData : requires Data
+	
+	port schedulerControl_0 : requires SchedulerControl
+	port outputData_0 : provides Data
+	
+	port schedulerControl_1 : requires SchedulerControl
+	port outputData_1 : provides Data
+] {
+	
+	region Main {
+		initial Initial
+		state WaitingForTarget_0 {
+			region Sent_0 {
+				initial Sent_0Initial
+				state Sent_0None
+				state Sent_0Start
+				state Sent_0AnotherSignal
+				state Sent_0Continue
+			}
+		}
+		state WaitingForTarget_1 {
+			region Sent_1 {
+				initial Sent_1Initial
+				state Sent_1None
+				state Sent_1Start
+				state Sent_1AnotherSignal
+				state Sent_1Continue
+			}
+		}
+		state WaitingForTester
+	}
+	
+	transition from Initial to WaitingForTarget_0
+	
+	transition from WaitingForTarget_0 to WaitingForTester when schedulerControl_0.ready / raise testerControl.next;
+	
+	transition from WaitingForTester to Sent_0Start when inputData.start / raise outputData_0.start;
+	transition from WaitingForTester to Sent_0AnotherSignal when inputData.anotherSignal / raise outputData_0.anotherSignal;
+	transition from WaitingForTester to Sent_0Continue when inputData.continue / raise outputData_0.continue;
+	
+	transition from Sent_0Initial to Sent_0None // ignored
+	
+	transition from Sent_0Start to Sent_1Start when schedulerControl_0.ignore / raise outputData_0.start;
+	transition from Sent_0AnotherSignal to Sent_1AnotherSignal when schedulerControl_0.ignore / raise outputData_0.anotherSignal;
+	transition from Sent_0Continue to Sent_1Continue when schedulerControl_0.ignore / raise outputData_0.continue;
+	
+	transition from Sent_1Initial to Sent_1None // ignored
+	
+	transition from WaitingForTarget_1 to WaitingForTester when schedulerControl_0.ready / raise testerControl.next;
+	transition from WaitingForTarget_1 to WaitingForTester when schedulerControl_0.ignore / raise testerControl.next;
+	
 }

@@ -1,6 +1,7 @@
 package interfaces
 
-interface SUTControl {
+interface Data {
+	out event start
 	out event continue
 	out event anotherSignal
 	out event pending
@@ -8,8 +9,15 @@ interface SUTControl {
 	out event integerData(value : integer)
 }
 
-interface TestControl {
-	out event start
+interface TesterControl {
+	out event next
+	out event end
+}
+
+interface SchedulerControl {
+	out event ready
+	out event ignore
+	out event end
 }
 
 interface ActivityControllerInterface {

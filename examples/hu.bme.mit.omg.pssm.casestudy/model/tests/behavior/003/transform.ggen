@@ -1,8 +1,8 @@
-import "/hu.bme.mit.omg.pssm/model/tests/behavior/003/SCSystem.gcd"
+import "target"
 
 analysis {
-	component : SCSystem
+	component : System
 	language : Theta
-	optimize : true
+	optimize : false
 	split-by : CHOICE
 }

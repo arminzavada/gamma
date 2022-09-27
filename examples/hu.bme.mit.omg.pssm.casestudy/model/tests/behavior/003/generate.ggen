@@ -1,7 +1,0 @@
-import trace "trace.get"
-
-trace-replay {
-	trace : Trace
-	system-file : "SCSystem"
-	environment-model : asynchronous
-}
