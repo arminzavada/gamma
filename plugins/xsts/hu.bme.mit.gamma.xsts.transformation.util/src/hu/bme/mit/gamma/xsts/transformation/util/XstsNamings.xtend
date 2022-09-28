@@ -32,4 +32,5 @@ class XstsNamings {
 	public static val String TRANS_VAR_NAME = "__trans"
 	public static val String INIT_VAR_NAME = "__init"
 	public static val String BRANCH_PC_VAR_NAME = "__branch_pc_"
+	
 }

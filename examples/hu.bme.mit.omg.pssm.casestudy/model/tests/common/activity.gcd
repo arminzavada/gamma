@@ -5,7 +5,8 @@ import "interfaces"
 activity Activity [
 	@ActivityController
 	port controller : provides ActivityControllerInterface
-	port control : requires SUTControl
+	port data : requires Data
+	port schedulerControl : provides SchedulerControl
 ] {
 	
 	initial init
@@ -14,7 +15,7 @@ activity Activity [
 		log "S1_doActivityPartI";
 	}
 	
-	trigger Wait when control.continue
+	trigger Wait when data.continue
 	
 	action Part2 {
 		log "S1_doActivityPartII";
@@ -37,10 +38,10 @@ activity Activity [
 adapter DoActivity of component act : Activity {	
 	when any / run
 	
-	queue controllerMessages(priority = 1, capacity = 1) {
+	queue controlMessages(priority = 1, capacity = 10) {
 		controller.any
 	}
-	queue controlMessages(priority = 2, capacity = 1) {
-		control.any
+	queue dataMessages(priority = 2, capacity = 10) {
+		data.any
 	}
 }
