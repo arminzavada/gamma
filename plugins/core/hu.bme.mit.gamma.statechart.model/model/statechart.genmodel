@@ -378,6 +378,7 @@
     <genClasses image="false" ecoreClass="statechart.ecore#//StateAnnotation"/>
     <genClasses image="false" ecoreClass="statechart.ecore#//TransitionAnnotation"/>
     <genClasses ecoreClass="statechart.ecore#//TransitionIdAnnotation"/>
+    <genClasses ecoreClass="statechart.ecore#//InternalTransitionAnnotation"/>
   </genPackages>
   <genPackages prefix="ActivityComposition" basePackage="hu.bme.mit.gamma.statechart"
       disposableProviderFactory="true" ecorePackage="activity.ecore#/">

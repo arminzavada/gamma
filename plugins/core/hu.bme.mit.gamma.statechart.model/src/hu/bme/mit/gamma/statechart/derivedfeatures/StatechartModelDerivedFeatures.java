@@ -107,6 +107,7 @@ import hu.bme.mit.gamma.statechart.statechart.DeepHistoryState;
 import hu.bme.mit.gamma.statechart.statechart.EntryState;
 import hu.bme.mit.gamma.statechart.statechart.ForkState;
 import hu.bme.mit.gamma.statechart.statechart.InitialState;
+import hu.bme.mit.gamma.statechart.statechart.InternalTransitionAnnotation;
 import hu.bme.mit.gamma.statechart.statechart.JoinState;
 import hu.bme.mit.gamma.statechart.statechart.MergeState;
 import hu.bme.mit.gamma.statechart.statechart.PortEventReference;
@@ -1931,6 +1932,10 @@ public class StatechartModelDerivedFeatures extends ActivityModelDerivedFeatures
 			}
 		}
 		return null;
+	}
+	
+	public static boolean isInternal(Transition transition) {
+		return transition.getAnnotations().stream().anyMatch(InternalTransitionAnnotation.class::isInstance);
 	}
 	
 	public static String getId(Transition transition) {

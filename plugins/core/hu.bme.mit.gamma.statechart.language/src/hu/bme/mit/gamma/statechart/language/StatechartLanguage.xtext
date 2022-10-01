@@ -330,12 +330,19 @@ Transition returns Transition:
 ;
 
 TransitionAnnotation returns TransitionAnnotation:
-	TransitionIdAnnotation
+	TransitionIdAnnotation | 
+	InternalTransitionAnnotation
 ;
 
 TransitionIdAnnotation returns TransitionIdAnnotation:
 	'@' '(' name=ID ')'
 ;
+
+InternalTransitionAnnotation returns InternalTransitionAnnotation:
+	{InternalTransitionAnnotation}
+	'@' 'Internal'
+;
+
 
 StateNode returns StateNode:
 	PseudoState |

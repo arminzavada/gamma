@@ -152,4 +152,5 @@
   <eClassifiers xsi:type="ecore:EClass" name="StateAnnotation" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="TransitionAnnotation" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="TransitionIdAnnotation" eSuperTypes="#//TransitionAnnotation ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//NamedElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InternalTransitionAnnotation" eSuperTypes="#//TransitionAnnotation"/>
 </ecore:EPackage>

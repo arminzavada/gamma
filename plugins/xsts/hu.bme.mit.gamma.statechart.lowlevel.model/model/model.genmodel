@@ -81,6 +81,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Transition/guard"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Transition/action"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Transition/priority"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Transition/internal"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//PseudoState"/>
     <genClasses ecoreClass="model.ecore#//PrecursoryState"/>

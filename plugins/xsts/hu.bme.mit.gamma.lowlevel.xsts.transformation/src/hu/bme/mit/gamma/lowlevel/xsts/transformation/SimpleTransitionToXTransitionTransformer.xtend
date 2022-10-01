@@ -39,11 +39,15 @@ class SimpleTransitionToXTransitionTransformer extends LowlevelTransitionToXTran
 		val xStsTransitionAction = createSequentialAction => [
 			// Active source state and guard
 			it.actions += xStsPrecondition.createAssumeAction
-			// To higher characteristics
-			it.actions += lowlevelSimpleTransition.createRecursiveXStsTransitionExitActionsWithOrthogonality
+			if (!lowlevelSimpleTransition.isInternal) { // internal transitions do not exit
+				// To higher characteristics
+				it.actions += lowlevelSimpleTransition.createRecursiveXStsTransitionExitActionsWithOrthogonality
+			}
 			it.actions += lowlevelSimpleTransition.action.transformAction
-			// To lower characteristics
-			it.actions += lowlevelSimpleTransition.createRecursiveXStsTransitionEntryActionsWithOrthogonality
+			if (!lowlevelSimpleTransition.isInternal) { // internal transitions do not enter
+				// To lower characteristics
+				it.actions += lowlevelSimpleTransition.createRecursiveXStsTransitionEntryActionsWithOrthogonality		
+			}
 		]
 		val xStsTransition = xStsTransitionAction.createXStsTransition
 		trace.put(lowlevelSimpleTransition, xStsTransition, xStsPrecondition)

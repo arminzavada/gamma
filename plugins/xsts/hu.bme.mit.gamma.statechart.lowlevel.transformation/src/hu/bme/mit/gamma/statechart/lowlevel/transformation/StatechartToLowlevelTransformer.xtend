@@ -210,6 +210,9 @@ class StatechartToLowlevelTransformer {
 		// Trivial simple transitions
 		val gammaSource = gammaTransition.sourceState
 		val gammaTarget = gammaTransition.targetState
+		if (gammaTransition.isInternal) {
+			checkState(gammaSource == gammaTarget, "Internal transitions must not be between two different states")
+		}
 		val lowlevelSource = if (gammaSource instanceof State) {
 			trace.get(gammaSource)
 		} else if (gammaSource instanceof PseudoState) {
@@ -224,6 +227,7 @@ class StatechartToLowlevelTransformer {
 			it.source = lowlevelSource
 			it.target = lowlevelTarget
 			it.priority = gammaTransition.calculatePriority.intValue // Priority is handled later
+			it.internal = gammaTransition.isInternal
 		]
 		trace.put(gammaTransition, lowlevelTransition) // Saving in trace
 		// Important to trace the Gamma transition as the trigger transformer depends on it
