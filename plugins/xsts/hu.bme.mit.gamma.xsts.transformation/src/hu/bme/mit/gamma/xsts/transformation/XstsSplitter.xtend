@@ -192,11 +192,11 @@ class XstsSplitter {
 	 		if (usingSlices !== null && usingSlices.size > 1) {
 	 			var declSlice = varDeclSlice.get(localVarDecl)
 	 			// Replace with global var
+	 			val initialVal = exprUtil.getInitialValue(localVar)
 	 			localVarDecl.variableDeclaration = null
 	 			localVar.expression = null
 	 			xSts.addGlobalVar(localVar)
 	 			declSlice.actions -= localVarDecl
-	 			val initialVal = exprUtil.getInitialValue(localVar)
 	 			// Replace original declaration with initial value assignment
 	 			declSlice.actions.add(1, createAssignment(localVar, initialVal))
 	 			// Add initial value assignment to every end of its scope
