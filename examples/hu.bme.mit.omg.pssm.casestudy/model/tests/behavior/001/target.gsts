@@ -40,9 +40,9 @@
       <literals name="WrapperFunction_entry"/>
       <literals name="S1_entry"/>
       <literals name="Final_entry"/>
+      <literals name="t_from_WrapperFunction_to_WrapperFunction_effect"/>
       <literals name="S1_exit"/>
       <literals name="t_from_S1_to_Final_effect"/>
-      <literals name="t_from_WrapperFunction_to_WrapperFunction_effect"/>
     </type>
   </typeDeclarations>
   <typeDeclarations name="Main_Dispatcher">
@@ -62,11 +62,11 @@
       <literals name="t_from_WaitingForTarget_to_WaitingForEvent_effect"/>
     </type>
   </typeDeclarations>
-  <variableDeclarations name="queueControl_next_In_eventQueue_EventQueue">
+  <variableDeclarations name="data_start_Out_eventQueue_EventQueue">
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
-  <variableDeclarations name="data_start_Out_eventQueue_EventQueue">
+  <variableDeclarations name="queueControl_next_In_eventQueue_EventQueue">
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
@@ -83,11 +83,11 @@
       <typeReference reference="//@typeDeclarations.1"/>
     </expression>
   </variableDeclarations>
-  <variableDeclarations name="dispatcherControl_ignore_Out_target_Target">
+  <variableDeclarations name="data_pending_In_target_Target">
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
-  <variableDeclarations name="data_pending_In_target_Target">
+  <variableDeclarations name="dispatcherControl_ignore_Out_target_Target">
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
@@ -95,11 +95,20 @@
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
-  <variableDeclarations name="data_start_In_target_Target">
+  <variableDeclarations name="data_anotherSignal_In_target_Target">
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
-  <variableDeclarations name="data_anotherSignal_In_target_Target">
+  <variableDeclarations name="data_data_In_target_Target">
+    <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
+    <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+  </variableDeclarations>
+  <variableDeclarations name="data_data_In_value_target_Target">
+    <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
+    <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+    <annotations xsi:type="hu.bme.mit.gamma.expression:EnvironmentResettableVariableDeclarationAnnotation"/>
+  </variableDeclarations>
+  <variableDeclarations name="data_start_In_target_Target">
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
   </variableDeclarations>
@@ -110,15 +119,6 @@
   <variableDeclarations name="data_integerData_In_value_target_Target">
     <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-    <annotations xsi:type="hu.bme.mit.gamma.expression:EnvironmentResettableVariableDeclarationAnnotation"/>
-  </variableDeclarations>
-  <variableDeclarations name="data_data_In_target_Target">
-    <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
-    <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-  </variableDeclarations>
-  <variableDeclarations name="data_data_In_value_target_Target">
-    <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
-    <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
     <annotations xsi:type="hu.bme.mit.gamma.expression:EnvironmentResettableVariableDeclarationAnnotation"/>
   </variableDeclarations>
   <variableDeclarations name="wrapper_target_Target">
@@ -224,23 +224,23 @@
     <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
     <expression xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
   </variableDeclarations>
-  <variableDeclarations name="eventId_master_DispatcherMessageQueueOfdispatcher_337388294">
+  <variableDeclarations name="eventId_master_DispatcherMessageQueueOfdispatcher_1813845146">
     <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
   </variableDeclarations>
-  <variableDeclarations name="eventId_master_TargetMessageQueueOftarget_634404302">
+  <variableDeclarations name="eventId_master_TargetMessageQueueOftarget_1205071024">
     <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
   </variableDeclarations>
-  <variableDeclarations name="eventId_master_EventQueueMessageQueueOfeventQueue_1422102427">
+  <variableDeclarations name="eventId_master_EventQueueMessageQueueOfeventQueue_1974056540">
     <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
   </variableDeclarations>
-  <variableDeclarations name="eventId_master_DispatcherMessageQueueOfdispatcher_3373882940">
+  <variableDeclarations name="eventId_master_DispatcherMessageQueueOfdispatcher_18138451460">
     <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
   </variableDeclarations>
-  <variableGroups variables="//@variableDeclarations.0 //@variableDeclarations.5 //@variableDeclarations.6 //@variableDeclarations.7 //@variableDeclarations.8 //@variableDeclarations.9 //@variableDeclarations.11 //@variableDeclarations.16">
-    <annotation xsi:type="hu.bme.mit.gamma.xsts:InEventGroup"/>
-  </variableGroups>
-  <variableGroups variables="//@variableDeclarations.1 //@variableDeclarations.4 //@variableDeclarations.17">
+  <variableGroups variables="//@variableDeclarations.0 //@variableDeclarations.5 //@variableDeclarations.17">
     <annotation xsi:type="hu.bme.mit.gamma.xsts:OutEventGroup"/>
+  </variableGroups>
+  <variableGroups variables="//@variableDeclarations.1 //@variableDeclarations.4 //@variableDeclarations.6 //@variableDeclarations.7 //@variableDeclarations.8 //@variableDeclarations.10 //@variableDeclarations.11 //@variableDeclarations.16">
+    <annotation xsi:type="hu.bme.mit.gamma.xsts:InEventGroup"/>
   </variableGroups>
   <variableGroups variables="//@variableDeclarations.2 //@variableDeclarations.13 //@variableDeclarations.14 //@variableDeclarations.18">
     <annotation xsi:type="hu.bme.mit.gamma.xsts:RegionGroup"/>
@@ -248,7 +248,7 @@
   <variableGroups>
     <annotation xsi:type="hu.bme.mit.gamma.xsts:ComponentParameterGroup"/>
   </variableGroups>
-  <variableGroups variables="//@variableDeclarations.10 //@variableDeclarations.12">
+  <variableGroups variables="//@variableDeclarations.9 //@variableDeclarations.12">
     <annotation xsi:type="hu.bme.mit.gamma.xsts:InEventParameterGroup"/>
   </variableGroups>
   <variableGroups>
@@ -321,7 +321,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.35"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.20"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.20"/>
@@ -376,7 +379,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.35"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.20"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssumeAction">
         <assumption xsi:type="hu.bme.mit.gamma.expression:EqualityExpression">
@@ -417,11 +423,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -460,7 +466,7 @@
                 <typeReference reference="//@typeDeclarations.0"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="6"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="5"/>
@@ -568,7 +574,7 @@
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -611,10 +617,13 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.35"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.20"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -646,7 +655,7 @@
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.30"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IfThenElseExpression">
-          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="9"/>
         </rhs>
@@ -747,7 +756,7 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -811,7 +820,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
@@ -866,7 +878,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssumeAction">
         <assumption xsi:type="hu.bme.mit.gamma.expression:EqualityExpression">
@@ -907,11 +922,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -950,7 +965,7 @@
                 <typeReference reference="//@typeDeclarations.3"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="18"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="19"/>
@@ -1015,7 +1030,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -1053,7 +1068,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -1106,12 +1121,12 @@
               </rightOperand>
             </operands>
             <operands xsi:type="hu.bme.mit.gamma.expression:OrExpression">
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
             </operands>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="22"/>
@@ -1142,12 +1157,12 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1177,19 +1192,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1197,27 +1204,38 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1257,7 +1275,7 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1296,7 +1314,7 @@
                 <typeReference reference="//@typeDeclarations.3"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="25"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="26"/>
@@ -1361,7 +1379,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -1399,7 +1417,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -1452,12 +1470,12 @@
               </rightOperand>
             </operands>
             <operands xsi:type="hu.bme.mit.gamma.expression:OrExpression">
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
             </operands>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="29"/>
@@ -1488,12 +1506,12 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1523,19 +1541,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1543,27 +1553,38 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1599,11 +1620,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1642,7 +1663,7 @@
                 <typeReference reference="//@typeDeclarations.3"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="32"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="33"/>
@@ -1707,7 +1728,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -1745,7 +1766,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -1798,12 +1819,12 @@
               </rightOperand>
             </operands>
             <operands xsi:type="hu.bme.mit.gamma.expression:OrExpression">
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
             </operands>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="36"/>
@@ -1834,12 +1855,12 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1869,19 +1890,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1889,27 +1902,38 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1945,11 +1969,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -1988,7 +2012,7 @@
                 <typeReference reference="//@typeDeclarations.3"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="39"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="40"/>
@@ -2053,7 +2077,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -2091,7 +2115,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -2144,12 +2168,12 @@
               </rightOperand>
             </operands>
             <operands xsi:type="hu.bme.mit.gamma.expression:OrExpression">
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
             </operands>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="43"/>
@@ -2180,12 +2204,12 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2215,19 +2239,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2235,27 +2251,38 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2291,11 +2318,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
           <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.26"/>
           <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
@@ -2327,7 +2354,7 @@
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2366,7 +2393,7 @@
                 <typeReference reference="//@typeDeclarations.3"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="46"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="47"/>
@@ -2431,7 +2458,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -2469,7 +2496,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -2522,12 +2549,12 @@
               </rightOperand>
             </operands>
             <operands xsi:type="hu.bme.mit.gamma.expression:OrExpression">
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
             </operands>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="50"/>
@@ -2558,12 +2585,12 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2593,19 +2620,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2613,27 +2632,38 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2669,11 +2699,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
           <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.24"/>
           <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
@@ -2705,7 +2735,7 @@
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2744,7 +2774,7 @@
                 <typeReference reference="//@typeDeclarations.3"/>
               </rightOperand>
             </operands>
-            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+            <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="53"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="54"/>
@@ -2809,7 +2839,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -2847,7 +2877,7 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.7">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
@@ -2900,12 +2930,12 @@
               </rightOperand>
             </operands>
             <operands xsi:type="hu.bme.mit.gamma.expression:OrExpression">
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.7"/>
+              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
               <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
-              <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
             </operands>
           </condition>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="57"/>
@@ -2936,12 +2966,12 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.15"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.8">
+        <rhs xsi:type="hu.bme.mit.gamma.expression:EnumerationLiteralExpression" reference="//@typeDeclarations.4/@type/@literals.6">
           <typeReference reference="//@typeDeclarations.4"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2971,19 +3001,11 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -2991,27 +3013,38 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.8"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.11"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.12"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.34"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.6"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -3043,7 +3076,7 @@
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.30"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IfThenElseExpression">
-          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="59"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="58"/>
         </rhs>
@@ -3144,7 +3177,7 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -3208,7 +3241,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
@@ -3263,7 +3299,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssumeAction">
         <assumption xsi:type="hu.bme.mit.gamma.expression:EqualityExpression">
@@ -3494,7 +3533,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -3723,7 +3765,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -3952,7 +3997,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -4181,7 +4229,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -4410,7 +4461,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -4639,7 +4693,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -4868,7 +4925,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -5101,7 +5161,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.33"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -5343,11 +5406,11 @@
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -5363,7 +5426,7 @@
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -5379,7 +5442,7 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.9"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.10"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -5387,7 +5450,7 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -5405,16 +5468,16 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.24"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.26"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayLiteralExpression">
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.25"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.27"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -5431,19 +5494,6 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayLiteralExpression">
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-        </rhs>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.29"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
-      </actions>
-      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.22"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayLiteralExpression">
           <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
@@ -5457,16 +5507,29 @@
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.26"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayLiteralExpression">
-          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
-          <operands xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
         </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.27"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.29"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.24"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayLiteralExpression">
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
+      </actions>
+      <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.25"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -5981,7 +6044,7 @@
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.30"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IfThenElseExpression">
-          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="18"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="17"/>
         </rhs>
@@ -6070,7 +6133,7 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.1"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.0"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -6098,7 +6161,7 @@
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.30"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:IfThenElseExpression">
-          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+          <condition xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
           <then xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="22"/>
           <else xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="21"/>
         </rhs>
@@ -6187,7 +6250,7 @@
         </assumption>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
-        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.4"/>
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.5"/>
         <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
@@ -6360,7 +6423,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
@@ -6411,7 +6477,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssumeAction">
         <assumption xsi:type="hu.bme.mit.gamma.expression:EqualityExpression">
@@ -6618,7 +6687,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -6823,7 +6895,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -7028,7 +7103,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -7233,7 +7311,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -7438,7 +7519,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -7643,7 +7727,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -7848,7 +7935,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
@@ -8057,7 +8147,10 @@
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.36"/>
-        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:ArrayAccessExpression">
+          <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.28"/>
+          <index xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </rhs>
       </actions>
       <actions xsi:type="hu.bme.mit.gamma.xsts:AssignmentAction">
         <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@variableDeclarations.16"/>
