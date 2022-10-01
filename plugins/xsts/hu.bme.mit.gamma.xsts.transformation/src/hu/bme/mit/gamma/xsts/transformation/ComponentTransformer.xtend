@@ -15,7 +15,10 @@ import hu.bme.mit.gamma.expression.model.Expression
 import hu.bme.mit.gamma.expression.model.ExpressionModelFactory
 import hu.bme.mit.gamma.expression.model.TypeReference
 import hu.bme.mit.gamma.expression.util.ExpressionEvaluator
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelActivityToXstsTransformer
+import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelToXstsTransformer
 import hu.bme.mit.gamma.lowlevel.xsts.transformation.TransitionMerging
+import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDefinition
 import hu.bme.mit.gamma.statechart.composite.AbstractAsynchronousCompositeComponent
 import hu.bme.mit.gamma.statechart.composite.AbstractSynchronousCompositeComponent
 import hu.bme.mit.gamma.statechart.composite.AsynchronousAdapter
@@ -31,6 +34,7 @@ import hu.bme.mit.gamma.statechart.lowlevel.transformation.GammaToLowlevelTransf
 import hu.bme.mit.gamma.statechart.lowlevel.transformation.Trace
 import hu.bme.mit.gamma.statechart.lowlevel.transformation.ValueDeclarationTransformer
 import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition
+import hu.bme.mit.gamma.transformation.util.preprocessor.StatechartPreprocessor
 import hu.bme.mit.gamma.util.GammaEcoreUtil
 import hu.bme.mit.gamma.util.JavaUtil
 import hu.bme.mit.gamma.xsts.model.AbstractAssignmentAction
@@ -55,10 +59,6 @@ import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeature
 import static extension hu.bme.mit.gamma.xsts.transformation.util.Namings.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.QueueNamings.*
 import static extension java.lang.Math.*
-import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDefinition
-import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelActivityToXstsTransformer
-import hu.bme.mit.gamma.lowlevel.xsts.transformation.LowlevelToXstsTransformer
-import hu.bme.mit.gamma.transformation.util.preprocessor.StatechartPreprocessor
 
 class ComponentTransformer {
 	// This gammaToLowlevelTransformer must be the same during this transformation cycle due to tracing
@@ -202,10 +202,10 @@ class ComponentTransformer {
 									it.elementType = parameterType.clone // Not type definition due to enums
 									it.size = evaluatedCapacity.toIntegerLiteral
 								]
-								val slaveQueueName = parameter.getSlaveQueueName(port, adapterInstance)
+								val slaveQueueName = parameter.getSlaveQueueName(port, adapterInstance, parameterType.name)
 								val slaveQueue = slaveQueueType.createVariableDeclaration(slaveQueueName)
 								
-								val slaveSizeVariableName = parameter.getSlaveSizeVariableName(port, adapterInstance)
+								val slaveSizeVariableName = parameter.getSlaveSizeVariableName(port, adapterInstance, parameterType.name)
 								val slaveSizeVariable = createIntegerTypeDefinition
 										.createVariableDeclaration(slaveSizeVariableName)
 								

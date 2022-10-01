@@ -56,11 +56,13 @@ import hu.bme.mit.gamma.expression.model.VariableDeclaration;
 import hu.bme.mit.gamma.expression.model.VariableDeclarationAnnotation;
 import hu.bme.mit.gamma.expression.util.ExpressionEvaluator;
 import hu.bme.mit.gamma.expression.util.ExpressionUtil;
+import hu.bme.mit.gamma.expression.util.TypeSerializer;
 import hu.bme.mit.gamma.util.GammaEcoreUtil;
 import hu.bme.mit.gamma.util.JavaUtil;
 
 public class ExpressionModelDerivedFeatures {
-	
+
+	protected static final TypeSerializer typeSerializer = TypeSerializer.INSTANCE;
 	protected static final ExpressionUtil expressionUtil = ExpressionUtil.INSTANCE;
 	protected static final ExpressionEvaluator evaluator = ExpressionEvaluator.INSTANCE;
 	protected static final GammaEcoreUtil ecoreUtil = GammaEcoreUtil.INSTANCE;
@@ -250,6 +252,10 @@ public class ExpressionModelDerivedFeatures {
 			return arrayTypeDefinition.getElementType();
 		}
 		throw new IllegalArgumentException("Not array type: " + type);
+	}
+	
+	public static String getName(Type type) {
+		return typeSerializer.serialize(type);
 	}
 	
 	// Type references
