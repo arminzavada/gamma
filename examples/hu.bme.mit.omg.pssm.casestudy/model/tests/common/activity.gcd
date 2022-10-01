@@ -5,8 +5,12 @@ import "interfaces"
 activity Activity [
 	@ActivityController
 	port controller : provides ActivityControllerInterface
+	
+	port trc : provides TRC
+	port _trc_ : requires TRC
+	
 	port data : requires Data
-	port schedulerControl : provides SchedulerControl
+	port dispatcherControl : provides ActivityDispatcherControl
 ] {
 	
 	initial init
@@ -38,10 +42,13 @@ activity Activity [
 adapter DoActivity of component act : Activity {	
 	when any / run
 	
-	queue controlMessages(priority = 1, capacity = 10) {
+	queue controlMessages(priority = 1, capacity = 0) {
 		controller.any
 	}
-	queue dataMessages(priority = 2, capacity = 10) {
+	queue trcMessages(priority = 2, capacity = 0) {
+		trc.any
+	}
+	queue dataMessages(priority = 3, capacity = 10) {
 		data.any
 	}
 }

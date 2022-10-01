@@ -9,18 +9,22 @@ interface Data {
 	out event integerData(value : integer)
 }
 
-interface TesterControl {
+interface QueueControl {
 	out event next
-	out event end
 }
 
-interface SchedulerControl {
-	out event ready
+interface DispatcherControl {
 	out event ignore
-	out event end
+	out event ready
 }
+
+interface ActivityDispatcherControl extends Data { }
 
 interface ActivityControllerInterface {
 	in persistent event control(isActive : boolean)
 	out event done
+}
+
+interface TRC {
+	in event Run
 }

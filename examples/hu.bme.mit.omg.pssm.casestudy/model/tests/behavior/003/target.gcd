@@ -5,55 +5,48 @@ import "common"
  
 scheduled-async System {
 	
-	component tester : Tester
+	component eventQueue : EventQueue
 	component target : Target
-	component scheduler : Scheduler
-	component doActivity : DoActivity
+	component dispatcher : Dispatcher
+	component doActivity_0 : DoActivity
 	
 	// Tester controlling - next, end
-	channel [ scheduler.testerControl ] -o)- [ tester.testerControl ]
+	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
 	
 	// Actual target data propagation
-	channel [ tester.data ] -o)- [ scheduler.inputData ]
-	channel [ scheduler.outputData_0 ] -o)- [ target.data ]
-	channel [ scheduler.outputData_1 ] -o)- [ doActivity.data ]
+	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	channel [ dispatcher.outputData ] -o)- [ target.data ]
 	
 	// Scheduler controlling - ready, ignore
-	channel [ target.schedulerControl ] -o)- [ scheduler.schedulerControl_0 ]
-	channel [ doActivity.schedulerControl ] -o)- [ scheduler.schedulerControl_1 ]
+	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
+	
+	// Hooking up doActivity_0
+	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
+	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
+	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
+	channel [ doActivity_0.trc ] -o)- [ doActivity_0._trc_ ]
 
-	channel [ doActivity.controller ] -o)- [ target.activityControl ]
-
-	initial execute target
+	initial execute dispatcher
 
 }
 
 @Asynchronous
-statechart Tester [
-	port testerControl : requires TesterControl
+statechart EventQueue [
+	port queueControl : requires QueueControl
 	
 	port data : provides Data
 ] {
 	
 	region Main {
 		initial Initial
-		state Test {
-			region Sequence {
-				initial SequenceInitial
-				state _0
-				state _1
-				state _2
-			}
-		}
-		state End
+		state _0
+		state _1
+		state _2
 	}
 	
-	transition from Initial to Test
-	transition from Test to End when testerControl.end
-	
-	transition from SequenceInitial to _0
-	transition from _0 to _1 when testerControl.next / raise data.start;
-	transition from _1 to _2 when testerControl.next / raise data.anotherSignal;
+	transition from Initial to _0
+	transition from _0 to _1 when queueControl.next / raise data.start;
+	transition from _1 to _2 when queueControl.next / raise data.anotherSignal;
 	
 }
 
@@ -62,89 +55,89 @@ statechart Tester [
 statechart Target [
 	port data : requires Data
 	
-	port schedulerControl : provides SchedulerControl
+	port dispatcherControl : provides DispatcherControl
 	
-	port activityControl : requires ActivityControllerInterface
+	port activity_0 : requires ActivityControllerInterface
 ] {	
 	
-	region Ignore {
-		initial IgnoreInitial
-		state MainFunction {
+	region Wrapper {
+		initial WrapperInitial
+		state WrapperFunction {
 			region Main {
 				initial Initial
-				state Wait {
-					entry / raise schedulerControl.ready;
-				}
+				state wait
 				state S1 {
-					entry / raise schedulerControl.ready;
+					entry / raise activity_0.control(true);
+					exit / raise activity_0.control(false);
 				}
-				state Final
+				state FS1
 			}
 		}
 	}
 	
-	transition from IgnoreInitial to MainFunction
-	transition from MainFunction to MainFunction when data.any / raise schedulerControl.ignore;
+	transition from WrapperInitial to WrapperFunction
 	
-	transition from Initial to Wait
-	transition from Wait to S1 when data.start
-	transition from S1 to Final when data.anotherSignal / raise schedulerControl.end;
-	transition from S1 to Final when activityControl.done / log "error"; raise schedulerControl.end;
+	@Internal
+	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
+	
+	transition from Initial to wait
+	transition from wait to S1 when data.start
+	transition from S1 to FS1 when activity_0.done / log "ERROR";
+	transition from S1 to FS1 when data.anotherSignal
 	
 }
 
 @Asynchronous
-statechart Scheduler [
-	port testerControl : provides TesterControl
+statechart Dispatcher [
+	port queueControl : provides QueueControl
 	port inputData : requires Data
 	
-	port schedulerControl_0 : requires SchedulerControl
-	port outputData_0 : provides Data
+	port dispatcherControl : requires DispatcherControl
+	port outputData : provides Data
 	
-	port schedulerControl_1 : requires SchedulerControl
-	port outputData_1 : provides Data
+	port outputDataActivity_0 : provides Data
+	port dispatcherControlActivity_0 : requires ActivityDispatcherControl
 ] {
+	
+	var activity_0Start : integer := 0
+	var activity_0AnotherSignal : integer := 0
 	
 	region Main {
 		initial Initial
-		state WaitingForTarget_0 {
-			region Sent_0 {
-				initial Sent_0Initial
-				state Sent_0None
-				state Sent_0Start
-				state Sent_0AnotherSignal
-				state Sent_0Continue
+		state WaitingForEvent {
+			entry / raise queueControl.next;
+		}
+		state WaitingForTarget {
+			region Sent {
+				initial SentInitial
+				state SentNone
+				state SentStart
+				state SentAnotherSignal
 			}
 		}
-		state WaitingForTarget_1 {
-			region Sent_1 {
-				initial Sent_1Initial
-				state Sent_1None
-				state Sent_1Start
-				state Sent_1AnotherSignal
-				state Sent_1Continue
-			}
-		}
-		state WaitingForTester
 	}
 	
-	transition from Initial to WaitingForTarget_0
+	region EventSubscription {
+		initial EventSubscriptionInitial
+		state ListeningToSubscriptions
+	}
 	
-	transition from WaitingForTarget_0 to WaitingForTester when schedulerControl_0.ready / raise testerControl.next;
+	transition from Initial to WaitingForEvent
 	
-	transition from WaitingForTester to Sent_0Start when inputData.start / raise outputData_0.start;
-	transition from WaitingForTester to Sent_0AnotherSignal when inputData.anotherSignal / raise outputData_0.anotherSignal;
-	transition from WaitingForTester to Sent_0Continue when inputData.continue / raise outputData_0.continue;
+	transition from WaitingForEvent to SentStart when inputData.start / raise outputData.start;
+	transition from WaitingForEvent to SentAnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal;
 	
-	transition from Sent_0Initial to Sent_0None // ignored
+	transition from SentStart to WaitingForEvent when dispatcherControl.ignore / raise outputDataActivity_0.start;
+	transition from SentAnotherSignal to WaitingForEvent when dispatcherControl.ignore / raise outputDataActivity_0.anotherSignal;
+	transition from WaitingForTarget to WaitingForEvent when dispatcherControl.ready
 	
-	transition from Sent_0Start to Sent_1Start when schedulerControl_0.ignore / raise outputData_0.start;
-	transition from Sent_0AnotherSignal to Sent_1AnotherSignal when schedulerControl_0.ignore / raise outputData_0.anotherSignal;
-	transition from Sent_0Continue to Sent_1Continue when schedulerControl_0.ignore / raise outputData_0.continue;
+	transition from WaitingForEvent to WaitingForEvent when inputData.start / raise outputDataActivity_0.start;
+	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal / raise outputDataActivity_0.anotherSignal;
 	
-	transition from Sent_1Initial to Sent_1None // ignored
+	transition from SentInitial to SentNone // ignored
 	
-	transition from WaitingForTarget_1 to WaitingForTester when schedulerControl_0.ready / raise testerControl.next;
-	transition from WaitingForTarget_1 to WaitingForTester when schedulerControl_0.ignore / raise testerControl.next;
+	transition from EventSubscriptionInitial to ListeningToSubscriptions
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.start / activity_0Start := activity_0Start + 1;
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.anotherSignal / activity_0AnotherSignal := activity_0AnotherSignal + 1;
 	
 }

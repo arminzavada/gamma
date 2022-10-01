@@ -1,8 +1,9 @@
 import "target"
 
+
 analysis {
 	component : System
 	language : Theta
-	optimize : false
+	optimize : true
 	split-by : CHOICE
 }
