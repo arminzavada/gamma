@@ -122,6 +122,7 @@
     <genClasses ecoreClass="model.ecore#//FinalNode"/>
     <genClasses ecoreClass="model.ecore#//TriggerNode">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//TriggerNode/triggerExpression"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//TriggerNode/preAction"/>
     </genClasses>
     <genClasses image="false" ecoreClass="model.ecore#//Succession">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Succession/guard"/>
@@ -131,5 +132,8 @@
     <genClasses image="false" ecoreClass="model.ecore#//EventAnnotation"/>
     <genClasses image="false" ecoreClass="model.ecore#//ActivityDerivedAnnotation"/>
     <genClasses ecoreClass="model.ecore#//ActivityControllerEventAnnotation"/>
+    <genClasses ecoreClass="model.ecore#//InRtcEventAnnotation"/>
+    <genClasses ecoreClass="model.ecore#//OutRtcEventAnnotation"/>
+    <genClasses ecoreClass="model.ecore#//DispatcherControlEventAnnotation"/>
   </genPackages>
 </genmodel:GenModel>

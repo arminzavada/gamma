@@ -58,6 +58,7 @@ import static extension hu.bme.mit.gamma.statechart.lowlevel.derivedfeatures.Low
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.XstsNamings.*
 import hu.bme.mit.gamma.statechart.lowlevel.model.Component
+import hu.bme.mit.gamma.expression.model.ReferenceExpression
 
 class LowlevelActivityToXstsTransformer {
 	// Transformation-related extensions
@@ -67,6 +68,7 @@ class LowlevelActivityToXstsTransformer {
 	final extension BatchTransformationRuleFactory = new BatchTransformationRuleFactory
 	// Auxiliary objects
 	protected final extension ExpressionTransformer expressionTransformer
+	protected final extension ActionTransformer actionTransformer
 	protected final extension VariableDeclarationTransformer variableDeclarationTransformer
 	protected final extension ActivityNodeTransformer activityNodeTransformer	
 	protected final extension ActivityInitialiser activityInitialiser
@@ -130,6 +132,7 @@ class LowlevelActivityToXstsTransformer {
 		
 		// The transformers need the trace model for the variable mapping
 		this.expressionTransformer = new ExpressionTransformer(this.trace)
+		this.actionTransformer = new ActionTransformer(this.trace)
 		this.variableDeclarationTransformer = new VariableDeclarationTransformer(this.trace)
 		this.transformation = BatchTransformation.forEngine(engine).build
 		this.statements = transformation.transformationStatements
@@ -183,22 +186,33 @@ class LowlevelActivityToXstsTransformer {
 	private def wrapActivityActions() {
 		val activity = _package.components.head as ActivityDefinition
 		val controller = activity.activityControllerEvent
+		val outRtc = activity.outRtcEvent
 				
 		val runAction = createNonDeterministicAction => [
 			it.actions += xSts.transitions.map [it.action]
 		]
-		val resetAction = activity.createInitialisationAction
-		
-		// should we run activity in the first cycle as well?
+		val resetAction = createIfAction(
+			controller.isRaisedExpression.transformExpression, // if this is the first cycle
+			activity.createInitialisationAction // reset activity
+		)
+		val rtcEventVariable = outRtc.isRaised.createReferenceExpression.transformExpression as ReferenceExpression
+		val rtcAction = createIfAction(
+			getIsAbleToRtcExpression, // if actions able to execute
+			rtcEventVariable.createAssignmentAction(createTrueExpression)
+		)
 		
 		createIfAction( // if
 			controller.isActiveExpression.transformExpression, // activity is enabled
-			createIfAction( // then
-				controller.isRaisedExpression.transformExpression, // if this is the first cycle
-				resetAction, // reset activity
-				runAction // otherwise run activity
-			)
+			createSequentialAction(#[
+				resetAction,
+				runAction,
+				rtcAction
+			])
 		)
+	}
+	
+	private def getIsAbleToRtcExpression() {
+		return createTrueExpression // is this correct?
 	}
 		
 	private def getIsActiveExpression(EventDeclaration declaration) {

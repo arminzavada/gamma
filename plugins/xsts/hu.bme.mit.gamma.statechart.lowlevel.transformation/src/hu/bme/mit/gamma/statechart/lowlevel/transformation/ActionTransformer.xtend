@@ -40,7 +40,6 @@ import java.util.List
 
 import static extension com.google.common.collect.Iterables.getOnlyElement
 import hu.bme.mit.gamma.activity.model.ExecuteActivityAction
-import hu.bme.mit.gamma.statechart.ActivityComposition.RunActivityAction
 import hu.bme.mit.gamma.action.model.LogStatement
 
 class ActionTransformer {
@@ -268,10 +267,6 @@ class ActionTransformer {
 	
 	protected def dispatch List<Action> transformAction(ExecuteActivityAction action) {
 		throw new UnsupportedOperationException("ExecuteActivityActions are not supported: " + action)
-	}
-	
-	protected def dispatch List<Action> transformAction(RunActivityAction action) {
-		throw new UnsupportedOperationException("RunActivityActions are not supported: " + action)
 	}
 
 	protected def dispatch List<Action> transformAction(SetTimeoutAction action) {

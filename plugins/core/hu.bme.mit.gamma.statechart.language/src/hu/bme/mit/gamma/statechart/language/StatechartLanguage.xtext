@@ -170,17 +170,31 @@ Port returns InterfaceModel::Port:
 ;
 
 PortAnnotation returns InterfaceModel::PortAnnotation:
-	ActivityControlPortAnnotation
+	ActivityControlPortAnnotation |
+	InRtcPortAnnotation |
+	OutRtcPortAnnotation |
+	DispatcherControlPortAnnotation
 ;
 
-ActivityControlPortAnnotation returns ActivityComposition::ActivityControllerPortAnnotation:
-	{ActivityComposition::ActivityControllerPortAnnotation}
+ActivityControlPortAnnotation returns ActivityComposition::ActivityControlPortAnnotation:
+	{ActivityComposition::ActivityControlPortAnnotation}
 	"@ActivityController"
 ;
 
-/*ActivityControllerPort returns ActivityComposition::ActivityControllerPort:
-	'activity-port' name=ID ':' activity=[ActivityComposition::ActivityDefinition]
-;*/
+DispatcherControlPortAnnotation returns ActivityComposition::DispatcherControlPortAnnotation:
+	{ActivityComposition::DispatcherControlPortAnnotation}
+	"@DispatcherControlPort"
+;
+
+InRtcPortAnnotation returns ActivityComposition::InRtcPortAnnotation:
+	{ActivityComposition::InRtcPortAnnotation}
+	"@InRtcPort"
+;
+
+OutRtcPortAnnotation returns ActivityComposition::OutRtcPortAnnotation:
+	{ActivityComposition::OutRtcPortAnnotation}
+	"@OutRtcPort"
+;
 
 InterfaceRealization returns InterfaceModel::InterfaceRealization:
 	realizationMode=RealizationMode interface=[InterfaceModel::Interface]
@@ -204,7 +218,6 @@ SynchronousStatechartDefinition returns SynchronousStatechartDefinition:
 	('(' ((parameterDeclarations+=ParameterDeclaration)(',' parameterDeclarations+=ParameterDeclaration)*)? ')')?
 		('[' 
 			((ports+=Port)((',')? ports+=Port)*)?
-			//((activities+=ActivityControllerPort)((',')? activities+=ActivityControllerPort)*)?
 		']')? '{'
 			(
 				variableDeclarations+=VariableDeclaration |
@@ -233,7 +246,6 @@ AsynchronousStatechartDefinition returns AsynchronousStatechartDefinition:
 	('(' ((parameterDeclarations+=ParameterDeclaration)(',' parameterDeclarations+=ParameterDeclaration)*)? ')')?
 		('[' 
 			((ports+=Port)((',')? ports+=Port)*)? 
-			//((activities+=ActivityControllerPort)((',')? activities+=ActivityControllerPort)*)?
 		']')? '{'
 			(
 				variableDeclarations+=VariableDeclaration |
@@ -340,7 +352,7 @@ TransitionIdAnnotation returns TransitionIdAnnotation:
 
 InternalTransitionAnnotation returns InternalTransitionAnnotation:
 	{InternalTransitionAnnotation}
-	'@' 'Internal'
+	'@Internal'
 ;
 
 
@@ -358,7 +370,6 @@ State returns State:
 			(
 				('invariant' invariants+=Expression)*
 				('entry' '/' (=> entryActions+=Action)* )?
-				//('do' '/' (=> doActions+=Action)* )?
 				('exit' '/' (=> exitActions+=Action)* )?
 			)
 			(regions+=Region)*
@@ -450,7 +461,6 @@ DeepHistoryState returns DeepHistoryState:
 
 // Activity Composition
 
-
 SynchronousActivityDefinition returns ActivityComposition::SynchronousActivityDefinition:
 	'activity' name=ID 
 	('(' ((parameterDeclarations+=ParameterDeclaration)(',' parameterDeclarations+=ParameterDeclaration)*)? ')')?
@@ -492,8 +502,7 @@ CascadeCompositeComponent returns CompositeModel::CascadeCompositeComponent:
 			(
 				components+=SynchronousComponentInstance |
 				portBindings+=PortBinding |
-				channels+=Channel /*|
-				activityConnections+=ActivityControllerPortConnection*/
+				channels+=Channel
 			)*
 			('initial' 'execute' initialExecutionList+=AtomicComponentInstanceReferenceExpression
 					(',' initialExecutionList+=AtomicComponentInstanceReferenceExpression)*)?
@@ -511,8 +520,7 @@ SynchronousCompositeComponent returns CompositeModel::SynchronousCompositeCompon
 			(
 				components+=SynchronousComponentInstance |
 				portBindings+=PortBinding |
-				channels+=Channel /*|
-				activityConnections+=ActivityControllerPortConnection*/
+				channels+=Channel
 			)*
 		'}'
 ;
@@ -538,8 +546,7 @@ AsynchronousCompositeComponent returns CompositeModel::AsynchronousCompositeComp
 			(
 				components+=AsynchronousComponentInstance |
 				portBindings+=PortBinding |
-				channels+=Channel /*|
-				activityConnections+=ActivityControllerPortConnection*/
+				channels+=Channel
 			)*
 		'}'
 ;
@@ -553,8 +560,7 @@ ScheduledAsynchronousCompositeComponent returns CompositeModel::ScheduledAsynchr
 			(
 				components+=AsynchronousComponentInstance |
 				portBindings+=PortBinding |
-				channels+=Channel /*|
-				activityConnections+=ActivityControllerPortConnection*/
+				channels+=Channel
 			)*
 			('initial' 'execute' initialExecutionList+=AtomicComponentInstanceReferenceExpression
 					(',' initialExecutionList+=AtomicComponentInstanceReferenceExpression)*)?
@@ -653,14 +659,6 @@ BroadcastChannel returns CompositeModel::BroadcastChannel:
 	'channel' '[' providedPort=InstancePortReference ']' '-o)-' '[' (requiredPorts+=InstancePortReference) (',' requiredPorts+=InstancePortReference)+ ']'
 ;
 
-/*ActivityControllerPortConnection returns ActivityComposition::ActivityControllerPortConnection:
-	'connect' provided=[CompositeModel::ComponentInstance] '->' required=InstanceActivityControllerPortReference
-;
-
-InstanceActivityControllerPortReference returns ActivityComposition::InstanceActivityControllerPortReference:
-	instance=[CompositeModel::ComponentInstance] '.' port=[ActivityComposition::ActivityControllerPort]
-;*/
-
 // Interface
 
 Interface returns InterfaceModel::Interface:
@@ -714,7 +712,10 @@ ControlNode returns ActivityModel::ControlNode:
 ;
 
 TriggerNode returns ActivityComposition::TriggerNode:
-	'trigger' name=ID 'when' trigger=Trigger
+	'trigger' name=ID 'when' trigger=Trigger 
+	(
+		'on-await' preAction=Block
+	)
 ;
 
 
@@ -728,8 +729,7 @@ InlineStatement returns ActionModel::Statement:
 	(
 		(
 			RaiseEventAction |
-			SetTimeoutAction /*|
-			RunActivityAction*/
+			SetTimeoutAction
 		)
 		';'
 	)
@@ -746,12 +746,6 @@ SetTimeoutAction returns SetTimeoutAction:
 DeactivateTimeoutAction returns DeactivateTimeoutAction:
 	'deactivate' timeoutDeclaration=[TimeoutDeclaration]
 ;
-
-/*
-RunActivityAction returns ActivityComposition::RunActivityAction:
-	'run' activity=[ActivityComposition::ActivityControllerPort]
-;
-*/
 
 // Component instance element references for subgrammars
 
@@ -776,5 +770,3 @@ ComponentInstanceEventParameterReferenceExpression returns CompositeModel::Compo
 	'parameter' instance=ComponentInstanceReferenceExpression '.' port=[InterfaceModel::Port] '.'
 		event=[InterfaceModel::Event] '::' parameterDeclaration=[ExpressionModel::ParameterDeclaration]
 ;
-
-//

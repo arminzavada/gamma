@@ -30,6 +30,7 @@ import java.util.List
 import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.transformation.util.Namings.*
+import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.LowlevelNamings.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.QueueNamings.*
 import static extension hu.bme.mit.gamma.xsts.transformation.util.XstsNamings.*
@@ -59,7 +60,7 @@ class Namings {
 			Port port, ComponentInstance instance) {
 		val type = parameterDeclaration.type.clone 
 		val names = type.createVariableDeclaration(
-				'''«parameterDeclaration.getSlaveQueueName(port, instance)»''').names
+				'''«parameterDeclaration.getSlaveQueueName(port, instance, type.name)»''').names
 		return names
 	}
 	

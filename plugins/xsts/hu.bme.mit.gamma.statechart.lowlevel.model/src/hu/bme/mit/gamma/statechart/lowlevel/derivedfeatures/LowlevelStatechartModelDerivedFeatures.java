@@ -33,6 +33,7 @@ import hu.bme.mit.gamma.statechart.lowlevel.model.EventDeclaration;
 import hu.bme.mit.gamma.statechart.lowlevel.model.EventDirection;
 import hu.bme.mit.gamma.statechart.lowlevel.model.HistoryState;
 import hu.bme.mit.gamma.statechart.lowlevel.model.InitialState;
+import hu.bme.mit.gamma.statechart.lowlevel.model.OutRtcEventAnnotation;
 import hu.bme.mit.gamma.statechart.lowlevel.model.Region;
 import hu.bme.mit.gamma.statechart.lowlevel.model.ShallowHistoryState;
 import hu.bme.mit.gamma.statechart.lowlevel.model.State;
@@ -76,6 +77,10 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 	
 	public static boolean isActivityControllerEvent(EventDeclaration lowlevelEventDeclaration) {
 		return lowlevelEventDeclaration.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityControllerEventAnnotation);
+	}
+	
+	public static boolean isOutRtcEvent(EventDeclaration lowlevelEventDeclaration) {
+		return lowlevelEventDeclaration.getAnnotations().stream().anyMatch(annotation -> annotation instanceof OutRtcEventAnnotation);
 	}
 	
 	public static EventDeclaration getInternalEventPair(EventDeclaration lowlevelEventDeclaration) {
@@ -334,6 +339,10 @@ public class LowlevelStatechartModelDerivedFeatures extends ActionModelDerivedFe
 	
 	public static EventDeclaration getActivityControllerEvent(ActivityDefinition activity) {
 		return activity.getEventDeclarations().stream().filter(event -> isActivityControllerEvent(event)).findFirst().orElseThrow();
+	}
+	
+	public static EventDeclaration getOutRtcEvent(ActivityDefinition activity) {
+		return activity.getEventDeclarations().stream().filter(event -> isOutRtcEvent(event)).findFirst().orElseThrow();
 	}
 	
 	public static List<ActivityNode> getPredecessors(ActivityNode node) {

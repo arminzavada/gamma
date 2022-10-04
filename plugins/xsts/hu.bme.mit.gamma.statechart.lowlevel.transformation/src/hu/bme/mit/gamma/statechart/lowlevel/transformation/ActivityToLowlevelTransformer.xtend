@@ -41,6 +41,11 @@ import hu.bme.mit.gamma.activity.model.InputPin
 import hu.bme.mit.gamma.activity.model.OutputPin
 import hu.bme.mit.gamma.activity.model.Flow
 import hu.bme.mit.gamma.statechart.interface_.Component
+import hu.bme.mit.gamma.statechart.interface_.Port
+import java.util.List
+import hu.bme.mit.gamma.statechart.lowlevel.model.EventDeclaration
+import hu.bme.mit.gamma.statechart.interface_.EventTrigger
+import hu.bme.mit.gamma.statechart.statechart.PortEventReference
 
 class ActivityToLowlevelTransformer {
 // Auxiliary objects
@@ -111,11 +116,8 @@ class ActivityToLowlevelTransformer {
 			// Both in and out events are transformed to a boolean VarDecl with additional parameters
 			for (eventDeclaration : port.allEventDeclarations) {
 				val lowlevelEventDeclarations = eventDeclaration.transform(port)
-				if (port.isActivityControllerPort) {
-					for (event : lowlevelEventDeclarations) {
-						event.annotations += createActivityControllerEventAnnotation
-					}
-				}
+				
+				addLowlevelActivityAnnotations(port, lowlevelEventDeclarations)
 				
 				lowlevelActivity.eventDeclarations += lowlevelEventDeclarations
 				if (eventDeclaration.direction == EventDirection.INTERNAL) {
@@ -138,6 +140,29 @@ class ActivityToLowlevelTransformer {
 		}
 		
 		return lowlevelActivity
+	}
+	
+	def addLowlevelActivityAnnotations(Port port, List<EventDeclaration> lowlevelEventDeclarations) {
+		if (port.isActivityControlPort) {
+			for (event : lowlevelEventDeclarations) {
+				event.annotations += createActivityControllerEventAnnotation
+			}
+		}
+		if (port.isInRtcPort) {
+			for (event : lowlevelEventDeclarations) {
+				event.annotations += createInRtcEventAnnotation
+			}
+		}
+		if (port.isOutRtcPort) {
+			for (event : lowlevelEventDeclarations) {
+				event.annotations += createOutRtcEventAnnotation
+			}
+		}
+		if (port.isDispatcherControlPort) {
+			for (event : lowlevelEventDeclarations) {
+				event.annotations += createDispatcherControlEventAnnotation
+			}
+		}
 	}
 	
 	def transformPin(Pin pin) {
@@ -216,6 +241,7 @@ class ActivityToLowlevelTransformer {
 		
 		val lowlevelNode = createActionNode => [
 			it.name = node.name
+			it.action = node.action?.transformAction.wrap
 		]
 		
 		trace.putActivityNode(node, lowlevelNode)
@@ -367,6 +393,7 @@ class ActivityToLowlevelTransformer {
 		
 		val lowlevelNode = createTriggerNode => [
 			it.name = node.name
+			it.preAction = node.preAction?.transformAction.wrap
 		]
 		
 		trace.putActivityNode(node, lowlevelNode)

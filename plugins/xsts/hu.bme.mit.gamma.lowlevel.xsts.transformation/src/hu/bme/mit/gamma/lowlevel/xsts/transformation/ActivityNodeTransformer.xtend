@@ -37,7 +37,7 @@ class ActivityNodeTransformer {
 		this.actionTransformer = new ActionTransformer(this.trace)
 		this.expressionTransformer = new ExpressionTransformer(this.trace)
 		this.variableDeclarationTransformer = new VariableDeclarationTransformer(this.trace)
-		this.activityFlowTransformer = new ActivityFlowTransformer(this.trace)
+		this.activityFlowTransformer = new ActivityFlowTransformer(this.trace, this)
 	}
 	
 	protected final extension VariableDeclarationTransformer variableDeclarationTransformer
@@ -45,7 +45,7 @@ class ActivityNodeTransformer {
 	
 	protected final extension ActivityLiterals activityLiterals = ActivityLiterals.INSTANCE 
 			
-	protected def runningPrecondition(ActivityNode node) {
+	def runningPrecondition(ActivityNode node) {
 		val nodeVariable = trace.getXStsVariable(node)
 
 		val expression = createAndExpression => [
@@ -60,7 +60,7 @@ class ActivityNodeTransformer {
 		return expression
 	}
 	
-	protected def createDoneAssignmentAction(ActivityNode node) {
+	def createDoneAssignmentAction(ActivityNode node) {
 		val nodeVariable = trace.getXStsVariable(node)
 	
 		return createAssignmentAction(
@@ -71,7 +71,7 @@ class ActivityNodeTransformer {
 		)
 	}
 	
-	protected def createRunningAssignmentAction(ActivityNode node) {
+	dispatch def createRunningAssignmentAction(ActivityNode node) {
 		val nodeVariable = trace.getXStsVariable(node)
 
 		return createAssignmentAction(
@@ -80,6 +80,20 @@ class ActivityNodeTransformer {
 				reference = runningNodeStateEnumLiteral
 			]
 		)
+	}
+	
+	dispatch def createRunningAssignmentAction(TriggerNode node) {
+		val nodeVariable = trace.getXStsVariable(node)
+
+		return createSequentialAction(#[
+			node.preAction.transformAction,
+			createAssignmentAction(
+				nodeVariable, 
+				createEnumerationLiteralExpression => [
+					reference = runningNodeStateEnumLiteral
+				]
+			)
+		])
 	}
 	
 	protected def dispatch createNodeTransitionAction(ActionNode node) {

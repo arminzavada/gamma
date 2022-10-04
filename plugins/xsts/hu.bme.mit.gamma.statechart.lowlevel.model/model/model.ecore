@@ -168,6 +168,8 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="triggerExpression" lowerBound="1"
         eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//Expression"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="preAction" eType="ecore:EClass ../../hu.bme.mit.gamma.action.model/model/action.ecore#//Action"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Succession">
     <eStructuralFeatures xsi:type="ecore:EReference" name="guard" eType="ecore:EClass ../../hu.bme.mit.gamma.expression.model/model/expression.ecore#//Expression"
@@ -180,4 +182,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="EventAnnotation" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActivityDerivedAnnotation" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActivityControllerEventAnnotation" eSuperTypes="#//ActivityDerivedAnnotation #//EventAnnotation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="InRtcEventAnnotation" eSuperTypes="#//ActivityDerivedAnnotation #//EventAnnotation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OutRtcEventAnnotation" eSuperTypes="#//ActivityDerivedAnnotation #//EventAnnotation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="DispatcherControlEventAnnotation" eSuperTypes="#//ActivityDerivedAnnotation #//EventAnnotation"/>
 </ecore:EPackage>

@@ -1,5 +1,5 @@
 /********************************************************************************
- * Copyright (c) 2018-2022 Contributors to the Gamma project
+00 * Copyright (c) 2018-2022 Contributors to the Gamma project
  *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -41,8 +41,11 @@ import hu.bme.mit.gamma.expression.model.FunctionDeclaration;
 import hu.bme.mit.gamma.expression.model.ParameterDeclaration;
 import hu.bme.mit.gamma.expression.model.TypeDeclaration;
 import hu.bme.mit.gamma.expression.model.TypeDefinition;
-import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityControllerPortAnnotation;
+import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityControlPortAnnotation;
 import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDerivedAnnotation;
+import hu.bme.mit.gamma.statechart.ActivityComposition.DispatcherControlPortAnnotation;
+import hu.bme.mit.gamma.statechart.ActivityComposition.InRtcPortAnnotation;
+import hu.bme.mit.gamma.statechart.ActivityComposition.OutRtcPortAnnotation;
 import hu.bme.mit.gamma.statechart.composite.AbstractAsynchronousCompositeComponent;
 import hu.bme.mit.gamma.statechart.composite.AbstractSynchronousCompositeComponent;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousAdapter;
@@ -264,8 +267,20 @@ public class StatechartModelDerivedFeatures extends ActivityModelDerivedFeatures
 		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityDerivedAnnotation);
 	}
 	
-	public static boolean isActivityControllerPort(Port port) {
-		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityControllerPortAnnotation);
+	public static boolean isActivityControlPort(Port port) {
+		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityControlPortAnnotation);
+	}
+	
+	public static boolean isInRtcPort(Port port) {
+		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof InRtcPortAnnotation);
+	}
+	
+	public static boolean isOutRtcPort(Port port) {
+		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof OutRtcPortAnnotation);
+	}
+	
+	public static boolean isDispatcherControlPort(Port port) {
+		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof DispatcherControlPortAnnotation);
 	}
 	
 	public static boolean isInternal(InstancePortReference port) {

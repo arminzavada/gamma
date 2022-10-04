@@ -23,9 +23,11 @@ class ActivityFlowTransformer {
 	protected final Trace trace
 	
 	protected final extension ActivityLiterals activityLiterals = ActivityLiterals.INSTANCE 
+	protected final extension ActivityNodeTransformer nodeTransformer
 	
-	new(Trace trace) {
+	new(Trace trace, ActivityNodeTransformer nodeTransformer) {
 		this.trace = trace
+		this.nodeTransformer = nodeTransformer
 		this.actionTransformer = new ActionTransformer(this.trace)
 		this.expressionTransformer = new ExpressionTransformer(this.trace)
 		this.variableDeclarationTransformer = new VariableDeclarationTransformer(this.trace)
@@ -36,11 +38,11 @@ class ActivityFlowTransformer {
 		return trace.getXStsVariable(succession)		
 	}
 	
-	private dispatch def sourceNodeVariable(Succession succession) {
+	private def sourceNodeVariable(Succession succession) {
 		return trace.getXStsVariable(succession.sourceNode)
 	}
 	
-	private dispatch def targetNodeVariable(Succession succession) {
+	private def targetNodeVariable(Succession succession) {
 		return trace.getXStsVariable(succession.targetNode)
 	}
 	
@@ -70,10 +72,7 @@ class ActivityFlowTransformer {
 					reference = emptyFlowStateEnumLiteral
 				]
 			)
-			it.actions += createAssignmentAction(nodeVariable, createEnumerationLiteralExpression => [
-					reference = runningNodeStateEnumLiteral
-				]
-			)
+			it.actions += succession.targetNode.createRunningAssignmentAction
 		]
 	}
 	
