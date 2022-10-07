@@ -33,7 +33,6 @@ import hu.bme.mit.gamma.xsts.model.IfAction
 import hu.bme.mit.gamma.xsts.model.EmptyAction
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 import hu.bme.mit.gamma.xsts.model.MultiaryAction
-import hu.bme.mit.gamma.expression.model.BooleanExpression
 
 class XstsSplitter {
 	static enum XstsTransitionOrigin {
@@ -200,9 +199,9 @@ class XstsSplitter {
 	 			// Replace original declaration with initial value assignment
 	 			declSlice.actions.add(1, createAssignment(localVar, initialVal))
 	 			// Add initial value assignment to every end of its scope
-	 			for (endSlice : declSlice.scopeEndSlices) {
-	 				endSlice.actions.add(endSlice.actions.size - 2, createAssignment(localVar, ecoreUtil.clone(initialVal)))
-	 			}
+	 			/*for (endSlice : declSlice.scopeEndSlices) {
+	 				endSlice.actions.add(endSlice.actions.size - 1, createAssignment(localVar, ecoreUtil.clone(initialVal)))
+	 			}*/
 	 		}
 	 	}
 	 	
