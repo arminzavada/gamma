@@ -46,7 +46,7 @@ class ActivityFlowTransformer {
 		return trace.getXStsVariable(succession.targetNode)
 	}
 	
-	private def inwardPrecondition(Succession succession) {
+	def inwardPrecondition(Succession succession) {
 		val successionVariable = succession.variable
 		val nodeVariable = succession.targetNodeVariable
 		
@@ -76,7 +76,7 @@ class ActivityFlowTransformer {
 		]
 	}
 	
-	private def outwardPrecondition(Succession succession) {
+	def outwardPrecondition(Succession succession) {
 		val successionVariable = succession.variable
 		val nodeVariable = succession.sourceNodeVariable
 		

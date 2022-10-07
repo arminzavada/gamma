@@ -70,6 +70,7 @@ class LowlevelActivityToXstsTransformer {
 	protected final extension ExpressionTransformer expressionTransformer
 	protected final extension ActionTransformer actionTransformer
 	protected final extension VariableDeclarationTransformer variableDeclarationTransformer
+	protected final extension ActivityFlowTransformer activityFlowTransformer	
 	protected final extension ActivityNodeTransformer activityNodeTransformer	
 	protected final extension ActivityInitialiser activityInitialiser
 	protected final extension GammaEcoreUtil gammaEcoreUtil = GammaEcoreUtil.INSTANCE
@@ -138,6 +139,7 @@ class LowlevelActivityToXstsTransformer {
 		this.statements = transformation.transformationStatements
 		
 		this.activityNodeTransformer = new ActivityNodeTransformer(this.engine, this.trace)
+		this.activityFlowTransformer = new ActivityFlowTransformer(this.trace, this.activityNodeTransformer)
 		this.activityInitialiser = new ActivityInitialiser(this.trace)
 		
 		this.optimize = optimize
@@ -212,7 +214,17 @@ class LowlevelActivityToXstsTransformer {
 	}
 	
 	private def getIsAbleToRtcExpression() {
-		return createTrueExpression // is this correct?
+		val expression = createOrExpression
+		
+		Nodes.Matcher.on(targetEngine).allValuesOfactivityNode.forEach[
+			expression.operands += it.runningPrecondition
+		]
+		Successions.Matcher.on(targetEngine).allValuesOfsuccession.forEach[
+			expression.operands += it.inwardPrecondition
+			expression.operands += it.outwardPrecondition
+		]
+		
+		return expression
 	}
 		
 	private def getIsActiveExpression(EventDeclaration declaration) {
