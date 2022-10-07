@@ -513,7 +513,7 @@ class ActionOptimizer {
 		val xStsSubactions = newArrayList
 		xStsSubactions += action.actions
 		// Now all parallel actions are optimized to sequential actions
-		if (action.isOptimizableToSequentialAction) {
+		if (true || action.isOptimizableToSequentialAction) {
 			return createSequentialAction => [
 				for (xStsSubaction : xStsSubactions) {
 					it.actions += xStsSubaction.optimizeParallelActions
