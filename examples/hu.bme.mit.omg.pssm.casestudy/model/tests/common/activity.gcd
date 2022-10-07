@@ -6,11 +6,16 @@ activity Activity [
 	@ActivityController
 	port controller : provides ActivityControllerInterface
 	
-	port trc : provides TRC
-	port _trc_ : requires TRC
+	@InRtcPort
+	port rtc : provides RTC	
+	
+	@OutRtcPort
+	port _rtc_ : requires RTC
+	
+	@DispatcherControlPort
+	port dispatcherControl : provides ActivityDispatcherControl
 	
 	port data : requires Data
-	port dispatcherControl : provides ActivityDispatcherControl
 ] {
 	
 	initial init
@@ -19,7 +24,9 @@ activity Activity [
 		log "S1_doActivityPartI";
 	}
 	
-	trigger Wait when data.continue
+	trigger Wait when data.continue on-await {
+		raise dispatcherControl.continue;
+	}
 	
 	action Part2 {
 		log "S1_doActivityPartII";
@@ -42,12 +49,13 @@ activity Activity [
 adapter DoActivity of component act : Activity {	
 	when any / run
 	
-	queue controlMessages(priority = 1, capacity = 0) {
+	queue controlMessages(priority = 1, capacity = 1) {
 		controller.any
 	}
-	queue trcMessages(priority = 2, capacity = 0) {
-		trc.any
+	queue rtcMessages(priority = 2, capacity = 1) {
+		rtc.any
 	}
+	
 	queue dataMessages(priority = 3, capacity = 10) {
 		data.any
 	}

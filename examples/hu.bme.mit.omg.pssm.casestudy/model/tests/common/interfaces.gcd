@@ -18,13 +18,15 @@ interface DispatcherControl {
 	out event ready
 }
 
-interface ActivityDispatcherControl extends Data { }
+interface ActivityDispatcherControl extends Data {
+	out event resetSubscriptions
+}
 
 interface ActivityControllerInterface {
 	in persistent event control(isActive : boolean)
 	out event done
 }
 
-interface TRC {
+interface RTC {
 	in event Run
 }

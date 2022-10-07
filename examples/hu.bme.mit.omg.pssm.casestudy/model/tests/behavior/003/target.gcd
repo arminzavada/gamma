@@ -24,7 +24,7 @@ scheduled-async System {
 	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
 	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
 	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
-	channel [ doActivity_0.trc ] -o)- [ doActivity_0._trc_ ]
+	channel [ doActivity_0.rtc ] -o)- [ doActivity_0._rtc_ ]
 
 	initial execute dispatcher
 
@@ -81,9 +81,9 @@ statechart Target [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
 	transition from Initial to wait
-	transition from wait to S1 when data.start
+	transition from wait to S1 when data.start / raise dispatcherControl.ready;
 	transition from S1 to FS1 when activity_0.done / log "ERROR";
-	transition from S1 to FS1 when data.anotherSignal
+	transition from S1 to FS1 when data.anotherSignal / raise dispatcherControl.ready;
 	
 }
 
@@ -99,8 +99,9 @@ statechart Dispatcher [
 	port dispatcherControlActivity_0 : requires ActivityDispatcherControl
 ] {
 	
-	var activity_0Start : integer := 0
-	var activity_0AnotherSignal : integer := 0
+	var activity_0_Start : integer := 0
+	var activity_0_AnotherSignal : integer := 0
+	var activity_0_Continue : integer := 0
 	
 	region Main {
 		initial Initial
@@ -109,10 +110,20 @@ statechart Dispatcher [
 		}
 		state WaitingForTarget {
 			region Sent {
-				initial SentInitial
-				state SentNone
-				state SentStart
-				state SentAnotherSignal
+				initial IgnoreInitial
+				state IgnoreState
+				
+				state Sent_Start
+				choice DecideActivity_Start
+				merge MergeActivity_Start
+				
+				state Sent_AnotherSignal
+				choice DecideActivity_AnotherSignal
+				merge MergeActivity_AnotherSignal
+				
+				state Sent_Continue
+				choice DecideActivity_Continue
+				merge MergeActivity_Continue
 			}
 		}
 	}
@@ -124,20 +135,46 @@ statechart Dispatcher [
 	
 	transition from Initial to WaitingForEvent
 	
-	transition from WaitingForEvent to SentStart when inputData.start / raise outputData.start;
-	transition from WaitingForEvent to SentAnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal;
+	// dispatching incoming start event
+	transition from WaitingForEvent to WaitingForEvent when inputData.start [activity_0_Start > 0] / raise outputDataActivity_0.start; // send to activity_0
+	transition from WaitingForEvent to Sent_Start when inputData.start / raise outputData.start; // send to statechart
+	transition from Sent_Start to DecideActivity_Start when dispatcherControl.ignore // statechart did not match
+	transition from DecideActivity_Start to MergeActivity_Start [activity_0_Start > 0] / raise outputDataActivity_0.start; // send to activity_0
+	transition from DecideActivity_Start to MergeActivity_Start [else] // throw away event
+	transition from MergeActivity_Start to WaitingForEvent
 	
-	transition from SentStart to WaitingForEvent when dispatcherControl.ignore / raise outputDataActivity_0.start;
-	transition from SentAnotherSignal to WaitingForEvent when dispatcherControl.ignore / raise outputDataActivity_0.anotherSignal;
+	// dispatching incoming anotherSignal event
+	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal;
+	transition from WaitingForEvent to Sent_AnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal; // send to statechart
+	transition from Sent_AnotherSignal to DecideActivity_AnotherSignal when dispatcherControl.ignore // statechart did not match
+	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; // send to activity_0
+	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [else] // throw away event
+	transition from MergeActivity_AnotherSignal to WaitingForEvent
+	
+	// dispatching incoming continue event
+	transition from WaitingForEvent to WaitingForEvent when inputData.continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue;
+	transition from WaitingForEvent to Sent_Continue when inputData.continue / raise outputData.continue; // send to statechart
+	transition from Sent_Continue to DecideActivity_Continue when dispatcherControl.ignore // statechart did not match
+	transition from DecideActivity_Continue to MergeActivity_Continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; // send to activity_0
+	transition from DecideActivity_Continue to MergeActivity_Continue [else] // throw away event
+	transition from MergeActivity_Continue to WaitingForEvent
+	
+	// statechart processed this event
 	transition from WaitingForTarget to WaitingForEvent when dispatcherControl.ready
 	
-	transition from WaitingForEvent to WaitingForEvent when inputData.start / raise outputDataActivity_0.start;
-	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal / raise outputDataActivity_0.anotherSignal;
+	transition from IgnoreInitial to IgnoreState // ignored
 	
-	transition from SentInitial to SentNone // ignored
+	// processing event subscriptions
+	transition from EventSubscriptionInitial to ListeningToSubscriptions / ResetActivity_0();
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.resetSubscriptions / ResetActivity_0();
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.start / activity_0_Start := activity_0_Start + 1;
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.anotherSignal / activity_0_AnotherSignal := activity_0_AnotherSignal + 1;
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.continue / activity_0_Continue := activity_0_Continue + 1;
 	
-	transition from EventSubscriptionInitial to ListeningToSubscriptions
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.start / activity_0Start := activity_0Start + 1;
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.anotherSignal / activity_0AnotherSignal := activity_0AnotherSignal + 1;
+	procedure ResetActivity_0 : void {
+		activity_0_Start := 0;
+		activity_0_AnotherSignal := 0;
+		activity_0_Continue := 0;
+	}
 	
 }

@@ -1,5 +1,0 @@
-import "target"
-
-component System
-
-E F [ { state dispatcher.Main.WaitingForTester } ]
