@@ -49,14 +49,14 @@ activity Activity [
 adapter DoActivity of component act : Activity {	
 	when any / run
 	
-	queue controlMessages(priority = 1, capacity = 1) {
+	queue controlMessages(priority = 3, capacity = 1) {
 		controller.any
 	}
 	queue rtcMessages(priority = 2, capacity = 1) {
 		rtc.any
 	}
 	
-	queue dataMessages(priority = 3, capacity = 10) {
+	queue dataMessages(priority = 1, capacity = 10) {
 		data.any
 	}
 }

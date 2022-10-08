@@ -484,7 +484,7 @@
     <controlSpecifications>
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
     </controlSpecifications>
-    <messageQueues name="controlMessages" priority="1">
+    <messageQueues name="controlMessages" priority="3">
       <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.8/@ports.0"/>
     </messageQueues>
@@ -492,7 +492,7 @@
       <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.8/@ports.1"/>
     </messageQueues>
-    <messageQueues name="dataMessages" priority="3">
+    <messageQueues name="dataMessages" priority="1">
       <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.8/@ports.4"/>
     </messageQueues>
