@@ -216,10 +216,10 @@ class LowlevelActivityToXstsTransformer {
 	private def getIsAbleToRtcExpression() {
 		val expression = createOrExpression
 		
-		Nodes.Matcher.on(targetEngine).allValuesOfactivityNode.forEach[
+		Nodes.Matcher.on(engine).allValuesOfactivityNode.forEach[
 			expression.operands += it.runningPrecondition
 		]
-		Successions.Matcher.on(targetEngine).allValuesOfsuccession.forEach[
+		Successions.Matcher.on(engine).allValuesOfsuccession.forEach[
 			expression.operands += it.inwardPrecondition
 			expression.operands += it.outwardPrecondition
 		]
