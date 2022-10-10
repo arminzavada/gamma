@@ -71,10 +71,10 @@ statechart Target [
 
 @Asynchronous
 statechart Dispatcher [
-	port queueControl : provides QueueControl
+	port dispatcherControl : requires DispatcherControl
 	port inputData : requires Data
 	
-	port dispatcherControl : requires DispatcherControl
+	port queueControl : provides QueueControl	
 	port outputData : provides Data
 ] {
 	
