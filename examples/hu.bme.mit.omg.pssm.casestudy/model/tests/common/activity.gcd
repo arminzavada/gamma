@@ -49,7 +49,7 @@ activity Activity [
 adapter DoActivity of component act : Activity {	
 	when any / run
 	
-	queue controlMessages(priority = 3, capacity = 1) {
+	queue controlMessages(priority = 3, capacity = 1, discard = oldest) {
 		controller.any
 	}
 	queue rtcMessages(priority = 2, capacity = 1) {
