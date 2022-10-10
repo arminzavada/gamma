@@ -64,7 +64,6 @@ class ActivityFlowTransformer {
 	
 	def transformInwards(Succession succession) {
 		val flowVariable = succession.variable
-		val nodeVariable = succession.targetNodeVariable
 		
 		return createSequentialAction => [
 			it.actions += succession.inwardPrecondition.createAssumeAction

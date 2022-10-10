@@ -45,7 +45,7 @@ class ActivityNodeTransformer {
 	
 	protected final extension ActivityLiterals activityLiterals = ActivityLiterals.INSTANCE 
 			
-	def runningPrecondition(ActivityNode node) {
+	dispatch def runningPrecondition(ActivityNode node) {
 		val nodeVariable = trace.getXStsVariable(node)
 
 		val expression = createAndExpression => [
@@ -55,6 +55,22 @@ class ActivityNodeTransformer {
 					reference = runningNodeStateEnumLiteral
 				]
 			)
+		]
+		
+		return expression
+	}
+		
+	dispatch def runningPrecondition(TriggerNode node) {
+		val nodeVariable = trace.getXStsVariable(node)
+
+		val expression = createAndExpression => [
+			it.operands += createEqualityExpression(
+				nodeVariable, 
+				createEnumerationLiteralExpression => [
+					reference = runningNodeStateEnumLiteral
+				]
+			)
+			it.operands += node.triggerExpression.transformExpression
 		]
 		
 		return expression
@@ -112,11 +128,8 @@ class ActivityNodeTransformer {
 	}
 	
 	protected def dispatch createNodeTransitionAction(TriggerNode node) {
-		return createSequentialAction => [
-			val precondition = node.runningPrecondition
-			precondition.operands += node.triggerExpression.transformExpression
-			
-			it.actions += precondition.createAssumeAction
+		return createSequentialAction => [			
+			it.actions += node.runningPrecondition.createAssumeAction
 			it.actions += node.createDoneAssignmentAction
 		]
 	}
