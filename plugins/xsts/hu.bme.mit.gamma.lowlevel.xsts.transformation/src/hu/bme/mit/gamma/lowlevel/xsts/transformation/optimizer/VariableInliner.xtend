@@ -33,6 +33,7 @@ import static com.google.common.base.Preconditions.checkState
 
 import static extension hu.bme.mit.gamma.expression.derivedfeatures.ExpressionModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
+import hu.bme.mit.gamma.xsts.model.ParallelAction
 
 class VariableInliner {
 	// Singleton
@@ -118,6 +119,13 @@ class VariableInliner {
 		for (subaction : subactions) {
 			subaction.inline(concreteValues, symbolicValues)
 		}
+	}
+	
+	protected def dispatch void inline(ParallelAction action,
+			Map<VariableDeclaration, InlineEntry> concreteValues,
+			Map<VariableDeclaration, InlineEntry> symbolicValues) {
+		concreteValues.clear
+		symbolicValues.clear
 	}
 	
 	protected def dispatch void inline(NonDeterministicAction action,
