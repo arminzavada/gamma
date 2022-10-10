@@ -125,7 +125,8 @@ class ComponentTransformer {
 		val inEventAction = createSequentialAction
 //		val outEventAction = createSequentialAction
 		
-		val mergedAction = createSequentialAction
+		var mergedAction = createSequentialAction
+		val nondetAction = createNonDeterministicAction
 		
 		// Transforming and saving the adapter instances
 		
@@ -383,6 +384,10 @@ class ComponentTransformer {
 			// Caching
 			queueHandlingMergedActions += adapterInstance -> (inputIfAction.clone /* Crucial */ -> eventDispatches)
 			//
+			
+			mergedAction.actions.add(0, createAssumeAction(createTrueExpression))
+			nondetAction.actions.add(mergedAction)
+			mergedAction = createSequentialAction
 		}
 		
 		// Initializing message queue related variables - done here and not in initial expression
@@ -523,7 +528,7 @@ class ComponentTransformer {
 		// Must not reset out events here: adapter instances reset them after running (no running, no reset)
 //		xSts.outEventTransition = outEventAction.wrap
 		
-		xSts.changeTransitions(mergedAction.wrap)
+		xSts.changeTransitions(nondetAction.wrap)
 		
 		return xSts
 	}
