@@ -53,11 +53,10 @@ statechart EventQueue [
 @Asynchronous
 @RegionSchedule=bottom-up
 statechart Target [
+	port activity_0 : requires ActivityControllerInterface
 	port data : requires Data
 	
-	port dispatcherControl : provides DispatcherControl
-	
-	port activity_0 : requires ActivityControllerInterface
+	port dispatcherControl : provides DispatcherControl	
 ] {	
 	
 	region Wrapper {
@@ -89,14 +88,13 @@ statechart Target [
 
 @Asynchronous
 statechart Dispatcher [
-	port queueControl : provides QueueControl
+	port dispatcherControlActivity_0 : requires ActivityDispatcherControl
+	port dispatcherControl : requires DispatcherControl
 	port inputData : requires Data
 	
-	port dispatcherControl : requires DispatcherControl
-	port outputData : provides Data
-	
+	port queueControl : provides QueueControl	
+	port outputData : provides Data	
 	port outputDataActivity_0 : provides Data
-	port dispatcherControlActivity_0 : requires ActivityDispatcherControl
 ] {
 	
 	var activity_0_Start : integer := 0
@@ -136,26 +134,26 @@ statechart Dispatcher [
 	transition from Initial to WaitingForEvent
 	
 	// dispatching incoming start event
-	transition from WaitingForEvent to WaitingForEvent when inputData.start [activity_0_Start > 0] / raise outputDataActivity_0.start; // send to activity_0
+	transition from WaitingForEvent to WaitingForEvent when inputData.start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; // send to activity_0
 	transition from WaitingForEvent to Sent_Start when inputData.start / raise outputData.start; // send to statechart
 	transition from Sent_Start to DecideActivity_Start when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Start to MergeActivity_Start [activity_0_Start > 0] / raise outputDataActivity_0.start; // send to activity_0
+	transition from DecideActivity_Start to MergeActivity_Start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; // send to activity_0
 	transition from DecideActivity_Start to MergeActivity_Start [else] // throw away event
 	transition from MergeActivity_Start to WaitingForEvent
 	
 	// dispatching incoming anotherSignal event
-	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal;
+	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1;
 	transition from WaitingForEvent to Sent_AnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal; // send to statechart
 	transition from Sent_AnotherSignal to DecideActivity_AnotherSignal when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; // send to activity_0
+	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1; // send to activity_0
 	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [else] // throw away event
 	transition from MergeActivity_AnotherSignal to WaitingForEvent
 	
 	// dispatching incoming continue event
-	transition from WaitingForEvent to WaitingForEvent when inputData.continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue;
+	transition from WaitingForEvent to WaitingForEvent when inputData.continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1;
 	transition from WaitingForEvent to Sent_Continue when inputData.continue / raise outputData.continue; // send to statechart
 	transition from Sent_Continue to DecideActivity_Continue when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Continue to MergeActivity_Continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; // send to activity_0
+	transition from DecideActivity_Continue to MergeActivity_Continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1; // send to activity_0
 	transition from DecideActivity_Continue to MergeActivity_Continue [else] // throw away event
 	transition from MergeActivity_Continue to WaitingForEvent
 	

@@ -25,6 +25,7 @@ activity Activity [
 	}
 	
 	trigger Wait when data.continue on-await {
+		log "S1_doActivityWait";
 		raise dispatcherControl.continue;
 	}
 	
