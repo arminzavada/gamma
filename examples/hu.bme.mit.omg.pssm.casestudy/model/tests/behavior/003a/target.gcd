@@ -1,7 +1,8 @@
 package target
 
 import "interfaces"
-import "common"
+import "activities"
+import "dispatchers"
  
 scheduled-async System {
 	
@@ -57,6 +58,8 @@ statechart Target [
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl	
+	
+	port completion : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -68,6 +71,9 @@ statechart Target [
 				state S1 {
 					entry / raise activity_0.control(true);
 					exit / raise activity_0.control(false);
+				}
+				state error {
+					entry / raise completion.completion;
 				}
 				state FS1
 			}
@@ -81,98 +87,8 @@ statechart Target [
 	
 	transition from Initial to wait
 	transition from wait to S1 when data.start / raise dispatcherControl.ready;
-	transition from S1 to FS1 when activity_0.done / log "ERROR";
+	transition from S1 to error when activity_0.done
+	transition from error to FS1 when completion.completion
 	transition from S1 to FS1 when data.anotherSignal / raise dispatcherControl.ready;
-	
-}
-
-@Asynchronous
-statechart Dispatcher [
-	port dispatcherControlActivity_0 : requires ActivityDispatcherControl
-	port dispatcherControl : requires DispatcherControl
-	port inputData : requires Data
-	
-	port queueControl : provides QueueControl	
-	port outputData : provides Data	
-	port outputDataActivity_0 : provides Data
-] {
-	
-	var activity_0_Start : integer := 0
-	var activity_0_AnotherSignal : integer := 0
-	var activity_0_Continue : integer := 0
-	
-	region Main {
-		initial Initial
-		state WaitingForEvent {
-			entry / raise queueControl.next;
-		}
-		state WaitingForTarget {
-			region Sent {
-				initial IgnoreInitial
-				state IgnoreState
-				
-				state Sent_Start
-				choice DecideActivity_Start
-				merge MergeActivity_Start
-				
-				state Sent_AnotherSignal
-				choice DecideActivity_AnotherSignal
-				merge MergeActivity_AnotherSignal
-				
-				state Sent_Continue
-				choice DecideActivity_Continue
-				merge MergeActivity_Continue
-			}
-		}
-	}
-	
-	region EventSubscription {
-		initial EventSubscriptionInitial
-		state ListeningToSubscriptions
-	}
-	
-	transition from Initial to WaitingForEvent
-	
-	// dispatching incoming start event
-	transition from WaitingForEvent to WaitingForEvent when inputData.start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; // send to activity_0
-	transition from WaitingForEvent to Sent_Start when inputData.start / raise outputData.start; // send to statechart
-	transition from Sent_Start to DecideActivity_Start when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Start to MergeActivity_Start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; // send to activity_0
-	transition from DecideActivity_Start to MergeActivity_Start [else] // throw away event
-	transition from MergeActivity_Start to WaitingForEvent
-	
-	// dispatching incoming anotherSignal event
-	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1;
-	transition from WaitingForEvent to Sent_AnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal; // send to statechart
-	transition from Sent_AnotherSignal to DecideActivity_AnotherSignal when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1; // send to activity_0
-	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [else] // throw away event
-	transition from MergeActivity_AnotherSignal to WaitingForEvent
-	
-	// dispatching incoming continue event
-	transition from WaitingForEvent to WaitingForEvent when inputData.continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1;
-	transition from WaitingForEvent to Sent_Continue when inputData.continue / raise outputData.continue; // send to statechart
-	transition from Sent_Continue to DecideActivity_Continue when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Continue to MergeActivity_Continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1; // send to activity_0
-	transition from DecideActivity_Continue to MergeActivity_Continue [else] // throw away event
-	transition from MergeActivity_Continue to WaitingForEvent
-	
-	// statechart processed this event
-	transition from WaitingForTarget to WaitingForEvent when dispatcherControl.ready
-	
-	transition from IgnoreInitial to IgnoreState // ignored
-	
-	// processing event subscriptions
-	transition from EventSubscriptionInitial to ListeningToSubscriptions / ResetActivity_0();
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.resetSubscriptions / ResetActivity_0();
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.start / activity_0_Start := activity_0_Start + 1;
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.anotherSignal / activity_0_AnotherSignal := activity_0_AnotherSignal + 1;
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.continue / activity_0_Continue := activity_0_Continue + 1;
-	
-	procedure ResetActivity_0 : void {
-		activity_0_Start := 0;
-		activity_0_AnotherSignal := 0;
-		activity_0_Continue := 0;
-	}
 	
 }

@@ -30,3 +30,7 @@ interface ActivityControllerInterface {
 interface RTC {
 	in event Run
 }
+
+interface StatechartCompletion {
+	internal event completion
+}

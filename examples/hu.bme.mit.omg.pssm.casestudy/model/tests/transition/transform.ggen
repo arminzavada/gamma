@@ -1,0 +1,6 @@
+include "hu.bme.mit.omg.pssm/model/tests/transition/001/transform.ggen"
+include "hu.bme.mit.omg.pssm/model/tests/transition/007/transform.ggen"
+include "hu.bme.mit.omg.pssm/model/tests/transition/010/transform.ggen"
+include "hu.bme.mit.omg.pssm/model/tests/transition/011a/transform.ggen"
+include "hu.bme.mit.omg.pssm/model/tests/transition/015/transform.ggen"
+include "hu.bme.mit.omg.pssm/model/tests/transition/016/transform.ggen"

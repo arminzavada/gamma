@@ -41,50 +41,50 @@
     </regions>
     <ports name="o1">
       <interfaceRealization>
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <ports name="o2">
       <interfaceRealization>
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <ports name="i1">
       <interfaceRealization realizationMode="REQUIRED">
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <ports name="i2">
       <interfaceRealization realizationMode="REQUIRED">
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <transitions sourceState="//@components.2/@regions.0/@stateNodes.0" targetState="//@components.2/@regions.0/@stateNodes.1">
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.0">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.1">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
     </transitions>
     <transitions sourceState="//@components.2/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.2">
-          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
         </eventReference>
       </trigger>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.0">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
     </transitions>
     <transitions sourceState="//@components.2/@regions.0/@stateNodes.1" targetState="//@components.2/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.2/@ports.3">
-          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
         </eventReference>
       </trigger>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.1">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
     </transitions>
   </components>
@@ -106,12 +106,12 @@
     </regions>
     <ports name="input">
       <interfaceRealization realizationMode="REQUIRED">
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <ports name="output">
       <interfaceRealization>
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <variableDeclarations name="amount">
@@ -122,7 +122,7 @@
     <transitions sourceState="//@components.4/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.0">
-          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
         </eventReference>
       </trigger>
       <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
@@ -137,7 +137,7 @@
         </rhs>
       </effects>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.1">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
     </transitions>
   </components>
@@ -159,12 +159,12 @@
     </regions>
     <ports name="input">
       <interfaceRealization realizationMode="REQUIRED">
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <ports name="output">
       <interfaceRealization>
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0"/>
+        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0"/>
       </interfaceRealization>
     </ports>
     <variableDeclarations name="amount">
@@ -175,7 +175,7 @@
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.0">
-          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
         </eventReference>
       </trigger>
       <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
@@ -190,7 +190,7 @@
         </rhs>
       </effects>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.1">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/tests/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
     </transitions>
   </components>

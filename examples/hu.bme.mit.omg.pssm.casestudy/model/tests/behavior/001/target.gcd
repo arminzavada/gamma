@@ -1,6 +1,8 @@
 package target
 
 import "interfaces"
+import "activities"
+import "dispatchers"
  
 scheduled-async System {
 	
@@ -46,6 +48,8 @@ statechart Target [
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl
+	
+	port completion : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -65,41 +69,6 @@ statechart Target [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
 	transition from Initial to S1
-	transition from S1 to Final when data.start
-	
-}
-
-@Asynchronous
-statechart Dispatcher [
-	port dispatcherControl : requires DispatcherControl
-	port inputData : requires Data
-	
-	port queueControl : provides QueueControl	
-	port outputData : provides Data
-] {
-	
-	region Main {
-		initial Initial
-		state WaitingForEvent {
-			entry / raise queueControl.next;
-		}
-		state WaitingForTarget {
-			region Sent {
-				initial SentInitial
-				state SentNone
-				state SentStart
-				state SentAnotherSignal
-			}
-		}
-	}
-	
-	transition from Initial to WaitingForEvent
-	
-	transition from WaitingForEvent to SentStart when inputData.start / raise outputData.start;
-	transition from WaitingForEvent to SentAnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal;
-	
-	transition from WaitingForTarget to WaitingForEvent when dispatcherControl.ready
-	
-	transition from SentInitial to SentNone // ignored
+	transition from S1 to Final when data.start / raise dispatcherControl.ready;
 	
 }
