@@ -385,7 +385,7 @@ class ComponentTransformer {
 			queueHandlingMergedActions += adapterInstance -> (inputIfAction.clone /* Crucial */ -> eventDispatches)
 			//
 			
-			mergedAction.actions.add(0, createAssumeAction(createTrueExpression))
+			mergedAction.actions.add(0, createAssumeAction(inputIfAction.condition.clone))
 			nondetAction.actions.add(mergedAction)
 			mergedAction = createSequentialAction
 		}
