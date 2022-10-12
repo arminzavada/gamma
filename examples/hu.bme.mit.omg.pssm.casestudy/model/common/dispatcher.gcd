@@ -16,6 +16,11 @@ statechart DispatcherSC [
 	var activity_0_AnotherSignal : integer := 0
 	var activity_0_Continue : integer := 0
 	var activity_0_Pending : integer := 0
+	var activity_0_Data : integer := 0
+	var activity_0_IntegerData : integer := 0
+	
+	var sentDataValue : boolean := false
+	var sentIntegerDataValue : integer := 0
 	
 	region Main {
 		initial Initial
@@ -42,6 +47,14 @@ statechart DispatcherSC [
 				state Sent_Pending
 				choice DecideActivity_Pending
 				merge MergeActivity_Pending
+				
+				state Sent_Data
+				choice DecideActivity_Data
+				merge MergeActivity_Data
+				
+				state Sent_IntegerData
+				choice DecideActivity_IntegerData
+				merge MergeActivity_IntegerData
 			}
 		}
 	}
@@ -54,55 +67,75 @@ statechart DispatcherSC [
 	transition from Initial to WaitingForEvent
 	
 	// dispatching incoming start event
-	transition from WaitingForEvent to WaitingForEvent when inputData.start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; // send to activity_0
-	transition from WaitingForEvent to Sent_Start when inputData.start / raise outputData.start; // send to statechart
-	transition from Sent_Start to DecideActivity_Start when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Start to MergeActivity_Start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; // send to activity_0
-	transition from DecideActivity_Start to MergeActivity_Start [else] // throw away event
+	transition from WaitingForEvent to WaitingForEvent when inputData.start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; log "Activity_0_send_start";
+	transition from WaitingForEvent to Sent_Start when inputData.start / raise outputData.start; log "try_send_start";
+	transition from Sent_Start to DecideActivity_Start when dispatcherControl.ignore / log "ignored";
+	transition from DecideActivity_Start to MergeActivity_Start [activity_0_Start > 0] / raise outputDataActivity_0.start; activity_0_Start := activity_0_Start - 1; log "Activity_0_send_start";
+	transition from DecideActivity_Start to MergeActivity_Start [else] / log "throw_away";
 	transition from MergeActivity_Start to WaitingForEvent
 	
 	// dispatching incoming anotherSignal event
-	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1;
-	transition from WaitingForEvent to Sent_AnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal; // send to statechart
-	transition from Sent_AnotherSignal to DecideActivity_AnotherSignal when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1; // send to activity_0
-	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [else] // throw away event
+	transition from WaitingForEvent to WaitingForEvent when inputData.anotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1; log "Activity_0_send_anotherSignal";
+	transition from WaitingForEvent to Sent_AnotherSignal when inputData.anotherSignal / raise outputData.anotherSignal; log "try_send_anotherSignal";
+	transition from Sent_AnotherSignal to DecideActivity_AnotherSignal when dispatcherControl.ignore / log "ignored";
+	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [activity_0_AnotherSignal > 0] / raise outputDataActivity_0.anotherSignal; activity_0_AnotherSignal := activity_0_AnotherSignal - 1; log "Activity_0_send_anotherSignal";
+	transition from DecideActivity_AnotherSignal to MergeActivity_AnotherSignal [else] / log "throw_away";
 	transition from MergeActivity_AnotherSignal to WaitingForEvent
 	
 	// dispatching incoming continue event
-	transition from WaitingForEvent to WaitingForEvent when inputData.continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1;
-	transition from WaitingForEvent to Sent_Continue when inputData.continue / raise outputData.continue; // send to statechart
-	transition from Sent_Continue to DecideActivity_Continue when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Continue to MergeActivity_Continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1; // send to activity_0
-	transition from DecideActivity_Continue to MergeActivity_Continue [else] // throw away event
+	transition from WaitingForEvent to WaitingForEvent when inputData.continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1; log "Activity_0_send_continue";
+	transition from WaitingForEvent to Sent_Continue when inputData.continue / raise outputData.continue; log "try_send_continue";
+	transition from Sent_Continue to DecideActivity_Continue when dispatcherControl.ignore / log "ignored";
+	transition from DecideActivity_Continue to MergeActivity_Continue [activity_0_Continue > 0] / raise outputDataActivity_0.continue; activity_0_Continue := activity_0_Continue - 1; log "Activity_0_send_continue";
+	transition from DecideActivity_Continue to MergeActivity_Continue [else] / log "throw_away";
 	transition from MergeActivity_Continue to WaitingForEvent
 	
-	// dispatching incoming continue event
-	transition from WaitingForEvent to WaitingForEvent when inputData.pending [activity_0_Pending > 0] / raise outputDataActivity_0.pending; activity_0_Pending := activity_0_Pending - 1;
-	transition from WaitingForEvent to Sent_Pending when inputData.pending / raise outputData.pending; // send to statechart
-	transition from Sent_Pending to DecideActivity_Pending when dispatcherControl.ignore // statechart did not match
-	transition from DecideActivity_Pending to MergeActivity_Pending [activity_0_Pending > 0] / raise outputDataActivity_0.pending; activity_0_Pending := activity_0_Pending - 1; // send to activity_0
-	transition from DecideActivity_Pending to MergeActivity_Pending [else] // throw away event
+	// dispatching incoming pending event
+	transition from WaitingForEvent to WaitingForEvent when inputData.pending [activity_0_Pending > 0] / raise outputDataActivity_0.pending; activity_0_Pending := activity_0_Pending - 1; log "Activity_0_send_pending";
+	transition from WaitingForEvent to Sent_Pending when inputData.pending / raise outputData.pending; log "try_send_pending";
+	transition from Sent_Pending to DecideActivity_Pending when dispatcherControl.ignore / log "ignored";
+	transition from DecideActivity_Pending to MergeActivity_Pending [activity_0_Pending > 0] / raise outputDataActivity_0.pending; activity_0_Pending := activity_0_Pending - 1; log "Activity_0_send_pending";
+	transition from DecideActivity_Pending to MergeActivity_Pending [else] / log "throw_away";
 	transition from MergeActivity_Pending to WaitingForEvent
 	
+	// dispatching incoming data event
+	transition from WaitingForEvent to WaitingForEvent when inputData.data [activity_0_Data > 0] / raise outputDataActivity_0.data(inputData.data::value); activity_0_Data := activity_0_Data - 1; log "Activity_0_send_data";
+	transition from WaitingForEvent to Sent_Data when inputData.data / raise outputData.data(inputData.data::value); sentDataValue := inputData.data::value; log "try_send_data";
+	transition from Sent_Data to DecideActivity_Data when dispatcherControl.ignore / sentDataValue := false; log "ignored";
+	transition from DecideActivity_Data to MergeActivity_Data [activity_0_Data > 0] / raise outputDataActivity_0.data(sentDataValue); activity_0_Data := activity_0_Data - 1; log "Activity_0_send_data";
+	transition from DecideActivity_Data to MergeActivity_Data [else] / log "throw_away";
+	transition from MergeActivity_Data to WaitingForEvent / sentDataValue := false;
+	
+	// dispatching incoming data event
+	transition from WaitingForEvent to WaitingForEvent when inputData.integerData [activity_0_IntegerData > 0] / raise outputDataActivity_0.integerData(inputData.integerData::value); activity_0_IntegerData := activity_0_IntegerData - 1; log "Activity_0_send_integerData";
+	transition from WaitingForEvent to Sent_IntegerData when inputData.integerData / raise outputData.integerData(inputData.integerData::value); sentIntegerDataValue := inputData.integerData::value; log "try_send_integerData";
+	transition from Sent_IntegerData to DecideActivity_IntegerData when dispatcherControl.ignore / sentIntegerDataValue := 0; log "ignored";
+	transition from DecideActivity_IntegerData to MergeActivity_IntegerData [activity_0_IntegerData > 0] / raise outputDataActivity_0.integerData(sentIntegerDataValue); activity_0_IntegerData := activity_0_IntegerData - 1; log "Activity_0_send_integerData";
+	transition from DecideActivity_IntegerData to MergeActivity_IntegerData [else] / log "throw_away";
+	transition from MergeActivity_IntegerData to WaitingForEvent / sentDataValue := false;
+	
 	// statechart processed this event
-	transition from WaitingForTarget to WaitingForEvent when dispatcherControl.ready
+	transition from WaitingForTarget to WaitingForEvent when dispatcherControl.ready / log "ready";
 	
 	transition from IgnoreInitial to IgnoreState // ignored
 	
 	// processing event subscriptions
 	transition from EventSubscriptionInitial to ListeningToSubscriptions / ResetActivity_0();
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.resetSubscriptions / ResetActivity_0();
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.start / activity_0_Start := activity_0_Start + 1;
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.anotherSignal / activity_0_AnotherSignal := activity_0_AnotherSignal + 1;
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.continue / activity_0_Continue := activity_0_Continue + 1;
-	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.pending / activity_0_Pending := activity_0_Pending + 1;
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.resetSubscriptions / ResetActivity_0(); log "Activity_0_resetSubscriptions";
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.start / activity_0_Start := activity_0_Start + 1; log "Activity_0_subscribed_start";
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.anotherSignal / activity_0_AnotherSignal := activity_0_AnotherSignal + 1; log "Activity_0_subscribed_anotherSignal";
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.continue / activity_0_Continue := activity_0_Continue + 1; log "Activity_0_subscribed_continue";
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.pending / activity_0_Pending := activity_0_Pending + 1; log "Activity_0_subscribed_pending";
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.data / activity_0_Data := activity_0_Data + 1; log "Activity_0_subscribed_data";
+	transition from ListeningToSubscriptions to ListeningToSubscriptions when dispatcherControlActivity_0.integerData / activity_0_IntegerData := activity_0_IntegerData + 1; log "Activity_0_subscribed_integerData";
 	
 	procedure ResetActivity_0 : void {
 		activity_0_Start := 0;
 		activity_0_AnotherSignal := 0;
 		activity_0_Continue := 0;
 		activity_0_Pending := 0;
+		activity_0_Data := 0;
+		activity_0_IntegerData := 0;
 	}
 	
 }
