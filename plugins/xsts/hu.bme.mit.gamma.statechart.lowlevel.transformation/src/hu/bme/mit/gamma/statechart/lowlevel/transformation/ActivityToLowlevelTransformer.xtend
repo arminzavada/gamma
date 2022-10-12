@@ -211,7 +211,7 @@ class ActivityToLowlevelTransformer {
 	}
 	
 	def dispatch ActivityNode transformNode(CompositeNode node) {
-		if (trace.isActivityNodeMapped(node)) {
+		/*if (trace.isActivityNodeMapped(node)) {
 			return trace.getActivityNode(node)
 		}
 		
@@ -231,7 +231,9 @@ class ActivityToLowlevelTransformer {
 			it.transformFlow
 		]
 		
-		return lowlevelNode
+		return lowlevelNode*/
+		
+		return null
 	}
 	
 	def dispatch ActivityNode transformNode(ActionNode node) {
@@ -241,7 +243,6 @@ class ActivityToLowlevelTransformer {
 		
 		val lowlevelNode = createActionNode => [
 			it.name = node.name
-			it.action = node.action?.transformAction.wrap
 		]
 		
 		trace.putActivityNode(node, lowlevelNode)
@@ -249,7 +250,7 @@ class ActivityToLowlevelTransformer {
 		lowlevelNode.pins += node.pins.map [
 			it.transformPin
 		]
-		lowlevelNode.action = node.action.transformAction.wrap
+		lowlevelNode.postAction = node.action.transformAction.wrap
 		lowlevelNode.incoming += node.incomingFlows.map[
 			it.transformFlow
 		]
@@ -379,11 +380,23 @@ class ActivityToLowlevelTransformer {
 		lowlevelNode.incoming += node.incomingFlows.map[
 			it.transformFlow
 		]
+		lowlevelNode.postAction = node.containingActivity.createCompletionAction.transformAction.wrap
 		lowlevelNode.outgoing += node.outgoingFlows.map[
 			it.transformFlow
 		]
 		
 		return lowlevelNode
+	}
+	
+	def createCompletionAction(ActivityDefinition activity) {
+		val controllerPort = activity.activityControllerPort
+		val completionEvent = controllerPort.allEvents.last
+		
+		val raiseAction = hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory.eINSTANCE.createRaiseEventAction
+		raiseAction.port = controllerPort
+		raiseAction.event = completionEvent
+		
+		return raiseAction
 	}
 		
 	def dispatch ActivityNode transformNode(TriggerNode node) {
@@ -393,7 +406,6 @@ class ActivityToLowlevelTransformer {
 		
 		val lowlevelNode = createTriggerNode => [
 			it.name = node.name
-			it.preAction = node.preAction?.transformAction.wrap
 		]
 		
 		trace.putActivityNode(node, lowlevelNode)
@@ -401,6 +413,7 @@ class ActivityToLowlevelTransformer {
 		lowlevelNode.incoming += node.incomingFlows.map[
 			it.transformFlow
 		]
+		lowlevelNode.preAction = node.preAction?.transformAction.wrap
 		lowlevelNode.outgoing += node.outgoingFlows.map[
 			it.transformFlow
 		]

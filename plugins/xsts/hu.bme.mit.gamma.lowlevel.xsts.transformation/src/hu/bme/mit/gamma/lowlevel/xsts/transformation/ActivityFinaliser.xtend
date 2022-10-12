@@ -18,7 +18,9 @@ import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityNode
 import hu.bme.mit.gamma.statechart.lowlevel.model.ActivityDefinition
 import hu.bme.mit.gamma.statechart.lowlevel.model.Succession
 
-class ActivityInitialiser {
+import static extension hu.bme.mit.gamma.statechart.lowlevel.derivedfeatures.LowlevelStatechartModelDerivedFeatures.*
+
+class ActivityFinaliser {
 	// Model factories
 	protected final extension XSTSModelFactory factory = XSTSModelFactory.eINSTANCE
 	protected final extension ExpressionModelFactory expressionFactory = ExpressionModelFactory.eINSTANCE
@@ -33,7 +35,7 @@ class ActivityInitialiser {
 		this.trace = trace
 	}
 	
-	private def initialiseSuccession(Succession succession) {
+	private def finaliseSuccession(Succession succession) {
 		val successionVariable = trace.getXStsVariable(succession)
 		return createAssignmentAction(successionVariable, createEnumerationLiteralExpression => [
 				reference = emptyFlowStateEnumLiteral
@@ -41,15 +43,7 @@ class ActivityInitialiser {
 		)
 	}
 	
-	private dispatch def initialiseNode(InitialNode node) {
-		val nodeVariable = trace.getXStsVariable(node)
-		return createAssignmentAction(nodeVariable, createEnumerationLiteralExpression => [
-				reference = runningNodeStateEnumLiteral
-			]
-		)
-	}
-	
-	private dispatch def initialiseNode(ActivityNode node) {
+	private def finaliseNode(ActivityNode node) {
 		val nodeVariable = trace.getXStsVariable(node)
 		return createAssignmentAction(nodeVariable, createEnumerationLiteralExpression => [
 				reference = idleNodeStateEnumLiteral
@@ -57,14 +51,18 @@ class ActivityInitialiser {
 		)
 	}
 	
-	def createInitialisationAction(ActivityDefinition activity) {
+	private def sendCompletionEvent(ActivityDefinition activity) {
+		val controller = activity.activityControllerEvent
+	}
+	
+	def createFinalisationAction(ActivityDefinition activity) {
 		val action = createSequentialAction
 		
 		for (flow : activity.flows) {
-			action.actions += flow.initialiseSuccession
+			action.actions += flow.finaliseSuccession
 		}
 		for (node : activity.activityNodes) {
-			action.actions += node.initialiseNode
+			action.actions += node.finaliseNode
 		}
 		
 		return action

@@ -33,17 +33,12 @@ activity Activity [
 		log "S1_doActivityPartII";
 	}
 	
-	action end {
-		raise controller.done;
-	}
-	
 	final fin
 	
 	succession from init to Part1
 	succession from Part1 to Wait
 	succession from Wait to Part2
-	succession from Part2 to end
-	succession from end to fin
+	succession from Part2 to fin
 	
 }
 

@@ -42,6 +42,7 @@ import hu.bme.mit.gamma.expression.model.ParameterDeclaration;
 import hu.bme.mit.gamma.expression.model.TypeDeclaration;
 import hu.bme.mit.gamma.expression.model.TypeDefinition;
 import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityControlPortAnnotation;
+import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDefinition;
 import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDerivedAnnotation;
 import hu.bme.mit.gamma.statechart.ActivityComposition.DispatcherControlPortAnnotation;
 import hu.bme.mit.gamma.statechart.ActivityComposition.InRtcPortAnnotation;
@@ -137,6 +138,22 @@ import hu.bme.mit.gamma.statechart.util.StatechartUtil;
 public class StatechartModelDerivedFeatures extends ActivityModelDerivedFeatures {
 	
 	protected static final StatechartUtil statechartUtil = StatechartUtil.INSTANCE;
+	
+	public static Port getActivityControllerPort(ActivityDefinition activity) {
+		return activity.getPorts().stream().filter(p -> isActivityControlPort(p)).findFirst().orElseThrow();
+	}
+	
+	public static Port getInRtcPort(ActivityDefinition activity) {
+		return activity.getPorts().stream().filter(p -> isInRtcPort(p)).findFirst().orElseThrow();
+	}
+	
+	public static Port getOutRtcPort(ActivityDefinition activity) {
+		return activity.getPorts().stream().filter(p -> isOutRtcPort(p)).findFirst().orElseThrow();
+	}
+	
+	public static Port getDispatcherControlPort(ActivityDefinition activity) {
+		return activity.getPorts().stream().filter(p -> isDispatcherControlPort(p)).findFirst().orElseThrow();
+	}
 	
 	public static List<ParameterDeclaration> getParameterDeclarations(ArgumentedElement element) {
 		if (element instanceof RaiseEventAction) {
@@ -1908,6 +1925,10 @@ public class StatechartModelDerivedFeatures extends ActivityModelDerivedFeatures
 	
 	public static StatefulComponent getContainingStatefulComponent(EObject object) {
 		return ecoreUtil.getContainerOfType(object, StatefulComponent.class);
+	}
+	
+	public static ActivityDefinition getContainingActivity(EObject object) {
+		return ecoreUtil.getContainerOfType(object, ActivityDefinition.class);
 	}
 	
 	public static Component getContainingComponent(EObject object) {
