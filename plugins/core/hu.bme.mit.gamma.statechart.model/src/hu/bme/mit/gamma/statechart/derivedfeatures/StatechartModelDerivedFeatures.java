@@ -45,8 +45,7 @@ import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityControlPortAnnota
 import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDefinition;
 import hu.bme.mit.gamma.statechart.ActivityComposition.ActivityDerivedAnnotation;
 import hu.bme.mit.gamma.statechart.ActivityComposition.DispatcherControlPortAnnotation;
-import hu.bme.mit.gamma.statechart.ActivityComposition.InRtcPortAnnotation;
-import hu.bme.mit.gamma.statechart.ActivityComposition.OutRtcPortAnnotation;
+import hu.bme.mit.gamma.statechart.ActivityComposition.RtcPortAnnotation;
 import hu.bme.mit.gamma.statechart.composite.AbstractAsynchronousCompositeComponent;
 import hu.bme.mit.gamma.statechart.composite.AbstractSynchronousCompositeComponent;
 import hu.bme.mit.gamma.statechart.composite.AsynchronousAdapter;
@@ -139,18 +138,14 @@ public class StatechartModelDerivedFeatures extends ActivityModelDerivedFeatures
 	
 	protected static final StatechartUtil statechartUtil = StatechartUtil.INSTANCE;
 	
-	public static Port getActivityControllerPort(ActivityDefinition activity) {
+	public static Port getActivityControlPort(ActivityDefinition activity) {
 		return activity.getPorts().stream().filter(p -> isActivityControlPort(p)).findFirst().orElseThrow();
 	}
 	
-	public static Port getInRtcPort(ActivityDefinition activity) {
-		return activity.getPorts().stream().filter(p -> isInRtcPort(p)).findFirst().orElseThrow();
+	public static Port getRtcPort(ActivityDefinition activity) {
+		return activity.getPorts().stream().filter(p -> isRtcPort(p)).findFirst().orElseThrow();
 	}
-	
-	public static Port getOutRtcPort(ActivityDefinition activity) {
-		return activity.getPorts().stream().filter(p -> isOutRtcPort(p)).findFirst().orElseThrow();
-	}
-	
+		
 	public static Port getDispatcherControlPort(ActivityDefinition activity) {
 		return activity.getPorts().stream().filter(p -> isDispatcherControlPort(p)).findFirst().orElseThrow();
 	}
@@ -288,12 +283,8 @@ public class StatechartModelDerivedFeatures extends ActivityModelDerivedFeatures
 		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof ActivityControlPortAnnotation);
 	}
 	
-	public static boolean isInRtcPort(Port port) {
-		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof InRtcPortAnnotation);
-	}
-	
-	public static boolean isOutRtcPort(Port port) {
-		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof OutRtcPortAnnotation);
+	public static boolean isRtcPort(Port port) {
+		return port.getAnnotations().stream().anyMatch(annotation -> annotation instanceof RtcPortAnnotation);
 	}
 	
 	public static boolean isDispatcherControlPort(Port port) {

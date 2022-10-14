@@ -12,7 +12,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ActivityDerivedAnnotation" abstract="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ActivityControlPortAnnotation" eSuperTypes="#//ActivityDerivedAnnotation interface.ecore#//PortAnnotation"/>
-  <eClassifiers xsi:type="ecore:EClass" name="InRtcPortAnnotation" eSuperTypes="#//ActivityDerivedAnnotation interface.ecore#//PortAnnotation"/>
-  <eClassifiers xsi:type="ecore:EClass" name="OutRtcPortAnnotation" eSuperTypes="#//ActivityDerivedAnnotation interface.ecore#//PortAnnotation"/>
+  <eClassifiers xsi:type="ecore:EClass" name="RtcPortAnnotation" eSuperTypes="#//ActivityDerivedAnnotation interface.ecore#//PortAnnotation"/>
   <eClassifiers xsi:type="ecore:EClass" name="DispatcherControlPortAnnotation" eSuperTypes="#//ActivityDerivedAnnotation interface.ecore#//PortAnnotation"/>
 </ecore:EPackage>

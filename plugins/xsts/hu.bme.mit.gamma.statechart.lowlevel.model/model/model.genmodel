@@ -128,8 +128,7 @@
     <genClasses image="false" ecoreClass="model.ecore#//EventAnnotation"/>
     <genClasses image="false" ecoreClass="model.ecore#//ActivityDerivedAnnotation"/>
     <genClasses ecoreClass="model.ecore#//ActivityControllerEventAnnotation"/>
-    <genClasses ecoreClass="model.ecore#//InRtcEventAnnotation"/>
-    <genClasses ecoreClass="model.ecore#//OutRtcEventAnnotation"/>
+    <genClasses ecoreClass="model.ecore#//RtcEventAnnotation"/>
     <genClasses ecoreClass="model.ecore#//DispatcherControlEventAnnotation"/>
   </genPackages>
 </genmodel:GenModel>

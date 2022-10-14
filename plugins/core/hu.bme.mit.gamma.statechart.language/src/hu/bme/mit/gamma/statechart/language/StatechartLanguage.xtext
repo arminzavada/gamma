@@ -171,8 +171,7 @@ Port returns InterfaceModel::Port:
 
 PortAnnotation returns InterfaceModel::PortAnnotation:
 	ActivityControlPortAnnotation |
-	InRtcPortAnnotation |
-	OutRtcPortAnnotation |
+	RtcPortAnnotation |
 	DispatcherControlPortAnnotation
 ;
 
@@ -186,14 +185,9 @@ DispatcherControlPortAnnotation returns ActivityComposition::DispatcherControlPo
 	"@DispatcherControlPort"
 ;
 
-InRtcPortAnnotation returns ActivityComposition::InRtcPortAnnotation:
-	{ActivityComposition::InRtcPortAnnotation}
-	"@InRtcPort"
-;
-
-OutRtcPortAnnotation returns ActivityComposition::OutRtcPortAnnotation:
-	{ActivityComposition::OutRtcPortAnnotation}
-	"@OutRtcPort"
+RtcPortAnnotation returns ActivityComposition::RtcPortAnnotation:
+	{ActivityComposition::RtcPortAnnotation}
+	"@RtcPort"
 ;
 
 InterfaceRealization returns InterfaceModel::InterfaceRealization:

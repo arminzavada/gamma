@@ -388,8 +388,7 @@
     </genClasses>
     <genClasses image="false" ecoreClass="activity.ecore#//ActivityDerivedAnnotation"/>
     <genClasses ecoreClass="activity.ecore#//ActivityControlPortAnnotation"/>
-    <genClasses ecoreClass="activity.ecore#//InRtcPortAnnotation"/>
-    <genClasses ecoreClass="activity.ecore#//OutRtcPortAnnotation"/>
+    <genClasses ecoreClass="activity.ecore#//RtcPortAnnotation"/>
     <genClasses ecoreClass="activity.ecore#//DispatcherControlPortAnnotation"/>
   </genPackages>
 </genmodel:GenModel>

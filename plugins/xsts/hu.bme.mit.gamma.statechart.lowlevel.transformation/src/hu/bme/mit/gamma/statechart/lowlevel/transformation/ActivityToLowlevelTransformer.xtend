@@ -148,16 +148,13 @@ class ActivityToLowlevelTransformer {
 				event.annotations += createActivityControllerEventAnnotation
 			}
 		}
-		if (port.isInRtcPort) {
+		
+		if (port.isRtcPort) {
 			for (event : lowlevelEventDeclarations) {
-				event.annotations += createInRtcEventAnnotation
+				event.annotations += createRtcEventAnnotation
 			}
 		}
-		if (port.isOutRtcPort) {
-			for (event : lowlevelEventDeclarations) {
-				event.annotations += createOutRtcEventAnnotation
-			}
-		}
+		
 		if (port.isDispatcherControlPort) {
 			for (event : lowlevelEventDeclarations) {
 				event.annotations += createDispatcherControlEventAnnotation
@@ -389,11 +386,11 @@ class ActivityToLowlevelTransformer {
 	}
 	
 	def createCompletionAction(ActivityDefinition activity) {
-		val controllerPort = activity.activityControllerPort
-		val completionEvent = controllerPort.allEvents.last
+		val controlPort = activity.activityControlPort
+		val completionEvent = controlPort.allEvents.last
 		
 		val raiseAction = hu.bme.mit.gamma.statechart.statechart.StatechartModelFactory.eINSTANCE.createRaiseEventAction
-		raiseAction.port = controllerPort
+		raiseAction.port = controlPort
 		raiseAction.event = completionEvent
 		
 		return raiseAction
