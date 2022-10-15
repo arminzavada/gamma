@@ -33,6 +33,8 @@ import hu.bme.mit.gamma.xsts.model.IfAction
 import hu.bme.mit.gamma.xsts.model.EmptyAction
 import hu.bme.mit.gamma.xsts.transformation.serializer.ActionSerializer
 import hu.bme.mit.gamma.xsts.model.MultiaryAction
+import hu.bme.mit.gamma.expression.model.ReferenceExpression
+import hu.bme.mit.gamma.expression.model.Declaration
 
 class XstsSplitter {
 	static enum XstsTransitionOrigin {
@@ -218,6 +220,17 @@ class XstsSplitter {
 	 def dispatch List<XstsSlice> slice(AtomicAction atomic, XstsTransitionOrigin origin,
 	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
 	 ) {
+	 	return null
+	 }
+	 
+	 def dispatch List<XstsSlice> slice(AssignmentAction atomic, XstsTransitionOrigin origin,
+	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
+	 ) {
+	 	if (atomic.lhs.pointsToLog) {
+		 	val slice = new XstsSlice(origin, beginIds, ownPc, ownPcEndId, atomic)
+		 	return newArrayList(slice)
+	 	}
+	 	
 	 	return null
 	 }
 	 
@@ -647,5 +660,14 @@ class XstsSplitter {
 	 		lhs = createDirectReference(varDecl)
 	 		rhs = expr
 	 	]
+	 }
+	 
+	 def getPointsToLog(ReferenceExpression expression) {
+	 	if (expression instanceof DirectReferenceExpression) {
+		 	val expr = expression as DirectReferenceExpression
+		 	return expr?.declaration?.name?.startsWith("logs_")
+	 	}
+		
+	 	return false
 	 }
  }
