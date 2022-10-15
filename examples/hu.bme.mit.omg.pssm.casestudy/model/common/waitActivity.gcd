@@ -6,11 +6,8 @@ activity Activity [
 	@ActivityController
 	port controller : provides ActivityControllerInterface
 	
-	@InRtcPort
-	port rtc : provides RTC	
-	
-	@OutRtcPort
-	port _rtc_ : requires RTC
+	@RtcPort
+	port rtc : provides Rtc	
 	
 	@DispatcherControlPort
 	port dispatcherControl : provides ActivityDispatcherControl
@@ -25,7 +22,6 @@ activity Activity [
 	}
 	
 	trigger Wait when data.continue on-await {
-		log "S1_doActivityWait";
 		raise dispatcherControl.continue;
 	}
 	
@@ -52,7 +48,7 @@ adapter DoActivity of component act : Activity {
 		rtc.any
 	}
 	
-	queue dataMessages(priority = 1, capacity = 10) {
+	queue dataMessages(priority = 1, capacity = QUEUE_SIZE) {
 		data.any
 	}
 }

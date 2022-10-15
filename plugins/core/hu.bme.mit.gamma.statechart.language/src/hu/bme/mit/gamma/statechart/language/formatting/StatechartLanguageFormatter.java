@@ -100,7 +100,7 @@ public class StatechartLanguageFormatter extends AbstractDeclarativeFormatter {
             c.setNoSpace().after(at);
         }
         // No space around guards 
-        c.setNoSpace().around(f.getTransitionAccess().getGuardAssignment_7_1_1());
+        c.setNoSpace().around(f.getTransitionAccess().getGuardAssignment_8_1_1());
         // No space before parameters and arguments 
         c.setNoSpace().before(f.getSynchronousStatechartDefinitionAccess().getGroup_3());
         c.setNoSpace().before(f.getAsynchronousStatechartDefinitionAccess().getGroup_5());

@@ -327,6 +327,7 @@ Region returns Region:
 Transition returns Transition:
 	(annotations+=TransitionAnnotation)*
 	'transition' ('(' priority=INTEGER ')')?
+	(name=STRING)?
 	'from' sourceState=[StateNode] 'to' targetState=[StateNode]
 	(
 		('when' trigger=Trigger)?
@@ -337,7 +338,8 @@ Transition returns Transition:
 
 TransitionAnnotation returns TransitionAnnotation:
 	TransitionIdAnnotation | 
-	InternalTransitionAnnotation
+	InternalTransitionAnnotation |
+	LocalTransitionAnnotation
 ;
 
 TransitionIdAnnotation returns TransitionIdAnnotation:
