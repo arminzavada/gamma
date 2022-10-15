@@ -1,7 +1,6 @@
 package target
 
 import "interfaces"
-import "activities"
 import "dispatchers"
  
 scheduled-async System {
@@ -42,9 +41,8 @@ statechart EventQueue [
 	
 }
 
-@Asynchronous
 @RegionSchedule=bottom-up
-statechart Target [
+statechart TargetSC [
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl
@@ -70,3 +68,12 @@ statechart Target [
 	transition from S1 to Final when data.start / raise dispatcherControl.ready;
 	
 }
+
+adapter Target of component target : TargetSC {
+	when any / run
+	
+	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
+}
+

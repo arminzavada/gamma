@@ -9,7 +9,6 @@ scheduled-async System {
 	component eventQueue : EventQueue
 	component target : Target
 	component dispatcher : Dispatcher
-	component doActivity_0 : DoActivity
 	
 	// Tester controlling - next, end
 	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
@@ -21,12 +20,6 @@ scheduled-async System {
 	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
 	
-	// Hooking up doActivity_0
-	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
-	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
-	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
-	channel [ doActivity_0.rtc ] -o)- [ doActivity_0._rtc_ ]
-
 	initial execute dispatcher
 
 }
@@ -52,12 +45,11 @@ statechart EventQueue [
 @Asynchronous
 @RegionSchedule=bottom-up
 statechart Target [
-	port activity_0 : requires ActivityControllerInterface
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl
 	
-	port completion : provides StatechartCompletion
+	port completion_s1 : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -67,7 +59,7 @@ statechart Target [
 				initial Initial
 				state waiting
 				state S1 {
-					entry / raise completion.completion;
+					entry / raise completion_s1.completion;
 				}
 				state Final
 			}
@@ -81,6 +73,6 @@ statechart Target [
 	
 	transition from Initial to waiting
 	transition from waiting to S1 when data.start / raise dispatcherControl.ready;
-	transition from S1 to Final when completion.completion
+	transition from S1 to Final when completion_s1.completion
 	
 }

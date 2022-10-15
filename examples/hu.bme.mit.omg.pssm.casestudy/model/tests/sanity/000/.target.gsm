@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
 <hu.bme.mit.gamma.statechart.interface:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hu.bme.mit.gamma.action="http://www.mit.bme.hu/gamma/action/Model" xmlns:hu.bme.mit.gamma.expression="http://www.mit.bme.hu/gamma/expression/Model" xmlns:hu.bme.mit.gamma.statechart="http://www.mit.bme.hu/gamma/statechart/Model/Statechart" xmlns:hu.bme.mit.gamma.statechart.composite="http://www.mit.bme.hu/gamma/statechart/Model/Composite" xmlns:hu.bme.mit.gamma.statechart.interface="http://www.mit.bme.hu/gamma/statechart/Model/Interface" name="targetView">
+  <constantDeclarations name="QUEUE_SIZE0">
+    <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+    <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
+  </constantDeclarations>
   <components xsi:type="hu.bme.mit.gamma.statechart.composite:ScheduledAsynchronousCompositeComponent" name="System">
     <channels xsi:type="hu.bme.mit.gamma.statechart.composite:SimpleChannel">
       <providedPort instance="//@components.0/@components.0" port="//@components.2/@ports.0"/>

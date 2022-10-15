@@ -1,0 +1,44 @@
+package simple_activities
+
+import "interfaces"
+
+activity Activity [
+	@ActivityController
+	port controller : provides ActivityControllerInterface
+	
+	@RtcPort
+	port rtc : provides Rtc	
+	
+	@DispatcherControlPort
+	port dispatcherControl : provides ActivityDispatcherControl
+	
+	port data : requires Data
+] {
+	
+	initial init
+	
+	action Part {
+		log "S1_doActivity";
+	}
+	
+	final fin
+	
+	succession from init to Part
+	succession from Part to fin
+	
+}
+
+adapter DoActivity of component act : Activity {	
+	when any / run
+	
+	queue controlMessages(priority = 3, capacity = 1, discard = oldest) {
+		controller.any
+	}
+	queue rtcMessages(priority = 2, capacity = 1) {
+		rtc.any
+	}
+	
+	queue dataMessages(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
+}

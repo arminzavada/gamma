@@ -338,8 +338,7 @@ Transition returns Transition:
 
 TransitionAnnotation returns TransitionAnnotation:
 	TransitionIdAnnotation | 
-	InternalTransitionAnnotation |
-	LocalTransitionAnnotation
+	InternalTransitionAnnotation
 ;
 
 TransitionIdAnnotation returns TransitionIdAnnotation:

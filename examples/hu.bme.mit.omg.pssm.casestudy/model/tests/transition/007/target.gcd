@@ -37,23 +37,24 @@ statechart EventQueue [
 		state _1
 		state _2
 		state _3
+		state _4
 	}
 	
 	transition from Initial to _0
-	transition from _0 to _1 when queueControl.next / raise data.anotherSignal;
-	transition from _1 to _2 when queueControl.next / raise data.continue;
+	transition from _0 to _1 when queueControl.next / raise data.start;
+	transition from _1 to _2 when queueControl.next / raise data.anotherSignal;
 	transition from _2 to _3 when queueControl.next / raise data.continue;
+	transition from _3 to _4 when queueControl.next / raise data.continue;
 	
 }
 
-@Asynchronous
 @RegionSchedule=bottom-up
-statechart Target [
+statechart TargetSC [
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl
 	
-	port completion : provides StatechartCompletion
+	port completion_s2 : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -63,7 +64,7 @@ statechart Target [
 				initial Initial
 				state S1
 				state S2 {
-					entry / raise completion.completion;
+					entry / raise completion_s2.completion;
 				}
 				state S3
 				state Final
@@ -81,6 +82,17 @@ statechart Target [
 	transition from S3 to S1 when data.continue / raise dispatcherControl.ready;
 	transition from S3 to S1 when data.anotherSignal / raise dispatcherControl.ready;
 	transition from S1 to S2 when data.continue / raise dispatcherControl.ready;
-	transition from S2 to Final when completion.completion
+	transition from S2 to Final when completion_s2.completion
 	
+}
+
+adapter Target of component target : TargetSC {
+	when any / run
+	
+	queue completionQueue(priority = 2, capacity = QUEUE_SIZE) {
+		completion_s2.any
+	}
+	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
 }

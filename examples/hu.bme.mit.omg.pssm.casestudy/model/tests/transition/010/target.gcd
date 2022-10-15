@@ -48,14 +48,11 @@ statechart EventQueue [
 	
 }
 
-@Asynchronous
 @RegionSchedule=bottom-up
-statechart Target [
+statechart TargetSC [
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl
-	
-	port completion : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -77,8 +74,18 @@ statechart Target [
 	
 	transition from Initial to Waiting
 	transition from Waiting to S1 when data.start / raise dispatcherControl.ready;
+	
 	@Internal
 	transition from S1 to S1 when data.anotherSignal / raise dispatcherControl.ready;
+	
 	transition from S1 to Final when data.continue / raise dispatcherControl.ready;
 	
+}
+
+adapter Target of component target : TargetSC {
+	when any / run
+	
+	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
 }

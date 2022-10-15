@@ -25,7 +25,6 @@ scheduled-async System {
 	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
 	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
 	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
-	channel [ doActivity_0.rtc ] -o)- [ doActivity_0._rtc_ ]
 
 	initial execute dispatcher
 
@@ -51,15 +50,14 @@ statechart EventQueue [
 	
 }
 
-@Asynchronous
 @RegionSchedule=bottom-up
-statechart Target [
+statechart TargetSC [
 	port activity_0 : requires ActivityControllerInterface
 	port data : requires Data
 	
 	port dispatcherControl : provides DispatcherControl	
 	
-	port completion : provides StatechartCompletion
+	port completion_error : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -73,7 +71,7 @@ statechart Target [
 					exit / raise activity_0.control(false);
 				}
 				state error {
-					entry / raise completion.completion;
+					entry / raise completion_error.completion;
 				}
 				state FS1
 			}
@@ -88,7 +86,19 @@ statechart Target [
 	transition from Initial to wait
 	transition from wait to S1 when data.start / raise dispatcherControl.ready;
 	transition from S1 to error when activity_0.done
-	transition from error to FS1 when completion.completion
+	transition from error to FS1 when completion_error.completion
 	transition from S1 to FS1 when data.anotherSignal / raise dispatcherControl.ready;
 	
+}
+
+adapter Target of component target : TargetSC {
+	when any / run
+	
+	queue completionQueue(priority = 2, capacity = QUEUE_SIZE) {
+		completion_error.any,
+		activity_0.any
+	}
+	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
 }

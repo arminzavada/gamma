@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="ASCII"?>
 <hu.bme.mit.gamma.statechart.interface:Package xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:hu.bme.mit.gamma.action="http://www.mit.bme.hu/gamma/action/Model" xmlns:hu.bme.mit.gamma.expression="http://www.mit.bme.hu/gamma/expression/Model" xmlns:hu.bme.mit.gamma.statechart="http://www.mit.bme.hu/gamma/statechart/Model/Statechart" xmlns:hu.bme.mit.gamma.statechart.composite="http://www.mit.bme.hu/gamma/statechart/Model/Composite" xmlns:hu.bme.mit.gamma.statechart.interface="http://www.mit.bme.hu/gamma/statechart/Model/Interface" name="targetView">
+  <constantDeclarations name="QUEUE_SIZE0">
+    <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+    <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
+  </constantDeclarations>
+  <constantDeclarations name="QUEUE_SIZE1">
+    <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+    <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
+  </constantDeclarations>
+  <constantDeclarations name="QUEUE_SIZE2">
+    <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+    <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
+  </constantDeclarations>
   <components xsi:type="hu.bme.mit.gamma.statechart.composite:ScheduledAsynchronousCompositeComponent" name="System">
     <channels xsi:type="hu.bme.mit.gamma.statechart.composite:SimpleChannel">
       <providedPort instance="//@components.0/@components.2" port="//@components.6/@ports.3"/>
@@ -95,18 +107,16 @@
     </transitions>
   </components>
   <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="Target">
-    <annotations xsi:type="hu.bme.mit.gamma.statechart.interface:WrapperComponentAnnotation"/>
     <controlSpecifications>
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
     </controlSpecifications>
-    <messageQueues name="TargetMessageQueue" priority="1">
-      <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="4"/>
+    <messageQueues name="dataQueue" priority="1">
+      <capacity xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@constantDeclarations.0"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.4/@ports.0"/>
-      <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.4/@ports.2"/>
     </messageQueues>
-    <wrappedComponent name="target_Target" type="//@components.4"/>
+    <wrappedComponent name="target_target" type="//@components.4"/>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="Target" schedulingOrder="BOTTOM_UP">
+  <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="TargetSC" schedulingOrder="BOTTOM_UP">
     <regions name="Wrapper">
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="WrapperInitial"/>
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="WrapperFunction">
@@ -126,11 +136,6 @@
     <ports name="dispatcherControl">
       <interfaceRealization>
         <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2"/>
-      </interfaceRealization>
-    </ports>
-    <ports name="completion">
-      <interfaceRealization>
-        <interface href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6"/>
       </interfaceRealization>
     </ports>
     <transitions sourceState="//@components.4/@regions.0/@stateNodes.0" targetState="//@components.4/@regions.0/@stateNodes.1"/>
@@ -181,7 +186,7 @@
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
     </controlSpecifications>
     <messageQueues name="activityControlMessages" priority="3">
-      <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="10"/>
+      <capacity xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@constantDeclarations.0"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.6/@ports.0"/>
     </messageQueues>
     <messageQueues name="controlMessages" priority="2">
@@ -218,6 +223,12 @@
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="Sent_Pending"/>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:ChoiceState" name="DecideActivity_Pending"/>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:MergeState" name="MergeActivity_Pending"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="Sent_Data"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:ChoiceState" name="DecideActivity_Data"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:MergeState" name="MergeActivity_Data"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="Sent_IntegerData"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:ChoiceState" name="DecideActivity_IntegerData"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:MergeState" name="MergeActivity_IntegerData"/>
         </regions>
       </stateNodes>
     </regions>
@@ -274,6 +285,14 @@
           <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.3"/>
           <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
         </actions>
+        <actions xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+          <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+          <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </actions>
+        <actions xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+          <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+          <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+        </actions>
       </body>
     </functionDeclarations>
     <variableDeclarations name="activity_0_Start">
@@ -289,6 +308,22 @@
       <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
     </variableDeclarations>
     <variableDeclarations name="activity_0_Pending">
+      <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+      <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+    </variableDeclarations>
+    <variableDeclarations name="activity_0_Data">
+      <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+      <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+    </variableDeclarations>
+    <variableDeclarations name="activity_0_IntegerData">
+      <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
+      <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+    </variableDeclarations>
+    <variableDeclarations name="sentDataValue">
+      <type xsi:type="hu.bme.mit.gamma.expression:BooleanTypeDefinition"/>
+      <expression xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+    </variableDeclarations>
+    <variableDeclarations name="sentIntegerDataValue">
       <type xsi:type="hu.bme.mit.gamma.expression:IntegerTypeDefinition"/>
       <expression xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
     </variableDeclarations>
@@ -313,6 +348,7 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_start"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.2">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -323,6 +359,7 @@
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.4">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="try_send_start"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.2" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.3">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -330,6 +367,7 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.0/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ignored"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.3" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.4">
       <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
@@ -346,9 +384,11 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_start"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.3" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.4">
       <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="throw_away"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.4" targetState="//@components.6/@regions.0/@stateNodes.1"/>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.1">
@@ -371,6 +411,7 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_anotherSignal"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.5">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -381,6 +422,7 @@
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.4">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.2/@event"/>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="try_send_anotherSignal"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.5" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.6">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -388,6 +430,7 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.0/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ignored"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.6" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.7">
       <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
@@ -404,9 +447,11 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_anotherSignal"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.6" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.7">
       <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="throw_away"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.7" targetState="//@components.6/@regions.0/@stateNodes.1"/>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.1">
@@ -429,6 +474,7 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_continue"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.8">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -439,6 +485,7 @@
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.4">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.1/@event"/>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="try_send_continue"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.8" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.9">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -446,6 +493,7 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.0/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ignored"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.9" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.10">
       <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
@@ -462,9 +510,11 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_continue"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.9" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.10">
       <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="throw_away"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.10" targetState="//@components.6/@regions.0/@stateNodes.1"/>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.1">
@@ -487,6 +537,7 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_pending"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.11">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -497,6 +548,7 @@
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.4">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.3/@event"/>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="try_send_pending"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.11" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.12">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -504,6 +556,7 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.0/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ignored"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.12" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.13">
       <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
@@ -520,17 +573,196 @@
           <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_pending"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.12" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.13">
       <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="throw_away"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.13" targetState="//@components.6/@regions.0/@stateNodes.1"/>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.1">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+        </eventReference>
+      </trigger>
+      <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
+        <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+        <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </guard>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.5">
+        <arguments xsi:type="hu.bme.mit.gamma.statechart.interface:EventParameterReferenceExpression" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+          <parameter href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event/@parameterDeclarations.0"/>
+        </arguments>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:SubtractExpression">
+          <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+          <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_data"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.14">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+        </eventReference>
+      </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.4">
+        <arguments xsi:type="hu.bme.mit.gamma.statechart.interface:EventParameterReferenceExpression" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+          <parameter href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event/@parameterDeclarations.0"/>
+        </arguments>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.6"/>
+        <rhs xsi:type="hu.bme.mit.gamma.statechart.interface:EventParameterReferenceExpression" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+          <parameter href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event/@parameterDeclarations.0"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="try_send_data"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.14" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.15">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.1">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.0/@event"/>
+        </eventReference>
+      </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.6"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ignored"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.15" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.16">
+      <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
+        <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+        <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </guard>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.5">
+        <arguments xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.6"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:SubtractExpression">
+          <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+          <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_data"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.15" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.16">
+      <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="throw_away"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.16" targetState="//@components.6/@regions.0/@stateNodes.1">
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.6"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </effects>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.1">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+        </eventReference>
+      </trigger>
+      <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
+        <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+        <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </guard>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.5">
+        <arguments xsi:type="hu.bme.mit.gamma.statechart.interface:EventParameterReferenceExpression" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+          <parameter href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event/@parameterDeclarations.0"/>
+        </arguments>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:SubtractExpression">
+          <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+          <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_integerData"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.1" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.17">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+        </eventReference>
+      </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.4">
+        <arguments xsi:type="hu.bme.mit.gamma.statechart.interface:EventParameterReferenceExpression" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+          <parameter href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event/@parameterDeclarations.0"/>
+        </arguments>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.7"/>
+        <rhs xsi:type="hu.bme.mit.gamma.statechart.interface:EventParameterReferenceExpression" port="//@components.6/@ports.2">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+          <parameter href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event/@parameterDeclarations.0"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="try_send_integerData"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.17" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.18">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.1">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.0/@event"/>
+        </eventReference>
+      </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.7"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ignored"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.18" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.19">
+      <guard xsi:type="hu.bme.mit.gamma.expression:GreaterExpression">
+        <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+        <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="0"/>
+      </guard>
+      <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.6/@ports.5">
+        <arguments xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.7"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:SubtractExpression">
+          <leftOperand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+          <rightOperand xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_send_integerData"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.18" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.19">
+      <guard xsi:type="hu.bme.mit.gamma.expression:ElseExpression"/>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="throw_away"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.19" targetState="//@components.6/@regions.0/@stateNodes.1">
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.6"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
+      </effects>
+    </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2" targetState="//@components.6/@regions.0/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.1">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.1/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="received_ready"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.0" targetState="//@components.6/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1"/>
     <transitions sourceState="//@components.6/@regions.1/@stateNodes.0" targetState="//@components.6/@regions.1/@stateNodes.1">
@@ -551,6 +783,7 @@
           <operand xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@functionDeclarations.0"/>
         </expression>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_resetSubscriptions"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.1/@stateNodes.1" targetState="//@components.6/@regions.1/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -565,6 +798,7 @@
           <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_subscribed_start"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.1/@stateNodes.1" targetState="//@components.6/@regions.1/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -579,6 +813,7 @@
           <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_subscribed_anotherSignal"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.1/@stateNodes.1" targetState="//@components.6/@regions.1/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -593,6 +828,7 @@
           <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_subscribed_continue"/>
     </transitions>
     <transitions sourceState="//@components.6/@regions.1/@stateNodes.1" targetState="//@components.6/@regions.1/@stateNodes.1">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
@@ -607,6 +843,37 @@
           <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
         </rhs>
       </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_subscribed_pending"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.1/@stateNodes.1" targetState="//@components.6/@regions.1/@stateNodes.1">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.0">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.4/@event"/>
+        </eventReference>
+      </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:AddExpression">
+          <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.4"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_subscribed_data"/>
+    </transitions>
+    <transitions sourceState="//@components.6/@regions.1/@stateNodes.1" targetState="//@components.6/@regions.1/@stateNodes.1">
+      <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
+        <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.6/@ports.0">
+          <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.5/@event"/>
+        </eventReference>
+      </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:AssignmentStatement">
+        <lhs xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+        <rhs xsi:type="hu.bme.mit.gamma.expression:AddExpression">
+          <operands xsi:type="hu.bme.mit.gamma.expression:DirectReferenceExpression" declaration="//@components.6/@variableDeclarations.5"/>
+          <operands xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="1"/>
+        </rhs>
+      </effects>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="Activity_0_subscribed_integerData"/>
     </transitions>
   </components>
   <annotations xsi:type="hu.bme.mit.gamma.statechart.interface:UnfoldedPackageAnnotation"/>

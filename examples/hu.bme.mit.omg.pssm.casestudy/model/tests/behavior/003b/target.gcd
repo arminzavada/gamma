@@ -3,7 +3,7 @@ package target
 import "interfaces"
 import "activities"
 import "dispatchers"
- 
+
 scheduled-async System {
 	
 	component eventQueue : EventQueue
@@ -25,7 +25,6 @@ scheduled-async System {
 	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
 	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
 	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
-	channel [ doActivity_0.rtc ] -o)- [ doActivity_0._rtc_ ]
 
 	initial execute dispatcher
 
@@ -51,9 +50,8 @@ statechart EventQueue [
 	
 }
 
-@Asynchronous
 @RegionSchedule=bottom-up
-statechart Target [
+statechart TargetSC [
 	port activity_0 : requires ActivityControllerInterface
 	port data : requires Data
 	
@@ -84,4 +82,15 @@ statechart Target [
 	transition from wait to S1 when data.start / raise dispatcherControl.ready;
 	transition from S1 to FS1 when activity_0.done
 	
+}
+
+adapter Target of component target : TargetSC {
+	when any / run
+	
+	queue completionQueue(priority = 2, capacity = QUEUE_SIZE) {
+		activity_0.any
+	}
+	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
 }
