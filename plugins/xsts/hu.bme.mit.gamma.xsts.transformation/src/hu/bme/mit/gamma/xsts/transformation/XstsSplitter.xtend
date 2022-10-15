@@ -244,8 +244,6 @@ class XstsSplitter {
 	 def dispatch List<XstsSlice> slice(SequentialAction seq, XstsTransitionOrigin origin,
 	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
 	 ) {
-	 	println("---seq:")
-	 	seq.print
 	 	val List<XstsSlice> slices = newArrayList
 	 	var XstsSlice slice = null
 	 	var int sliceBeginId = beginIds.get(ownPc)
@@ -282,8 +280,6 @@ class XstsSplitter {
  				sliceBeginId = sliceEndId
 	 		}
  		}
- 		println("***slices:")
-	 	slices.print
  		return slices
 	 }
 	 
@@ -301,8 +297,6 @@ class XstsSplitter {
 	 def dispatch List<XstsSlice> slice(IfAction ifAction, XstsTransitionOrigin origin,
 	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int ownPcEndId
 	 ) {
-	 	println("---ifAction:")
-	 	ifAction.print
 	 	val List<XstsSlice> slices = newArrayList
 	 	val thenId = nextId(ownPc)
 	 	val elseExists = ifAction.^else !== null && !(ifAction.^else instanceof EmptyAction)
@@ -337,8 +331,6 @@ class XstsSplitter {
 	 	}
 	 	//
 	 	registerCompositeActionRelations(ifAction, slices, ownPc, ownPcEndId)
-	 	println("***slices:")
-	 	slices.print
 	 	return slices
 	 }
 	 
@@ -391,21 +383,7 @@ class XstsSplitter {
 	 	
 	 	return slices
 	 }
-	 
-	 //TODO temp
-	 def void print(Action action) {
-	 	print(ActionSerializer.INSTANCE.serialize(action))
-	 }
-	 def void print(XstsSlice slice) {
-	 	println("*Slice:")
-	 	for (a : slice.actions)
-	 		a.print
-	 }
-	 def void print(List<XstsSlice> slices) {
-	 	for (s : slices)
-	 		s.print
-	 }
-	 
+	 	 
 	 // Util
 	 def Map<VariableDeclaration, Integer> getNewBeginIds(
 	 	Map<VariableDeclaration, Integer> beginIds, VariableDeclaration ownPc, int newBeginId
