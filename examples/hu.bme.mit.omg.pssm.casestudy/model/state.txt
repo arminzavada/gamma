@@ -1,0 +1,133 @@
+todo
+ - @Local transition
+ - entry and exit point
+ - op trigger
+ - activity send data to sc (dispatcher?)
+ - junction node
+ - terminate node
+ - final node
+ - deferred dispatcher with multiple activities 
+   - defferred dispatcher
+   - multiple activity dispatcher
+
+behavior
+ - 001 - done
+ - 002 - done
+ - 003a - done - EM Bug NOT found
+ - 003b - done - EM Bug found
+ - 004 - done
+transition
+ - 001 - done
+ - 007 - done
+ - 010 - done
+ - 011a - partial, need @Local
+ - 011b - need @Local and entry point
+ - 011c - partial, need @Local
+ - 011d - need @Local and exit point
+ - 011e - need @Local and entry and exit point
+ - 015 - done
+ - 016 - done
+ - 017 - done - EM Bug STILL TO BE found
+ - 019 - done
+ - 020 - done
+ - 022 - done
+ - 023 - need entry and exit point
+event
+ - 001 - done
+ - 002 - done
+ - 008 - done
+ - 009 - done
+ - 010 - done
+ - 015 - done
+ - 016a - done
+ - 016b - done
+ - 017a - done
+ - 017b - done
+ - 018 - done
+ - 019a - need op
+ - 019b - need op
+ - 019c - need op
+ - 019d - need op
+ - 019e - need op
+entering
+ - 004 - done
+ - 005 - done
+ - 009 - need entry point
+ - 010 - done - EM Bug STILL TO BE found
+ - 011 - done - EM Bug STILL TO BE found
+exiting
+ - 001 - done
+ - 002 - need activity sending data to sc (dispatcher?) - EM Bug STILL TO BE found
+ - 003 - done - EM Bug STILL TO BE found
+ - 004 - need exit point
+ - 005 - done - EM Bug STILL TO BE found
+entry
+ - 002a - need entry point
+ - 002b - need entry point
+ - 002c - need entry point
+ - 002d - need entry point
+ - 002e - need entry point
+ - 002f - need entry point
+exit
+ - 001 - need exit point
+ - 002 - need exit point
+ - 003 - need exit point
+choice
+ - 001 - todo
+ - 002 - todo
+ - 003 - todo
+ - 004 - todo
+ - 005 - todo
+junction
+ - 001 - need junction
+ - 002 - need junction
+ - 003 - need junction
+ - 004 - need junction
+ - 005 - need junction
+ - 006 - need junction
+fork
+ - 001 - need exit point
+ - 002 - todo
+join
+ - 001 - todo - EM Bug STILL TO BE found
+ - 002 - todo
+ - 003 - todo - EM Bug STILL TO BE found
+terminate
+ - 001 - need terminate - EM Bug STILL TO BE found
+ - 002 - need terminate - EM Bug STILL TO BE found
+ - 003 - need terminate - EM Bug STILL TO BE found
+final
+ - 001 - need final - EM Bug STILL TO BE found
+history
+ - 001a - todo - EM Bug STILL TO BE found
+ - 001b - todo - EM Bug STILL TO BE found
+ - 001c - todo
+ - 001d - todo
+ - 002a - todo
+ - 002b - todo
+ - 002c - todo
+ - 002d - todo
+deferred
+ - 001 - need deferred dispatcher - EM Bug STILL TO BE found
+ - 002 - need deferred dispatcher
+ - 003 - need deferred dispatcher - EM Bug STILL TO BE found
+ - 004a - need deferred dispatcher - EM Bug STILL TO BE found
+ - 004b - need deferred dispatcher - EM Bug STILL TO BE found
+ - 005 - need deferred dispatcher - EM Bug STILL TO BE found
+ - 006a - need deferred dispatcher - EM Bug STILL TO BE found
+ - 006b - need deferred dispatcher - EM Bug STILL TO BE found
+ - 006c - need deferred dispatcher
+ - 007 - need deferred dispatcher
+redefinition
+ - 001 - skipped
+ - 002 - skipped
+ - 003 - skipped
+ - 004 - skipped
+ - 005 - skipped
+ - 006 - skipped
+standalone
+ - 001 - need entry and exit point
+ - 002 - need entry and exit point
+ - 003 - need op
+other test
+ - transition execution alorithm test - need entry and exit point

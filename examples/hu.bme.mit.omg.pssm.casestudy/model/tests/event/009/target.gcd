@@ -36,11 +36,13 @@ statechart EventQueue [
 		state _0
 		state _1
 		state _2
+		state _3
 	}
 	
 	transition from Initial to _0
 	transition from _0 to _1 when queueControl.next / raise data.start;
 	transition from _1 to _2 when queueControl.next / raise data.continue;
+	transition from _2 to _3 when queueControl.next / raise data.pending;
 	
 }
 
@@ -61,7 +63,7 @@ statechart TargetSC [
 		state WrapperFunction {
 			region Main {
 				initial Initial
-				state Waiting
+				state waiting
 				state S1 {
 					region S1_1Region {
 						initial S1_1Initial
@@ -100,14 +102,14 @@ statechart TargetSC [
 	@Internal
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
-	transition from Initial to Waiting
-	transition from Waiting to S1 when data.start / raise dispatcherControl.ready;
+	transition "T1" from Initial to waiting
+	transition "T2" from waiting to S1 when data.start / raise dispatcherControl.ready;
 	
-	transition from S1_1Initial to S1_1
-	transition from S1_1 to S1_1Final when data.continue / raise dispatcherControl.ready;
+	transition "T1_1" from S1_1Initial to S1_1
+	transition "T1_2" from S1_1 to S1_1Final when data.continue / raise dispatcherControl.ready;
 	
-	transition from S1_2Initial to S1_2
-	transition from S1_2 to S1_2Final when data.continue / raise dispatcherControl.ready;	
+	transition "T2_1" from S1_2Initial to S1_2
+	transition "T2_2" from S1_2 to S1_2Final when data.continue / raise dispatcherControl.ready;	
 	
 	
 	// Handling composite completion events for S1
@@ -117,9 +119,9 @@ statechart TargetSC [
 	transition from S1CompletionListener_S1_1Final to S1CompletionListener_Done when completion_s1_2.completion
 	transition from S1CompletionListener_S1_2Final to S1CompletionListener_Done when completion_s1_1.completion
 	
-	transition from S1 to invalid when data.pending / raise dispatcherControl.ready;
-	transition from invalid to Final when completion_invalid.completion
-	transition from S1 to Final when completion_s1.completion
+	transition "T3" from S1 to invalid when data.pending / raise dispatcherControl.ready;
+	transition "T4" from invalid to Final when completion_invalid.completion
+	transition "T5" from S1 to Final when completion_s1.completion
 }
 
 adapter Target of component target : TargetSC {

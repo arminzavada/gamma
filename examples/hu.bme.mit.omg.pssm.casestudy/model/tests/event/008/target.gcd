@@ -40,7 +40,7 @@ statechart EventQueue [
 	
 	transition from Initial to _0
 	transition from _0 to _1 when queueControl.next / raise data.start;
-	transition from _1 to _2 when queueControl.next / raise data.anotherSignal;
+	transition from _1 to _2 when queueControl.next / raise data.continue;
 	
 }
 
@@ -58,7 +58,7 @@ statechart TargetSC [
 		state WrapperFunction {
 			region Main {
 				initial Initial
-				state Waiting
+				state waiting
 				state S1 {
 					entry / raise completion_s1.completion;
 				}
@@ -73,10 +73,10 @@ statechart TargetSC [
 	@Internal
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
-	transition from Initial to Waiting
-	transition from Waiting to S1 when data.start / raise dispatcherControl.ready;
-	transition from S1 to S2 when completion_s1.completion	
-	transition from S2 to Final when data.continue / raise dispatcherControl.ready;
+	transition "T1" from Initial to waiting
+	transition "T2" from waiting to S1 when data.start / raise dispatcherControl.ready;
+	transition "T3" from S1 to S2 when completion_s1.completion	
+	transition "T4" from S2 to Final when data.continue / raise dispatcherControl.ready;
 	
 }
 

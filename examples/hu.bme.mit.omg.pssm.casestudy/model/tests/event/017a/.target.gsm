@@ -141,8 +141,8 @@
       </effects>
       <annotations xsi:type="hu.bme.mit.gamma.statechart:InternalTransitionAnnotation"/>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.0" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1"/>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.0" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" name="T1"/>
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" name="T2">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.0">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
@@ -176,7 +176,7 @@
         </operand>
       </guard>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4" name="T5">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.2">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>

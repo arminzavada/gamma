@@ -67,7 +67,7 @@ statechart TargetSC [
 					entry / raise completion_s2.completion;
 				}
 				state S3
-				state Final
+				state FinalState1
 			}
 		}
 	}
@@ -78,11 +78,11 @@ statechart TargetSC [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
 	transition from Initial to S1
-	transition from S1 to S3 when data.anotherSignal / raise dispatcherControl.ready;
-	transition from S3 to S1 when data.continue / raise dispatcherControl.ready;
-	transition from S3 to S1 when data.anotherSignal / raise dispatcherControl.ready;
-	transition from S1 to S2 when data.continue / raise dispatcherControl.ready;
-	transition from S2 to Final when completion_s2.completion
+	transition "T1" from S1 to S3 when data.anotherSignal / raise dispatcherControl.ready;
+	transition "T2_1" from S3 to S1 when data.continue / raise dispatcherControl.ready;
+	transition "T2_2" from S3 to S1 when data.anotherSignal / raise dispatcherControl.ready;
+	transition "T3" from S1 to S2 when data.continue / raise dispatcherControl.ready;
+	transition "T4" from S2 to FinalState1 when completion_s2.completion
 	
 }
 

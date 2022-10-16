@@ -65,8 +65,8 @@ statechart TargetSC [
 	@Internal
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
-	transition from Initial to wait
-	transition from wait to Final when data.start / raise dispatcherControl.ready;
+	transition "T1" from Initial to wait
+	transition "T2" from wait to Final when data.start / raise dispatcherControl.ready;
 	
 }
 

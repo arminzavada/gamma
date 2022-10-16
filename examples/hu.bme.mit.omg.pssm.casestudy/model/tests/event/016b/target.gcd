@@ -94,23 +94,23 @@ statechart TargetSC [
 	@Internal
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
-	transition from Initial to wait
-	transition from wait to S1 when data.start / raise dispatcherControl.ready;
+	transition "T1" from Initial to wait
+	transition "T2" from wait to S1 when data.start / raise dispatcherControl.ready;
 	
-	transition from S1Initial to S1_1
+	transition "T1_1" from S1Initial to S1_1
 	transition "T1_2" from S1_1 to S1_2 when data.continue / raise dispatcherControl.ready;
 	transition "T1_3" from S1_1 to S1_2 when data.continue / raise dispatcherControl.ready;
 	
-	transition from S2Initial to S2_1
+	transition "T2_1" from S2Initial to S2_1
 	transition "T2_2" from S2_1 to S2_2 when data.continue / raise dispatcherControl.ready;
 	transition "T2_3" from S2_1 to S2_2 when data.continue / raise dispatcherControl.ready;
 	transition "T2_4" from S2_1 to S2_2 when data.continue / raise dispatcherControl.ready;
 	
-	transition from S2_1Initial to S2_1_1
-	transition "T2_2" from S2_1_1 to S2_1Final when data.continue / raise dispatcherControl.ready;
+	transition "T2_1_1" from S2_1Initial to S2_1_1
+	transition "T2_1_2" from S2_1_1 to S2_1Final when data.continue / raise dispatcherControl.ready;
 		
-	transition from S2_2Initial to S2_2_1
-	transition "T2_2" from S2_2_1 to S2_2Final when data.continue / raise dispatcherControl.ready;
+	transition "T2_2_1" from S2_2Initial to S2_2_1
+	transition "T2_2_2" from S2_2_1 to S2_2Final when data.continue / raise dispatcherControl.ready;
 	
 	transition from S1 to Final when data.continue / raise dispatcherControl.ready;
 }

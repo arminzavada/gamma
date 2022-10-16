@@ -80,7 +80,7 @@
         </eventReference>
       </trigger>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.1">
-        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.2/@event"/>
+        <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.1/@event"/>
       </effects>
     </transitions>
   </components>
@@ -104,7 +104,7 @@
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="WrapperFunction">
         <regions name="Main">
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="Initial"/>
-          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="Waiting"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="waiting"/>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1">
             <entryActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.2">
               <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>
@@ -140,8 +140,8 @@
       </effects>
       <annotations xsi:type="hu.bme.mit.gamma.statechart:InternalTransitionAnnotation"/>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.0" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1"/>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.0" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" name="T1"/>
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" name="T2">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.0">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
@@ -151,14 +151,14 @@
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.1/@event"/>
       </effects>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" name="T3">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.2">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>
         </eventReference>
       </trigger>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4" name="T4">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.0">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.1/@event"/>
