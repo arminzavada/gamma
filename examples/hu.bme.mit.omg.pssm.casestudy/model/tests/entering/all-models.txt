@@ -1,0 +1,4 @@
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/entering/004/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/entering/005/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/entering/010/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/entering/011/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher

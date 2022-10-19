@@ -1,1 +1,1 @@
-include "hu.bme.mit.omg.pssm/model/tests/sanity/000/transform.ggen"
+include "000/transform.ggen"

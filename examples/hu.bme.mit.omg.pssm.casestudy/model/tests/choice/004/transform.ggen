@@ -1,0 +1,8 @@
+import "target"
+
+analysis {
+	component : System
+	language : Theta
+	optimize : false
+	split-by : CHOICE
+}

@@ -1,4 +1,4 @@
-include "hu.bme.mit.omg.pssm/model/tests/entering/004/transform.ggen"
-include "hu.bme.mit.omg.pssm/model/tests/entering/005/transform.ggen"
-include "hu.bme.mit.omg.pssm/model/tests/entering/010/transform.ggen"
-include "hu.bme.mit.omg.pssm/model/tests/entering/011/transform.ggen"
+include "004/transform.ggen"
+include "005/transform.ggen"
+include "010/transform.ggen"
+include "011/transform.ggen"

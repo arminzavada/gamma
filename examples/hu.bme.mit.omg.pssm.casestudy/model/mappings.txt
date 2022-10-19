@@ -1,0 +1,41 @@
+gamma already has
+ - states
+   - simple and composite
+   - entry-exit actions
+ - pseudo-states
+   - initial
+   - choices
+   - fork-join
+   - deep-shallow history
+ - orthogonal regions
+ - transitions
+   - correct priorities
+   - guard
+     - else
+   - trigger
+   - effect
+ - activities
+ - variables
+
+completion events
+ - add completion port for each state
+ - add to completion priority channell
+
+composite completion event listener
+ - add completion listener orthogonal region to "remember" already completed sub-states
+
+region S1CompletionListener {
+	initial S1CompletionListener_Initial
+	state S1CompletionListener_Waiting
+	state S1CompletionListener_S1_1Final
+	state S1CompletionListener_S1_2Final
+	state S1CompletionListener_Done {
+		entry / raise completion_s1.completion; 
+	}
+}
+
+history
+ - no transition -> same as initial
+ 
+final
+ - added normal state

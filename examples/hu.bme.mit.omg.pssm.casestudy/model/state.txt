@@ -1,34 +1,34 @@
-todo
- - @Local transition
- - entry and exit point
- - op trigger
- - activity send data to sc (dispatcher?)
- - junction node
- - terminate node
- - final node
- - deferred dispatcher with multiple activities 
-   - defferred dispatcher
-   - multiple activity dispatcher
+to-do
+ - entry-exit point
+ - @local
+ - op
+
+notation:
+ - done - it has been modelled in gamma
+ - partial - missing gamma implementation
+ - interesting - according to EM, it contains some kind of bug
+ - need * - something we have not decided how to model yet
+ - skip - not interesting
 
 behavior
  - 001 - done
  - 002 - done
- - 003a - done - EM Bug NOT found
- - 003b - done - EM Bug found
- - 004 - done
+ - 003a - done - interesting
+ - 003b - done - interesting
+ - 004 - done - interesting
 transition
  - 001 - done
  - 007 - done
  - 010 - done
- - 011a - partial, need @Local
+ - 011a - partial, need @Local - interesting
  - 011b - need @Local and entry point
  - 011c - partial, need @Local
- - 011d - need @Local and exit point
+ - 011d - need @Local and exit point - interesting
  - 011e - need @Local and entry and exit point
  - 015 - done
  - 016 - done
- - 017 - done - EM Bug STILL TO BE found
- - 019 - done
+ - 017 - done - interesting
+ - 019 - done - interesting
  - 020 - done
  - 022 - done
  - 023 - need entry and exit point
@@ -53,14 +53,14 @@ entering
  - 004 - done
  - 005 - done
  - 009 - need entry point
- - 010 - done - EM Bug STILL TO BE found
- - 011 - done - EM Bug STILL TO BE found
+ - 010 - done - interesting
+ - 011 - done - interesting
 exiting
  - 001 - done
- - 002 - need activity sending data to sc (dispatcher?) - EM Bug STILL TO BE found
- - 003 - done - EM Bug STILL TO BE found
+ - 002 - skip - unorthodox model
+ - 003 - done - interesting
  - 004 - need exit point
- - 005 - done - EM Bug STILL TO BE found
+ - 005 - done - interesting
 entry
  - 002a - need entry point
  - 002b - need entry point
@@ -73,49 +73,49 @@ exit
  - 002 - need exit point
  - 003 - need exit point
 choice
- - 001 - todo
- - 002 - todo
- - 003 - todo
- - 004 - todo
- - 005 - todo
+ - 001 - done
+ - 002 - done
+ - 003 - done
+ - 004 - done
+ - 005 - done
 junction
  - 001 - need junction
  - 002 - need junction
  - 003 - need junction
  - 004 - need junction
  - 005 - need junction
- - 006 - need junction
+ - 006 - need junction and exit point
 fork
  - 001 - need exit point
- - 002 - todo
+ - 002 - done
 join
- - 001 - todo - EM Bug STILL TO BE found
- - 002 - todo
- - 003 - todo - EM Bug STILL TO BE found
+ - 001 - done - interesting
+ - 002 - done
+ - 003 - error - "transition from join nodes cannot have guards" Gamma limitation - interesting
 terminate
- - 001 - need terminate - EM Bug STILL TO BE found
- - 002 - need terminate - EM Bug STILL TO BE found
- - 003 - need terminate - EM Bug STILL TO BE found
+ - 001 - need terminate - interesting
+ - 002 - need terminate - interesting
+ - 003 - need terminate - interesting
 final
- - 001 - need final - EM Bug STILL TO BE found
+ - 001 - done - interesting
 history
- - 001a - todo - EM Bug STILL TO BE found
- - 001b - todo - EM Bug STILL TO BE found
- - 001c - todo
- - 001d - todo
+ - 001a - done - interesting
+ - 001b - done - interesting
+ - 001c - done - interesting
+ - 001d - done
  - 002a - todo
- - 002b - todo
+ - 002b - todo - interesting
  - 002c - todo
  - 002d - todo
 deferred
- - 001 - need deferred dispatcher - EM Bug STILL TO BE found
+ - 001 - need deferred dispatcher - interesting
  - 002 - need deferred dispatcher
- - 003 - need deferred dispatcher - EM Bug STILL TO BE found
- - 004a - need deferred dispatcher - EM Bug STILL TO BE found
- - 004b - need deferred dispatcher - EM Bug STILL TO BE found
- - 005 - need deferred dispatcher - EM Bug STILL TO BE found
- - 006a - need deferred dispatcher - EM Bug STILL TO BE found
- - 006b - need deferred dispatcher - EM Bug STILL TO BE found
+ - 003 - need deferred dispatcher - interesting
+ - 004a - need deferred dispatcher - interesting
+ - 004b - need deferred dispatcher - interesting
+ - 005 - need deferred dispatcher - interesting
+ - 006a - need deferred dispatcher - interesting
+ - 006b - need deferred dispatcher - interesting
  - 006c - need deferred dispatcher
  - 007 - need deferred dispatcher
 redefinition
