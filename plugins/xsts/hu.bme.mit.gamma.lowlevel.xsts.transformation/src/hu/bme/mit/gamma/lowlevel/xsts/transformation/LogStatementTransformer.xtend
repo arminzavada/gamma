@@ -27,7 +27,7 @@ class LogStatementTransformer {
 	// Action utility
 	protected final extension XstsActionUtil xStsActionUtil = XstsActionUtil.INSTANCE
 	protected final extension GammaEcoreUtil gammaEcoreUtil = GammaEcoreUtil.INSTANCE
-	// Trace
+	// Trace 
 	protected final Trace trace
 	
 	new(Trace trace) {
@@ -36,7 +36,12 @@ class LogStatementTransformer {
 	 
 	def transformLogStatement(LogStatement logStatement) {
 		val component = logStatement.component
-		val literal = logStatement.logLiteral
+		return transformLogStatement(logStatement, component)
+	}
+	
+	
+	def transformLogStatement(LogStatement logStatement, Component component) {
+		val literal = logStatement.getLogLiteral(component)
 		val type = component.getTypeDefinition
 		type.literals += literal
 		return createAssignmentAction(component.logVariable, literal.createEnumerationLiteralExpression)
@@ -82,8 +87,7 @@ class LogStatementTransformer {
 		return component.getTypeDeclaration.type as EnumerationTypeDefinition
 	}
 	
-	private def getLogLiteral(LogStatement logStatement) {
-		val component = logStatement.component
+	private def getLogLiteral(LogStatement logStatement, Component component) {
 		val type = component.getTypeDefinition
 		
 		var literal = type.literals.findFirst[it.name == logStatement.text]

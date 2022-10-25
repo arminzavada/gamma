@@ -36,14 +36,19 @@ import static com.google.common.base.Preconditions.checkState
 import static extension hu.bme.mit.gamma.statechart.lowlevel.derivedfeatures.LowlevelStatechartModelDerivedFeatures.*
 import static extension hu.bme.mit.gamma.xsts.derivedfeatures.XstsDerivedFeatures.*
 import static extension java.lang.Math.abs
+import hu.bme.mit.gamma.action.model.ActionModelFactory
+import hu.bme.mit.gamma.statechart.lowlevel.model.StatechartDefinition
 
 class HierarchicalTransitionMerger extends AbstractTransitionMerger {
+	protected final extension LogStatementTransformer logStatementTransformer
+	protected final extension ActionModelFactory actionModelFactory = ActionModelFactory.eINSTANCE
 	
 	protected Set<NonDeterministicAction> choicesWithDefaultBranch = newHashSet
 	
 	new(ViatraQueryEngine engine, Trace trace) {
 		// Conflict and priority encoding are unnecessary
 		super(engine, trace)
+		this.logStatementTransformer = new LogStatementTransformer(this.trace)
 	}
 	
 	override mergeTransitions() {
@@ -77,7 +82,21 @@ class HierarchicalTransitionMerger extends AbstractTransitionMerger {
 		}
 		
 		// The many transitions are now replaced by a single merged transition
-		xSts.changeTransitions(xStsMergedAction.wrap)
+		xSts.changeTransitions(xStsMergedAction.withRtcLog(statechart).wrap)
+	}
+	
+	
+	private def withRtcLog(Action action, StatechartDefinition statechart) {
+		return createSequentialAction(#[
+			createLog("beginningOfRtc").transformLogStatement(statechart),
+			action,
+			createLog("endOfRtc").transformLogStatement(statechart)
+		])
+	}
+	
+	
+	private def createLog(String text) {
+		return createLogStatement => [it.text = text]
 	}
 		
 	private def Action mergeAllTransitionsOfRegion(CompositeElement element,
