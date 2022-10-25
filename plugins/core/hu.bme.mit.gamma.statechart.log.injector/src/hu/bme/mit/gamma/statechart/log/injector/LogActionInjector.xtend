@@ -11,6 +11,7 @@
 package hu.bme.mit.gamma.statechart.log.injector
 
 import hu.bme.mit.gamma.action.model.ActionModelFactory
+import hu.bme.mit.gamma.statechart.statechart.EntryState
 import hu.bme.mit.gamma.statechart.statechart.State
 import hu.bme.mit.gamma.statechart.statechart.StatechartDefinition
 import hu.bme.mit.gamma.statechart.statechart.Transition
@@ -42,6 +43,8 @@ class LogActionInjector {
 	}
 	
 	private dispatch def injectLogAction(Transition transition) {
+		if (transition.sourceState instanceof EntryState) return;
+		
 		transition.effects.add(0, createLogStatement => [
 			it.text = (transition.name ?: ("t_from_" + transition.sourceState.name + "_to_" + transition.targetState.name)) + "_effect"
 		])
