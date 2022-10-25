@@ -65,7 +65,7 @@ statechart TargetSC [
 				initial Initial
 				state wait
 				state S1 {
-					entry / raise activity_0.control(true);
+					entry / log "S1_entry"; raise activity_0.control(true);
 					exit / raise activity_0.control(false);
 				}
 				state FS1

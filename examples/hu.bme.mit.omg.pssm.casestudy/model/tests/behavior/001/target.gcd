@@ -53,7 +53,9 @@ statechart TargetSC [
 		state WrapperFunction {
 			region Main {
 				initial Initial
-				state S1
+				state S1 {
+					entry / log "S1_entry";
+				}
 				state Final
 			}
 		}

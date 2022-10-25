@@ -128,10 +128,12 @@
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="Initial"/>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="wait"/>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1">
+            <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_entry"/>
             <entryActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.0">
               <arguments xsi:type="hu.bme.mit.gamma.expression:TrueExpression"/>
               <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.4/@events.0/@event"/>
             </entryActions>
+            <exitActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_exit"/>
             <exitActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.0">
               <arguments xsi:type="hu.bme.mit.gamma.expression:FalseExpression"/>
               <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.4/@events.0/@event"/>
@@ -193,6 +195,7 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.4/@events.1/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="T3_effect"/>
     </transitions>
     <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4" name="T4">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">

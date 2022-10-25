@@ -89,7 +89,9 @@
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="WrapperFunction">
         <regions name="Main">
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="Initial"/>
-          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1"/>
+          <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1">
+            <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_entry"/>
+          </stateNodes>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="Final"/>
         </regions>
       </stateNodes>

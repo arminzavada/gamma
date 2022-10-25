@@ -1,13 +1,13 @@
 //@splitted
 //@noenv
 type Main_Producer : { __Inactive__, Send }
-type ProducerLogs : { None, t_from_Initial_to_Send_effect, Send_entry, Send_exit, t_from_Send_to_Send_effect }
+type ProducerLogs : { None, raisingEvent_start, Send_entry, Send_exit, t_from_Send_to_Send_effect, beginningOfRtc, endOfRtc }
 type Main_Consumer : { __Inactive__, Wait }
-type ConsumerLogs : { None, t_from_Initial_to_Wait_effect, Wait_entry, Wait_exit, t_from_Wait_to_Wait_effect }
+type ConsumerLogs : { None, Wait_entry, Wait_exit, t_from_Wait_to_Wait_effect, raisingEvent_start, beginningOfRtc, endOfRtc }
 var o2_start_Out_producer_Producer : boolean = false
-var i1_start_In_producer_Producer : boolean = false
-var i2_start_In_producer_Producer : boolean = false
 var o1_start_Out_producer_Producer : boolean = false
+var i2_start_In_producer_Producer : boolean = false
+var i1_start_In_producer_Producer : boolean = false
 ctrl var main_producer_Producer : Main_Producer = __Inactive__
 var logs_producer_Producer : ProducerLogs = None
 var input_start_In_c1_Consumer : boolean = false
@@ -29,10 +29,10 @@ ctrl var sizeMasterConsumerMessageQueueOfc2 : integer
 var __pc : integer = 0
 var __trans : boolean = false
 var __init : boolean = true
-var eventId_master_ConsumerMessageQueueOfc2_1312442023 : integer
-var eventId_master_ProducerMessageQueueOfproducer_1289656960 : integer
-var eventId_master_ConsumerMessageQueueOfc1_158315961 : integer
-var eventId_master_ProducerMessageQueueOfproducer_12896569600 : integer
+var eventId_master_ConsumerMessageQueueOfc2_2147108802 : integer
+var eventId_master_ConsumerMessageQueueOfc1_102988496 : integer
+var eventId_master_ProducerMessageQueueOfproducer_348216906 : integer
+var eventId_master_ProducerMessageQueueOfproducer_3482169060 : integer
 
 trans {
 	assume (((__init == false) && (__trans == true)) && (__pc == 0));
@@ -43,1417 +43,1861 @@ trans {
 	__pc := (if (0 < sizeMasterProducerMessageQueueOfproducer) then 3 else 2);
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 3));
-	eventId_master_ProducerMessageQueueOfproducer_1289656960 := master_ProducerMessageQueueOfproducer[0];
+	eventId_master_ProducerMessageQueueOfproducer_348216906 := master_ProducerMessageQueueOfproducer[0];
 	master_ProducerMessageQueueOfproducer := [0 <- master_ProducerMessageQueueOfproducer[1], 1 <- master_ProducerMessageQueueOfproducer[2], 2 <- master_ProducerMessageQueueOfproducer[3], 3 <- 0, default <- 0];
 	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer - 1);
 	__pc := 4;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 0);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 0);
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 1);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 1);
 	i1_start_In_producer_Producer := true;
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
 	__pc := 5;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 5));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 7;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 7));
-	__pc := (if (main_producer_Producer == Send) then 9 else 8);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 9));
-	logs_producer_Producer := Send_exit;
-	__pc := 8;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 8));
-	main_producer_Producer := __Inactive__;
-	__pc := 10;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 10));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 11;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 11));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 12;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 12));
-	logs_producer_Producer := Send_entry;
-	__pc := 6;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 5));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 13;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 13));
-	__pc := (if (main_producer_Producer == Send) then 15 else 14);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 15));
-	logs_producer_Producer := Send_exit;
-	__pc := 14;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 14));
-	main_producer_Producer := __Inactive__;
-	__pc := 16;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 16));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 17;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 17));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 18;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 18));
-	logs_producer_Producer := Send_entry;
-	__pc := 6;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 5));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 6;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 6));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 2;
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 8;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 2);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	assume (((__init == false) && (__trans == true)) && (__pc == 8));
+	__pc := (if (main_producer_Producer == Send) then 10 else 9);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 10));
+	logs_producer_Producer := Send_exit;
+	__pc := 9;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 9));
+	main_producer_Producer := __Inactive__;
+	__pc := 11;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 11));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 12;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 12));
+	o1_start_Out_producer_Producer := true;
+	__pc := 13;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 13));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 14;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 14));
+	main_producer_Producer := Send;
+	__pc := 15;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 15));
+	logs_producer_Producer := Send_entry;
+	__pc := 7;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 6));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 16;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 16));
+	__pc := (if (main_producer_Producer == Send) then 18 else 17);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 18));
+	logs_producer_Producer := Send_exit;
+	__pc := 17;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 17));
+	main_producer_Producer := __Inactive__;
 	__pc := 19;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 19));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 21;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 21));
-	__pc := (if (main_producer_Producer == Send) then 23 else 22);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 23));
-	logs_producer_Producer := Send_exit;
-	__pc := 22;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 22));
-	main_producer_Producer := __Inactive__;
-	__pc := 24;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 24));
 	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 25;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 25));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 26;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 26));
-	logs_producer_Producer := Send_entry;
-	__pc := 20;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 19));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 27;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 27));
-	__pc := (if (main_producer_Producer == Send) then 29 else 28);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 29));
-	logs_producer_Producer := Send_exit;
-	__pc := 28;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 28));
-	main_producer_Producer := __Inactive__;
-	__pc := 30;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 30));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 31;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 31));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 32;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 32));
-	logs_producer_Producer := Send_entry;
-	__pc := 20;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 19));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
 	__pc := 20;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 20));
-	i2_start_In_producer_Producer := false;
+	o2_start_Out_producer_Producer := true;
+	__pc := 21;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 21));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 22;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 22));
+	main_producer_Producer := Send;
+	__pc := 23;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 23));
+	logs_producer_Producer := Send_entry;
+	__pc := 7;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 6));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 7;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 7));
+	logs_producer_Producer := endOfRtc;
+	__pc := 24;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 24));
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 3);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 2);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 25;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 25));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 26;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 26));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 28;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 28));
+	__pc := (if (main_producer_Producer == Send) then 30 else 29);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 30));
+	logs_producer_Producer := Send_exit;
+	__pc := 29;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 29));
+	main_producer_Producer := __Inactive__;
+	__pc := 31;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 31));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 32;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 32));
+	o1_start_Out_producer_Producer := true;
 	__pc := 33;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 33));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 35;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 35));
-	__pc := (if (main_producer_Producer == Send) then 37 else 36);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 37));
-	logs_producer_Producer := Send_exit;
-	__pc := 36;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 36));
-	main_producer_Producer := __Inactive__;
-	__pc := 38;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 38));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 39;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 39));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 40;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 40));
-	logs_producer_Producer := Send_entry;
-	__pc := 34;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 33));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 41;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 41));
-	__pc := (if (main_producer_Producer == Send) then 43 else 42);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 43));
-	logs_producer_Producer := Send_exit;
-	__pc := 42;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 42));
-	main_producer_Producer := __Inactive__;
-	__pc := 44;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 44));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 45;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 45));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 46;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 46));
-	logs_producer_Producer := Send_entry;
-	__pc := 34;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 33));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 34;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 34));
-	i2_start_In_producer_Producer := false;
+	main_producer_Producer := Send;
+	__pc := 35;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 35));
+	logs_producer_Producer := Send_entry;
+	__pc := 27;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 26));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 36;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 36));
+	__pc := (if (main_producer_Producer == Send) then 38 else 37);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 38));
+	logs_producer_Producer := Send_exit;
+	__pc := 37;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 37));
+	main_producer_Producer := __Inactive__;
+	__pc := 39;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 39));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 40;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 40));
+	o2_start_Out_producer_Producer := true;
+	__pc := 41;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 41));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 42;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 42));
+	main_producer_Producer := Send;
+	__pc := 43;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 43));
+	logs_producer_Producer := Send_entry;
+	__pc := 27;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 26));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 27;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 27));
+	logs_producer_Producer := endOfRtc;
+	__pc := 44;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 44));
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 4);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 3);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
-	__pc := 47;
+	__pc := 45;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 47));
+	assume (((__init == false) && (__trans == true)) && (__pc == 45));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 46;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 46));
 	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 49;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 49));
-	__pc := (if (main_producer_Producer == Send) then 51 else 50);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 51));
-	logs_producer_Producer := Send_exit;
-	__pc := 50;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 50));
-	main_producer_Producer := __Inactive__;
-	__pc := 52;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 52));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 53;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 53));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 54;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 54));
-	logs_producer_Producer := Send_entry;
-	__pc := 48;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 47));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 55;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 55));
-	__pc := (if (main_producer_Producer == Send) then 57 else 56);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 57));
-	logs_producer_Producer := Send_exit;
-	__pc := 56;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 56));
-	main_producer_Producer := __Inactive__;
-	__pc := 58;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 58));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 59;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 59));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 60;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 60));
-	logs_producer_Producer := Send_entry;
-	__pc := 48;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 47));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
 	__pc := 48;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 48));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 2;
+	__pc := (if (main_producer_Producer == Send) then 50 else 49);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 5);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	assume (((__init == false) && (__trans == true)) && (__pc == 50));
+	logs_producer_Producer := Send_exit;
+	__pc := 49;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 49));
+	main_producer_Producer := __Inactive__;
+	__pc := 51;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 51));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 52;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 52));
+	o1_start_Out_producer_Producer := true;
+	__pc := 53;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 53));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 54;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 54));
+	main_producer_Producer := Send;
+	__pc := 55;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 55));
+	logs_producer_Producer := Send_entry;
+	__pc := 47;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 46));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 56;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 56));
+	__pc := (if (main_producer_Producer == Send) then 58 else 57);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 58));
+	logs_producer_Producer := Send_exit;
+	__pc := 57;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 57));
+	main_producer_Producer := __Inactive__;
+	__pc := 59;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 59));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 60;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 60));
+	o2_start_Out_producer_Producer := true;
 	__pc := 61;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 61));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 63;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 63));
-	__pc := (if (main_producer_Producer == Send) then 65 else 64);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 65));
-	logs_producer_Producer := Send_exit;
-	__pc := 64;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 64));
-	main_producer_Producer := __Inactive__;
-	__pc := 66;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 66));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 67;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 67));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 68;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 68));
-	logs_producer_Producer := Send_entry;
-	__pc := 62;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 61));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 69;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 69));
-	__pc := (if (main_producer_Producer == Send) then 71 else 70);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 71));
-	logs_producer_Producer := Send_exit;
-	__pc := 70;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 70));
-	main_producer_Producer := __Inactive__;
-	__pc := 72;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 72));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 73;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 73));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 74;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 74));
-	logs_producer_Producer := Send_entry;
-	__pc := 62;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 61));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 62;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 62));
-	i2_start_In_producer_Producer := false;
+	main_producer_Producer := Send;
+	__pc := 63;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 63));
+	logs_producer_Producer := Send_entry;
+	__pc := 47;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 46));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 47;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 47));
+	logs_producer_Producer := endOfRtc;
+	__pc := 64;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 64));
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 6);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 4);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 65;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 65));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 66;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 66));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 68;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 68));
+	__pc := (if (main_producer_Producer == Send) then 70 else 69);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 70));
+	logs_producer_Producer := Send_exit;
+	__pc := 69;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 69));
+	main_producer_Producer := __Inactive__;
+	__pc := 71;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 71));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 72;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 72));
+	o1_start_Out_producer_Producer := true;
+	__pc := 73;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 73));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 74;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 74));
+	main_producer_Producer := Send;
 	__pc := 75;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 75));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 77;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 77));
-	__pc := (if (main_producer_Producer == Send) then 79 else 78);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 79));
-	logs_producer_Producer := Send_exit;
-	__pc := 78;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 78));
-	main_producer_Producer := __Inactive__;
-	__pc := 80;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 80));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 81;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 81));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 82;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 82));
 	logs_producer_Producer := Send_entry;
-	__pc := 76;
+	__pc := 67;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 75));
+	assume (((__init == false) && (__trans == true)) && (__pc == 66));
 	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 83;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 83));
-	__pc := (if (main_producer_Producer == Send) then 85 else 84);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 85));
-	logs_producer_Producer := Send_exit;
-	__pc := 84;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 84));
-	main_producer_Producer := __Inactive__;
-	__pc := 86;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 86));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 87;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 87));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 88;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 88));
-	logs_producer_Producer := Send_entry;
-	__pc := 76;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 75));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
 	__pc := 76;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 76));
-	i2_start_In_producer_Producer := false;
+	__pc := (if (main_producer_Producer == Send) then 78 else 77);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 78));
+	logs_producer_Producer := Send_exit;
+	__pc := 77;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 77));
+	main_producer_Producer := __Inactive__;
+	__pc := 79;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 79));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 80;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 80));
+	o2_start_Out_producer_Producer := true;
+	__pc := 81;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 81));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 82;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 82));
+	main_producer_Producer := Send;
+	__pc := 83;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 83));
+	logs_producer_Producer := Send_entry;
+	__pc := 67;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 66));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 67;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 67));
+	logs_producer_Producer := endOfRtc;
+	__pc := 84;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 84));
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 7);
-	i2_start_In_producer_Producer := true;
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 5);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 85;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 85));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 86;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 86));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 88;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 88));
+	__pc := (if (main_producer_Producer == Send) then 90 else 89);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 90));
+	logs_producer_Producer := Send_exit;
 	__pc := 89;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 89));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	main_producer_Producer := __Inactive__;
 	__pc := 91;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 91));
-	__pc := (if (main_producer_Producer == Send) then 93 else 92);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 93));
-	logs_producer_Producer := Send_exit;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
 	__pc := 92;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 92));
-	main_producer_Producer := __Inactive__;
+	o1_start_Out_producer_Producer := true;
+	__pc := 93;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 93));
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 94;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 94));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	main_producer_Producer := Send;
 	__pc := 95;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 95));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	logs_producer_Producer := Send_entry;
+	__pc := 87;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 86));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
 	__pc := 96;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 96));
-	logs_producer_Producer := Send_entry;
-	__pc := 90;
+	__pc := (if (main_producer_Producer == Send) then 98 else 97);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 89));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	assume (((__init == false) && (__trans == true)) && (__pc == 98));
+	logs_producer_Producer := Send_exit;
 	__pc := 97;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 97));
-	__pc := (if (main_producer_Producer == Send) then 99 else 98);
+	main_producer_Producer := __Inactive__;
+	__pc := 99;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 99));
-	logs_producer_Producer := Send_exit;
-	__pc := 98;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 98));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
 	__pc := 100;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 100));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	o2_start_Out_producer_Producer := true;
 	__pc := 101;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 101));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 102;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 102));
-	logs_producer_Producer := Send_entry;
-	__pc := 90;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 89));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 90;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 90));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 2;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 8);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	main_producer_Producer := Send;
 	__pc := 103;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 103));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 105;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 105));
-	__pc := (if (main_producer_Producer == Send) then 107 else 106);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 107));
-	logs_producer_Producer := Send_exit;
-	__pc := 106;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 106));
-	main_producer_Producer := __Inactive__;
-	__pc := 108;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 108));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 109;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 109));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 110;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 110));
 	logs_producer_Producer := Send_entry;
-	__pc := 104;
+	__pc := 87;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 103));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 111;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 111));
-	__pc := (if (main_producer_Producer == Send) then 113 else 112);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 113));
-	logs_producer_Producer := Send_exit;
-	__pc := 112;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 112));
-	main_producer_Producer := __Inactive__;
-	__pc := 114;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 114));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 115;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 115));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 116;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 116));
-	logs_producer_Producer := Send_entry;
-	__pc := 104;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 103));
+	assume (((__init == false) && (__trans == true)) && (__pc == 86));
 	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 87;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 87));
+	logs_producer_Producer := endOfRtc;
 	__pc := 104;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 104));
-	i2_start_In_producer_Producer := false;
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 9);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 6);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 105;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 105));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 106;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 106));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 108;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 108));
+	__pc := (if (main_producer_Producer == Send) then 110 else 109);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 110));
+	logs_producer_Producer := Send_exit;
+	__pc := 109;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 109));
+	main_producer_Producer := __Inactive__;
+	__pc := 111;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 111));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 112;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 112));
+	o1_start_Out_producer_Producer := true;
+	__pc := 113;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 113));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 114;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 114));
+	main_producer_Producer := Send;
+	__pc := 115;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 115));
+	logs_producer_Producer := Send_entry;
+	__pc := 107;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 106));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 116;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 116));
+	__pc := (if (main_producer_Producer == Send) then 118 else 117);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 118));
+	logs_producer_Producer := Send_exit;
 	__pc := 117;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 117));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	main_producer_Producer := __Inactive__;
 	__pc := 119;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 119));
-	__pc := (if (main_producer_Producer == Send) then 121 else 120);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 121));
-	logs_producer_Producer := Send_exit;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
 	__pc := 120;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 120));
-	main_producer_Producer := __Inactive__;
+	o2_start_Out_producer_Producer := true;
+	__pc := 121;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 121));
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 122;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 122));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	main_producer_Producer := Send;
 	__pc := 123;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 123));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	logs_producer_Producer := Send_entry;
+	__pc := 107;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 106));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 107;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 107));
+	logs_producer_Producer := endOfRtc;
 	__pc := 124;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 124));
-	logs_producer_Producer := Send_entry;
-	__pc := 118;
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 2;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 117));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	assume (((__init == false) && (__trans == true)) && (__pc == 4));
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 7);
+	i2_start_In_producer_Producer := true;
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 125;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 125));
-	__pc := (if (main_producer_Producer == Send) then 127 else 126);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 127));
-	logs_producer_Producer := Send_exit;
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 126;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 126));
-	main_producer_Producer := __Inactive__;
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
 	__pc := 128;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 128));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := (if (main_producer_Producer == Send) then 130 else 129);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 130));
+	logs_producer_Producer := Send_exit;
 	__pc := 129;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 129));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 130;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 130));
-	logs_producer_Producer := Send_entry;
-	__pc := 118;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 117));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 118;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 118));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 2;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 10);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	main_producer_Producer := __Inactive__;
 	__pc := 131;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 131));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 133;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 133));
-	__pc := (if (main_producer_Producer == Send) then 135 else 134);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 135));
-	logs_producer_Producer := Send_exit;
-	__pc := 134;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 134));
-	main_producer_Producer := __Inactive__;
-	__pc := 136;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 136));
 	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 137;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 137));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 138;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 138));
-	logs_producer_Producer := Send_entry;
-	__pc := 132;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 131));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 139;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 139));
-	__pc := (if (main_producer_Producer == Send) then 141 else 140);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 141));
-	logs_producer_Producer := Send_exit;
-	__pc := 140;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 140));
-	main_producer_Producer := __Inactive__;
-	__pc := 142;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 142));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 143;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 143));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 144;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 144));
-	logs_producer_Producer := Send_entry;
-	__pc := 132;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 131));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
 	__pc := 132;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 132));
-	i2_start_In_producer_Producer := false;
+	o1_start_Out_producer_Producer := true;
+	__pc := 133;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 133));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 134;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 134));
+	main_producer_Producer := Send;
+	__pc := 135;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 135));
+	logs_producer_Producer := Send_entry;
+	__pc := 127;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 126));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 136;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 136));
+	__pc := (if (main_producer_Producer == Send) then 138 else 137);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 138));
+	logs_producer_Producer := Send_exit;
+	__pc := 137;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 137));
+	main_producer_Producer := __Inactive__;
+	__pc := 139;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 139));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 140;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 140));
+	o2_start_Out_producer_Producer := true;
+	__pc := 141;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 141));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 142;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 142));
+	main_producer_Producer := Send;
+	__pc := 143;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 143));
+	logs_producer_Producer := Send_entry;
+	__pc := 127;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 126));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 127;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 127));
+	logs_producer_Producer := endOfRtc;
+	__pc := 144;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 144));
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 11);
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 8);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
 	__pc := 145;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 145));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 147;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 147));
-	__pc := (if (main_producer_Producer == Send) then 149 else 148);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 149));
-	logs_producer_Producer := Send_exit;
-	__pc := 148;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 148));
-	main_producer_Producer := __Inactive__;
-	__pc := 150;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 150));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 151;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 151));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 152;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 152));
-	logs_producer_Producer := Send_entry;
-	__pc := 146;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 145));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 153;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 153));
-	__pc := (if (main_producer_Producer == Send) then 155 else 154);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 155));
-	logs_producer_Producer := Send_exit;
-	__pc := 154;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 154));
-	main_producer_Producer := __Inactive__;
-	__pc := 156;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 156));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 157;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 157));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 158;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 158));
-	logs_producer_Producer := Send_entry;
-	__pc := 146;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 145));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 146;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 146));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 2;
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 148;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 4));
-	assume (eventId_master_ProducerMessageQueueOfproducer_1289656960 == 12);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	assume (((__init == false) && (__trans == true)) && (__pc == 148));
+	__pc := (if (main_producer_Producer == Send) then 150 else 149);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 150));
+	logs_producer_Producer := Send_exit;
+	__pc := 149;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 149));
+	main_producer_Producer := __Inactive__;
+	__pc := 151;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 151));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 152;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 152));
+	o1_start_Out_producer_Producer := true;
+	__pc := 153;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 153));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 154;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 154));
+	main_producer_Producer := Send;
+	__pc := 155;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 155));
+	logs_producer_Producer := Send_entry;
+	__pc := 147;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 146));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 156;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 156));
+	__pc := (if (main_producer_Producer == Send) then 158 else 157);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 158));
+	logs_producer_Producer := Send_exit;
+	__pc := 157;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 157));
+	main_producer_Producer := __Inactive__;
 	__pc := 159;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 159));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 161;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 161));
-	__pc := (if (main_producer_Producer == Send) then 163 else 162);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 163));
-	logs_producer_Producer := Send_exit;
-	__pc := 162;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 162));
-	main_producer_Producer := __Inactive__;
-	__pc := 164;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 164));
 	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 165;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 165));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 166;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 166));
-	logs_producer_Producer := Send_entry;
-	__pc := 160;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 159));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 167;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 167));
-	__pc := (if (main_producer_Producer == Send) then 169 else 168);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 169));
-	logs_producer_Producer := Send_exit;
-	__pc := 168;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 168));
-	main_producer_Producer := __Inactive__;
-	__pc := 170;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 170));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 171;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 171));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 172;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 172));
-	logs_producer_Producer := Send_entry;
-	__pc := 160;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 159));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
 	__pc := 160;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 160));
-	i2_start_In_producer_Producer := false;
+	o2_start_Out_producer_Producer := true;
+	__pc := 161;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 161));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 162;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 162));
+	main_producer_Producer := Send;
+	__pc := 163;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 163));
+	logs_producer_Producer := Send_entry;
+	__pc := 147;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 146));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 147;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 147));
+	logs_producer_Producer := endOfRtc;
+	__pc := 164;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 164));
 	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
 	__pc := 2;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 2));
-	__pc := (if o1_start_Out_producer_Producer then 174 else 173);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 174));
-	__pc := (if (sizeMasterConsumerMessageQueueOfc1 < 4) then 176 else 175);
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 176));
-	master_ConsumerMessageQueueOfc1[sizeMasterConsumerMessageQueueOfc1] := 1;
-	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 + 1);
-	__pc := 175;
-} or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 175));
+	assume (((__init == false) && (__trans == true)) && (__pc == 4));
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 9);
+	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 165;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 165));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 166;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 166));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 168;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 168));
+	__pc := (if (main_producer_Producer == Send) then 170 else 169);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 170));
+	logs_producer_Producer := Send_exit;
+	__pc := 169;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 169));
+	main_producer_Producer := __Inactive__;
+	__pc := 171;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 171));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 172;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 172));
+	o1_start_Out_producer_Producer := true;
 	__pc := 173;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 173));
-	__pc := (if o2_start_Out_producer_Producer then 177 else 0);
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 174;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 174));
+	main_producer_Producer := Send;
+	__pc := 175;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 175));
+	logs_producer_Producer := Send_entry;
+	__pc := 167;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 166));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 176;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 176));
+	__pc := (if (main_producer_Producer == Send) then 178 else 177);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 178));
+	logs_producer_Producer := Send_exit;
+	__pc := 177;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 177));
+	main_producer_Producer := __Inactive__;
+	__pc := 179;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 179));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 180;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 180));
+	o2_start_Out_producer_Producer := true;
+	__pc := 181;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 181));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 182;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 182));
+	main_producer_Producer := Send;
+	__pc := 183;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 183));
+	logs_producer_Producer := Send_entry;
+	__pc := 167;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 166));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 167;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 167));
+	logs_producer_Producer := endOfRtc;
+	__pc := 184;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 184));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 2;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 4));
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 10);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
+	__pc := 185;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 185));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 186;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 186));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 188;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 188));
+	__pc := (if (main_producer_Producer == Send) then 190 else 189);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 190));
+	logs_producer_Producer := Send_exit;
+	__pc := 189;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 189));
+	main_producer_Producer := __Inactive__;
+	__pc := 191;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 191));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 192;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 192));
+	o1_start_Out_producer_Producer := true;
+	__pc := 193;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 193));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 194;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 194));
+	main_producer_Producer := Send;
+	__pc := 195;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 195));
+	logs_producer_Producer := Send_entry;
+	__pc := 187;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 186));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 196;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 196));
+	__pc := (if (main_producer_Producer == Send) then 198 else 197);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 198));
+	logs_producer_Producer := Send_exit;
+	__pc := 197;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 197));
+	main_producer_Producer := __Inactive__;
+	__pc := 199;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 199));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 200;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 200));
+	o2_start_Out_producer_Producer := true;
+	__pc := 201;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 201));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 202;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 202));
+	main_producer_Producer := Send;
+	__pc := 203;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 203));
+	logs_producer_Producer := Send_entry;
+	__pc := 187;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 186));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 187;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 187));
+	logs_producer_Producer := endOfRtc;
+	__pc := 204;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 204));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 2;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 4));
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 11);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
+	__pc := 205;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 205));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 206;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 206));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 208;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 208));
+	__pc := (if (main_producer_Producer == Send) then 210 else 209);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 210));
+	logs_producer_Producer := Send_exit;
+	__pc := 209;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 209));
+	main_producer_Producer := __Inactive__;
+	__pc := 211;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 211));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 212;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 212));
+	o1_start_Out_producer_Producer := true;
+	__pc := 213;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 213));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 214;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 214));
+	main_producer_Producer := Send;
+	__pc := 215;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 215));
+	logs_producer_Producer := Send_entry;
+	__pc := 207;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 206));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 216;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 216));
+	__pc := (if (main_producer_Producer == Send) then 218 else 217);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 218));
+	logs_producer_Producer := Send_exit;
+	__pc := 217;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 217));
+	main_producer_Producer := __Inactive__;
+	__pc := 219;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 219));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 220;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 220));
+	o2_start_Out_producer_Producer := true;
+	__pc := 221;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 221));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 222;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 222));
+	main_producer_Producer := Send;
+	__pc := 223;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 223));
+	logs_producer_Producer := Send_entry;
+	__pc := 207;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 206));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 207;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 207));
+	logs_producer_Producer := endOfRtc;
+	__pc := 224;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 224));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 2;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 4));
+	assume (eventId_master_ProducerMessageQueueOfproducer_348216906 == 12);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
+	__pc := 225;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 225));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 226;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 226));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 228;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 228));
+	__pc := (if (main_producer_Producer == Send) then 230 else 229);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 230));
+	logs_producer_Producer := Send_exit;
+	__pc := 229;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 229));
+	main_producer_Producer := __Inactive__;
+	__pc := 231;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 231));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 232;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 232));
+	o1_start_Out_producer_Producer := true;
+	__pc := 233;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 233));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 234;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 234));
+	main_producer_Producer := Send;
+	__pc := 235;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 235));
+	logs_producer_Producer := Send_entry;
+	__pc := 227;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 226));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 236;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 236));
+	__pc := (if (main_producer_Producer == Send) then 238 else 237);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 238));
+	logs_producer_Producer := Send_exit;
+	__pc := 237;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 237));
+	main_producer_Producer := __Inactive__;
+	__pc := 239;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 239));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 240;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 240));
+	o2_start_Out_producer_Producer := true;
+	__pc := 241;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 241));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 242;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 242));
+	main_producer_Producer := Send;
+	__pc := 243;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 243));
+	logs_producer_Producer := Send_entry;
+	__pc := 227;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 226));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 227;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 227));
+	logs_producer_Producer := endOfRtc;
+	__pc := 244;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 244));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 2;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 2));
+	__pc := (if o1_start_Out_producer_Producer then 246 else 245);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 246));
+	__pc := (if (sizeMasterConsumerMessageQueueOfc1 < 4) then 248 else 247);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 248));
+	master_ConsumerMessageQueueOfc1[sizeMasterConsumerMessageQueueOfc1] := 1;
+	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 + 1);
+	__pc := 247;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 247));
+	o1_start_Out_producer_Producer := false;
+	__pc := 245;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 245));
+	__pc := (if o2_start_Out_producer_Producer then 249 else 0);
 	if ((__pc == 0)) {
 		__trans := false;
 	}
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 177));
-	__pc := (if (sizeMasterConsumerMessageQueueOfc2 < 4) then 179 else 178);
+	assume (((__init == false) && (__trans == true)) && (__pc == 249));
+	__pc := (if (sizeMasterConsumerMessageQueueOfc2 < 4) then 251 else 250);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 179));
+	assume (((__init == false) && (__trans == true)) && (__pc == 251));
 	master_ConsumerMessageQueueOfc2[sizeMasterConsumerMessageQueueOfc2] := 1;
 	sizeMasterConsumerMessageQueueOfc2 := (sizeMasterConsumerMessageQueueOfc2 + 1);
-	__pc := 178;
+	__pc := 250;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 178));
+	assume (((__init == false) && (__trans == true)) && (__pc == 250));
 	o2_start_Out_producer_Producer := false;
 	__pc := 0;
 	__trans := false;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 0));
 	assume (0 < sizeMasterConsumerMessageQueueOfc1);
-	__pc := 180;
+	__pc := 252;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 180));
-	__pc := (if (0 < sizeMasterConsumerMessageQueueOfc1) then 182 else 181);
+	assume (((__init == false) && (__trans == true)) && (__pc == 252));
+	__pc := (if (0 < sizeMasterConsumerMessageQueueOfc1) then 254 else 253);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 182));
-	eventId_master_ConsumerMessageQueueOfc1_158315961 := master_ConsumerMessageQueueOfc1[0];
+	assume (((__init == false) && (__trans == true)) && (__pc == 254));
+	eventId_master_ConsumerMessageQueueOfc1_102988496 := master_ConsumerMessageQueueOfc1[0];
 	master_ConsumerMessageQueueOfc1 := [0 <- master_ConsumerMessageQueueOfc1[1], 1 <- master_ConsumerMessageQueueOfc1[2], 2 <- master_ConsumerMessageQueueOfc1[3], 3 <- 0, default <- 0];
 	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 - 1);
-	__pc := 183;
+	__pc := 255;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 0);
-	__pc := 181;
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 0);
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 1);
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 1);
 	input_start_In_c1_Consumer := true;
 	output_start_Out_c1_Consumer := false;
-	__pc := 184;
+	__pc := 256;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 184));
-	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 186 else 185);
+	assume (((__init == false) && (__trans == true)) && (__pc == 256));
+	logs_c1_Consumer := beginningOfRtc;
+	__pc := 257;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 186));
-	__pc := (if (main_c1_Consumer == Wait) then 188 else 187);
+	assume (((__init == false) && (__trans == true)) && (__pc == 257));
+	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 259 else 258);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 188));
+	assume (((__init == false) && (__trans == true)) && (__pc == 259));
+	__pc := (if (main_c1_Consumer == Wait) then 261 else 260);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 261));
 	logs_c1_Consumer := Wait_exit;
-	__pc := 187;
+	__pc := 260;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 187));
+	assume (((__init == false) && (__trans == true)) && (__pc == 260));
 	main_c1_Consumer := __Inactive__;
-	__pc := 189;
+	__pc := 262;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 189));
+	assume (((__init == false) && (__trans == true)) && (__pc == 262));
 	logs_c1_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 190;
+	__pc := 263;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 190));
+	assume (((__init == false) && (__trans == true)) && (__pc == 263));
 	amount_c1_Consumer := (amount_c1_Consumer - 1);
 	output_start_Out_c1_Consumer := true;
+	__pc := 264;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 264));
+	logs_c1_Consumer := raisingEvent_start;
+	__pc := 265;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 265));
 	main_c1_Consumer := Wait;
-	__pc := 191;
+	__pc := 266;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 191));
+	assume (((__init == false) && (__trans == true)) && (__pc == 266));
 	logs_c1_Consumer := Wait_entry;
-	__pc := 185;
+	__pc := 258;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 185));
+	assume (((__init == false) && (__trans == true)) && (__pc == 258));
+	logs_c1_Consumer := endOfRtc;
+	__pc := 267;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 267));
 	input_start_In_c1_Consumer := false;
-	__pc := 181;
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 2);
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 2);
 	output_start_Out_c1_Consumer := false;
-	__pc := 192;
+	__pc := 268;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 192));
-	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 194 else 193);
+	assume (((__init == false) && (__trans == true)) && (__pc == 268));
+	logs_c1_Consumer := beginningOfRtc;
+	__pc := 269;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 194));
-	__pc := (if (main_c1_Consumer == Wait) then 196 else 195);
+	assume (((__init == false) && (__trans == true)) && (__pc == 269));
+	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 271 else 270);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 196));
+	assume (((__init == false) && (__trans == true)) && (__pc == 271));
+	__pc := (if (main_c1_Consumer == Wait) then 273 else 272);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 273));
 	logs_c1_Consumer := Wait_exit;
-	__pc := 195;
+	__pc := 272;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 195));
+	assume (((__init == false) && (__trans == true)) && (__pc == 272));
 	main_c1_Consumer := __Inactive__;
-	__pc := 197;
+	__pc := 274;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 197));
+	assume (((__init == false) && (__trans == true)) && (__pc == 274));
 	logs_c1_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 198;
+	__pc := 275;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 198));
+	assume (((__init == false) && (__trans == true)) && (__pc == 275));
 	amount_c1_Consumer := (amount_c1_Consumer - 1);
 	output_start_Out_c1_Consumer := true;
+	__pc := 276;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 276));
+	logs_c1_Consumer := raisingEvent_start;
+	__pc := 277;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 277));
 	main_c1_Consumer := Wait;
-	__pc := 199;
+	__pc := 278;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 199));
+	assume (((__init == false) && (__trans == true)) && (__pc == 278));
 	logs_c1_Consumer := Wait_entry;
-	__pc := 193;
+	__pc := 270;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 193));
+	assume (((__init == false) && (__trans == true)) && (__pc == 270));
+	logs_c1_Consumer := endOfRtc;
+	__pc := 279;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 279));
 	input_start_In_c1_Consumer := false;
-	__pc := 181;
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 3);
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 3);
 	output_start_Out_c1_Consumer := false;
-	__pc := 200;
+	__pc := 280;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 200));
-	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 202 else 201);
+	assume (((__init == false) && (__trans == true)) && (__pc == 280));
+	logs_c1_Consumer := beginningOfRtc;
+	__pc := 281;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 202));
-	__pc := (if (main_c1_Consumer == Wait) then 204 else 203);
+	assume (((__init == false) && (__trans == true)) && (__pc == 281));
+	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 283 else 282);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 204));
+	assume (((__init == false) && (__trans == true)) && (__pc == 283));
+	__pc := (if (main_c1_Consumer == Wait) then 285 else 284);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 285));
 	logs_c1_Consumer := Wait_exit;
-	__pc := 203;
+	__pc := 284;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 203));
+	assume (((__init == false) && (__trans == true)) && (__pc == 284));
 	main_c1_Consumer := __Inactive__;
-	__pc := 205;
+	__pc := 286;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 205));
+	assume (((__init == false) && (__trans == true)) && (__pc == 286));
 	logs_c1_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 206;
+	__pc := 287;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 206));
+	assume (((__init == false) && (__trans == true)) && (__pc == 287));
 	amount_c1_Consumer := (amount_c1_Consumer - 1);
 	output_start_Out_c1_Consumer := true;
+	__pc := 288;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 288));
+	logs_c1_Consumer := raisingEvent_start;
+	__pc := 289;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 289));
 	main_c1_Consumer := Wait;
-	__pc := 207;
+	__pc := 290;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 207));
+	assume (((__init == false) && (__trans == true)) && (__pc == 290));
 	logs_c1_Consumer := Wait_entry;
-	__pc := 201;
+	__pc := 282;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 201));
+	assume (((__init == false) && (__trans == true)) && (__pc == 282));
+	logs_c1_Consumer := endOfRtc;
+	__pc := 291;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 291));
 	input_start_In_c1_Consumer := false;
-	__pc := 181;
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 4);
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 4);
 	output_start_Out_c1_Consumer := false;
-	__pc := 208;
+	__pc := 292;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 208));
-	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 210 else 209);
+	assume (((__init == false) && (__trans == true)) && (__pc == 292));
+	logs_c1_Consumer := beginningOfRtc;
+	__pc := 293;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 210));
-	__pc := (if (main_c1_Consumer == Wait) then 212 else 211);
+	assume (((__init == false) && (__trans == true)) && (__pc == 293));
+	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 295 else 294);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 212));
+	assume (((__init == false) && (__trans == true)) && (__pc == 295));
+	__pc := (if (main_c1_Consumer == Wait) then 297 else 296);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 297));
 	logs_c1_Consumer := Wait_exit;
-	__pc := 211;
+	__pc := 296;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 211));
+	assume (((__init == false) && (__trans == true)) && (__pc == 296));
 	main_c1_Consumer := __Inactive__;
-	__pc := 213;
+	__pc := 298;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 213));
+	assume (((__init == false) && (__trans == true)) && (__pc == 298));
 	logs_c1_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 214;
+	__pc := 299;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 214));
+	assume (((__init == false) && (__trans == true)) && (__pc == 299));
 	amount_c1_Consumer := (amount_c1_Consumer - 1);
 	output_start_Out_c1_Consumer := true;
+	__pc := 300;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 300));
+	logs_c1_Consumer := raisingEvent_start;
+	__pc := 301;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 301));
 	main_c1_Consumer := Wait;
-	__pc := 215;
+	__pc := 302;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 215));
+	assume (((__init == false) && (__trans == true)) && (__pc == 302));
 	logs_c1_Consumer := Wait_entry;
-	__pc := 209;
+	__pc := 294;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 209));
+	assume (((__init == false) && (__trans == true)) && (__pc == 294));
+	logs_c1_Consumer := endOfRtc;
+	__pc := 303;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 303));
 	input_start_In_c1_Consumer := false;
-	__pc := 181;
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 5);
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 5);
 	output_start_Out_c1_Consumer := false;
-	__pc := 216;
+	__pc := 304;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 216));
-	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 218 else 217);
+	assume (((__init == false) && (__trans == true)) && (__pc == 304));
+	logs_c1_Consumer := beginningOfRtc;
+	__pc := 305;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 218));
-	__pc := (if (main_c1_Consumer == Wait) then 220 else 219);
+	assume (((__init == false) && (__trans == true)) && (__pc == 305));
+	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 307 else 306);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 220));
+	assume (((__init == false) && (__trans == true)) && (__pc == 307));
+	__pc := (if (main_c1_Consumer == Wait) then 309 else 308);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 309));
 	logs_c1_Consumer := Wait_exit;
-	__pc := 219;
+	__pc := 308;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 219));
+	assume (((__init == false) && (__trans == true)) && (__pc == 308));
 	main_c1_Consumer := __Inactive__;
-	__pc := 221;
+	__pc := 310;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 221));
+	assume (((__init == false) && (__trans == true)) && (__pc == 310));
 	logs_c1_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 222;
+	__pc := 311;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 222));
+	assume (((__init == false) && (__trans == true)) && (__pc == 311));
 	amount_c1_Consumer := (amount_c1_Consumer - 1);
 	output_start_Out_c1_Consumer := true;
+	__pc := 312;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 312));
+	logs_c1_Consumer := raisingEvent_start;
+	__pc := 313;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 313));
 	main_c1_Consumer := Wait;
-	__pc := 223;
+	__pc := 314;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 223));
+	assume (((__init == false) && (__trans == true)) && (__pc == 314));
 	logs_c1_Consumer := Wait_entry;
-	__pc := 217;
+	__pc := 306;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 217));
+	assume (((__init == false) && (__trans == true)) && (__pc == 306));
+	logs_c1_Consumer := endOfRtc;
+	__pc := 315;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 315));
 	input_start_In_c1_Consumer := false;
-	__pc := 181;
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 183));
-	assume (eventId_master_ConsumerMessageQueueOfc1_158315961 == 6);
+	assume (((__init == false) && (__trans == true)) && (__pc == 255));
+	assume (eventId_master_ConsumerMessageQueueOfc1_102988496 == 6);
 	output_start_Out_c1_Consumer := false;
-	__pc := 224;
+	__pc := 316;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 224));
-	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 226 else 225);
+	assume (((__init == false) && (__trans == true)) && (__pc == 316));
+	logs_c1_Consumer := beginningOfRtc;
+	__pc := 317;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 226));
-	__pc := (if (main_c1_Consumer == Wait) then 228 else 227);
+	assume (((__init == false) && (__trans == true)) && (__pc == 317));
+	__pc := (if ((main_c1_Consumer == Wait) && input_start_In_c1_Consumer && (amount_c1_Consumer > 0)) then 319 else 318);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 228));
+	assume (((__init == false) && (__trans == true)) && (__pc == 319));
+	__pc := (if (main_c1_Consumer == Wait) then 321 else 320);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 321));
 	logs_c1_Consumer := Wait_exit;
-	__pc := 227;
+	__pc := 320;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 227));
+	assume (((__init == false) && (__trans == true)) && (__pc == 320));
 	main_c1_Consumer := __Inactive__;
-	__pc := 229;
+	__pc := 322;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 229));
+	assume (((__init == false) && (__trans == true)) && (__pc == 322));
 	logs_c1_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 230;
+	__pc := 323;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 230));
+	assume (((__init == false) && (__trans == true)) && (__pc == 323));
 	amount_c1_Consumer := (amount_c1_Consumer - 1);
 	output_start_Out_c1_Consumer := true;
+	__pc := 324;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 324));
+	logs_c1_Consumer := raisingEvent_start;
+	__pc := 325;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 325));
 	main_c1_Consumer := Wait;
-	__pc := 231;
+	__pc := 326;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 231));
+	assume (((__init == false) && (__trans == true)) && (__pc == 326));
 	logs_c1_Consumer := Wait_entry;
-	__pc := 225;
+	__pc := 318;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 225));
+	assume (((__init == false) && (__trans == true)) && (__pc == 318));
+	logs_c1_Consumer := endOfRtc;
+	__pc := 327;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 327));
 	input_start_In_c1_Consumer := false;
-	__pc := 181;
+	__pc := 253;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 181));
-	__pc := (if output_start_Out_c1_Consumer then 232 else 0);
+	assume (((__init == false) && (__trans == true)) && (__pc == 253));
+	__pc := (if output_start_Out_c1_Consumer then 328 else 0);
 	if ((__pc == 0)) {
 		__trans := false;
 	}
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 232));
-	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 234 else 233);
+	assume (((__init == false) && (__trans == true)) && (__pc == 328));
+	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 330 else 329);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 234));
+	assume (((__init == false) && (__trans == true)) && (__pc == 330));
 	master_ProducerMessageQueueOfproducer[sizeMasterProducerMessageQueueOfproducer] := 1;
 	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer + 1);
-	__pc := 233;
+	__pc := 329;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 233));
+	assume (((__init == false) && (__trans == true)) && (__pc == 329));
 	output_start_Out_c1_Consumer := false;
 	__pc := 0;
 	__trans := false;
 } or {
 	assume (((__init == false) && (__trans == true)) && (__pc == 0));
 	assume (0 < sizeMasterConsumerMessageQueueOfc2);
-	__pc := 235;
+	__pc := 331;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 235));
-	__pc := (if (0 < sizeMasterConsumerMessageQueueOfc2) then 237 else 236);
+	assume (((__init == false) && (__trans == true)) && (__pc == 331));
+	__pc := (if (0 < sizeMasterConsumerMessageQueueOfc2) then 333 else 332);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 237));
-	eventId_master_ConsumerMessageQueueOfc2_1312442023 := master_ConsumerMessageQueueOfc2[0];
+	assume (((__init == false) && (__trans == true)) && (__pc == 333));
+	eventId_master_ConsumerMessageQueueOfc2_2147108802 := master_ConsumerMessageQueueOfc2[0];
 	master_ConsumerMessageQueueOfc2 := [0 <- master_ConsumerMessageQueueOfc2[1], 1 <- master_ConsumerMessageQueueOfc2[2], 2 <- master_ConsumerMessageQueueOfc2[3], 3 <- 0, default <- 0];
 	sizeMasterConsumerMessageQueueOfc2 := (sizeMasterConsumerMessageQueueOfc2 - 1);
-	__pc := 238;
+	__pc := 334;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 0);
-	__pc := 236;
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 0);
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 1);
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 1);
 	input_start_In_c2_Consumer := true;
 	output_start_Out_c2_Consumer := false;
-	__pc := 239;
+	__pc := 335;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 239));
-	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 241 else 240);
+	assume (((__init == false) && (__trans == true)) && (__pc == 335));
+	logs_c2_Consumer := beginningOfRtc;
+	__pc := 336;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 241));
-	__pc := (if (main_c2_Consumer == Wait) then 243 else 242);
+	assume (((__init == false) && (__trans == true)) && (__pc == 336));
+	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 338 else 337);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 243));
+	assume (((__init == false) && (__trans == true)) && (__pc == 338));
+	__pc := (if (main_c2_Consumer == Wait) then 340 else 339);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 340));
 	logs_c2_Consumer := Wait_exit;
-	__pc := 242;
+	__pc := 339;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 242));
+	assume (((__init == false) && (__trans == true)) && (__pc == 339));
 	main_c2_Consumer := __Inactive__;
-	__pc := 244;
+	__pc := 341;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 244));
+	assume (((__init == false) && (__trans == true)) && (__pc == 341));
 	logs_c2_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 245;
+	__pc := 342;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 245));
+	assume (((__init == false) && (__trans == true)) && (__pc == 342));
 	amount_c2_Consumer := (amount_c2_Consumer - 1);
 	output_start_Out_c2_Consumer := true;
+	__pc := 343;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 343));
+	logs_c2_Consumer := raisingEvent_start;
+	__pc := 344;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 344));
 	main_c2_Consumer := Wait;
-	__pc := 246;
+	__pc := 345;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 246));
+	assume (((__init == false) && (__trans == true)) && (__pc == 345));
 	logs_c2_Consumer := Wait_entry;
-	__pc := 240;
+	__pc := 337;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 240));
+	assume (((__init == false) && (__trans == true)) && (__pc == 337));
+	logs_c2_Consumer := endOfRtc;
+	__pc := 346;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 346));
 	input_start_In_c2_Consumer := false;
-	__pc := 236;
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 2);
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 2);
 	output_start_Out_c2_Consumer := false;
-	__pc := 247;
+	__pc := 347;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 247));
-	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 249 else 248);
+	assume (((__init == false) && (__trans == true)) && (__pc == 347));
+	logs_c2_Consumer := beginningOfRtc;
+	__pc := 348;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 249));
-	__pc := (if (main_c2_Consumer == Wait) then 251 else 250);
+	assume (((__init == false) && (__trans == true)) && (__pc == 348));
+	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 350 else 349);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 251));
+	assume (((__init == false) && (__trans == true)) && (__pc == 350));
+	__pc := (if (main_c2_Consumer == Wait) then 352 else 351);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 352));
 	logs_c2_Consumer := Wait_exit;
-	__pc := 250;
+	__pc := 351;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 250));
+	assume (((__init == false) && (__trans == true)) && (__pc == 351));
 	main_c2_Consumer := __Inactive__;
-	__pc := 252;
+	__pc := 353;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 252));
+	assume (((__init == false) && (__trans == true)) && (__pc == 353));
 	logs_c2_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 253;
+	__pc := 354;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 253));
+	assume (((__init == false) && (__trans == true)) && (__pc == 354));
 	amount_c2_Consumer := (amount_c2_Consumer - 1);
 	output_start_Out_c2_Consumer := true;
+	__pc := 355;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 355));
+	logs_c2_Consumer := raisingEvent_start;
+	__pc := 356;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 356));
 	main_c2_Consumer := Wait;
-	__pc := 254;
+	__pc := 357;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 254));
+	assume (((__init == false) && (__trans == true)) && (__pc == 357));
 	logs_c2_Consumer := Wait_entry;
-	__pc := 248;
+	__pc := 349;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 248));
+	assume (((__init == false) && (__trans == true)) && (__pc == 349));
+	logs_c2_Consumer := endOfRtc;
+	__pc := 358;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 358));
 	input_start_In_c2_Consumer := false;
-	__pc := 236;
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 3);
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 3);
 	output_start_Out_c2_Consumer := false;
-	__pc := 255;
+	__pc := 359;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 255));
-	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 257 else 256);
+	assume (((__init == false) && (__trans == true)) && (__pc == 359));
+	logs_c2_Consumer := beginningOfRtc;
+	__pc := 360;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 257));
-	__pc := (if (main_c2_Consumer == Wait) then 259 else 258);
+	assume (((__init == false) && (__trans == true)) && (__pc == 360));
+	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 362 else 361);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 259));
+	assume (((__init == false) && (__trans == true)) && (__pc == 362));
+	__pc := (if (main_c2_Consumer == Wait) then 364 else 363);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 364));
 	logs_c2_Consumer := Wait_exit;
-	__pc := 258;
+	__pc := 363;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 258));
+	assume (((__init == false) && (__trans == true)) && (__pc == 363));
 	main_c2_Consumer := __Inactive__;
-	__pc := 260;
+	__pc := 365;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 260));
+	assume (((__init == false) && (__trans == true)) && (__pc == 365));
 	logs_c2_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 261;
+	__pc := 366;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 261));
+	assume (((__init == false) && (__trans == true)) && (__pc == 366));
 	amount_c2_Consumer := (amount_c2_Consumer - 1);
 	output_start_Out_c2_Consumer := true;
+	__pc := 367;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 367));
+	logs_c2_Consumer := raisingEvent_start;
+	__pc := 368;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 368));
 	main_c2_Consumer := Wait;
-	__pc := 262;
+	__pc := 369;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 262));
+	assume (((__init == false) && (__trans == true)) && (__pc == 369));
 	logs_c2_Consumer := Wait_entry;
-	__pc := 256;
+	__pc := 361;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 256));
+	assume (((__init == false) && (__trans == true)) && (__pc == 361));
+	logs_c2_Consumer := endOfRtc;
+	__pc := 370;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 370));
 	input_start_In_c2_Consumer := false;
-	__pc := 236;
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 4);
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 4);
 	output_start_Out_c2_Consumer := false;
-	__pc := 263;
+	__pc := 371;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 263));
-	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 265 else 264);
+	assume (((__init == false) && (__trans == true)) && (__pc == 371));
+	logs_c2_Consumer := beginningOfRtc;
+	__pc := 372;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 265));
-	__pc := (if (main_c2_Consumer == Wait) then 267 else 266);
+	assume (((__init == false) && (__trans == true)) && (__pc == 372));
+	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 374 else 373);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 267));
+	assume (((__init == false) && (__trans == true)) && (__pc == 374));
+	__pc := (if (main_c2_Consumer == Wait) then 376 else 375);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 376));
 	logs_c2_Consumer := Wait_exit;
-	__pc := 266;
+	__pc := 375;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 266));
+	assume (((__init == false) && (__trans == true)) && (__pc == 375));
 	main_c2_Consumer := __Inactive__;
-	__pc := 268;
+	__pc := 377;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 268));
+	assume (((__init == false) && (__trans == true)) && (__pc == 377));
 	logs_c2_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 269;
+	__pc := 378;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 269));
+	assume (((__init == false) && (__trans == true)) && (__pc == 378));
 	amount_c2_Consumer := (amount_c2_Consumer - 1);
 	output_start_Out_c2_Consumer := true;
+	__pc := 379;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 379));
+	logs_c2_Consumer := raisingEvent_start;
+	__pc := 380;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 380));
 	main_c2_Consumer := Wait;
-	__pc := 270;
+	__pc := 381;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 270));
+	assume (((__init == false) && (__trans == true)) && (__pc == 381));
 	logs_c2_Consumer := Wait_entry;
-	__pc := 264;
+	__pc := 373;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 264));
+	assume (((__init == false) && (__trans == true)) && (__pc == 373));
+	logs_c2_Consumer := endOfRtc;
+	__pc := 382;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 382));
 	input_start_In_c2_Consumer := false;
-	__pc := 236;
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 5);
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 5);
 	output_start_Out_c2_Consumer := false;
-	__pc := 271;
+	__pc := 383;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 271));
-	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 273 else 272);
+	assume (((__init == false) && (__trans == true)) && (__pc == 383));
+	logs_c2_Consumer := beginningOfRtc;
+	__pc := 384;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 273));
-	__pc := (if (main_c2_Consumer == Wait) then 275 else 274);
+	assume (((__init == false) && (__trans == true)) && (__pc == 384));
+	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 386 else 385);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 275));
+	assume (((__init == false) && (__trans == true)) && (__pc == 386));
+	__pc := (if (main_c2_Consumer == Wait) then 388 else 387);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 388));
 	logs_c2_Consumer := Wait_exit;
-	__pc := 274;
+	__pc := 387;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 274));
+	assume (((__init == false) && (__trans == true)) && (__pc == 387));
 	main_c2_Consumer := __Inactive__;
-	__pc := 276;
+	__pc := 389;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 276));
+	assume (((__init == false) && (__trans == true)) && (__pc == 389));
 	logs_c2_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 277;
+	__pc := 390;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 277));
+	assume (((__init == false) && (__trans == true)) && (__pc == 390));
 	amount_c2_Consumer := (amount_c2_Consumer - 1);
 	output_start_Out_c2_Consumer := true;
+	__pc := 391;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 391));
+	logs_c2_Consumer := raisingEvent_start;
+	__pc := 392;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 392));
 	main_c2_Consumer := Wait;
-	__pc := 278;
+	__pc := 393;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 278));
+	assume (((__init == false) && (__trans == true)) && (__pc == 393));
 	logs_c2_Consumer := Wait_entry;
-	__pc := 272;
+	__pc := 385;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 272));
+	assume (((__init == false) && (__trans == true)) && (__pc == 385));
+	logs_c2_Consumer := endOfRtc;
+	__pc := 394;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 394));
 	input_start_In_c2_Consumer := false;
-	__pc := 236;
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 238));
-	assume (eventId_master_ConsumerMessageQueueOfc2_1312442023 == 6);
+	assume (((__init == false) && (__trans == true)) && (__pc == 334));
+	assume (eventId_master_ConsumerMessageQueueOfc2_2147108802 == 6);
 	output_start_Out_c2_Consumer := false;
-	__pc := 279;
+	__pc := 395;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 279));
-	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 281 else 280);
+	assume (((__init == false) && (__trans == true)) && (__pc == 395));
+	logs_c2_Consumer := beginningOfRtc;
+	__pc := 396;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 281));
-	__pc := (if (main_c2_Consumer == Wait) then 283 else 282);
+	assume (((__init == false) && (__trans == true)) && (__pc == 396));
+	__pc := (if ((main_c2_Consumer == Wait) && input_start_In_c2_Consumer && (amount_c2_Consumer > 0)) then 398 else 397);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 283));
+	assume (((__init == false) && (__trans == true)) && (__pc == 398));
+	__pc := (if (main_c2_Consumer == Wait) then 400 else 399);
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 400));
 	logs_c2_Consumer := Wait_exit;
-	__pc := 282;
+	__pc := 399;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 282));
+	assume (((__init == false) && (__trans == true)) && (__pc == 399));
 	main_c2_Consumer := __Inactive__;
-	__pc := 284;
+	__pc := 401;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 284));
+	assume (((__init == false) && (__trans == true)) && (__pc == 401));
 	logs_c2_Consumer := t_from_Wait_to_Wait_effect;
-	__pc := 285;
+	__pc := 402;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 285));
+	assume (((__init == false) && (__trans == true)) && (__pc == 402));
 	amount_c2_Consumer := (amount_c2_Consumer - 1);
 	output_start_Out_c2_Consumer := true;
+	__pc := 403;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 403));
+	logs_c2_Consumer := raisingEvent_start;
+	__pc := 404;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 404));
 	main_c2_Consumer := Wait;
-	__pc := 286;
+	__pc := 405;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 286));
+	assume (((__init == false) && (__trans == true)) && (__pc == 405));
 	logs_c2_Consumer := Wait_entry;
-	__pc := 280;
+	__pc := 397;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 280));
+	assume (((__init == false) && (__trans == true)) && (__pc == 397));
+	logs_c2_Consumer := endOfRtc;
+	__pc := 406;
+} or {
+	assume (((__init == false) && (__trans == true)) && (__pc == 406));
 	input_start_In_c2_Consumer := false;
-	__pc := 236;
+	__pc := 332;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 236));
-	__pc := (if output_start_Out_c2_Consumer then 287 else 0);
+	assume (((__init == false) && (__trans == true)) && (__pc == 332));
+	__pc := (if output_start_Out_c2_Consumer then 407 else 0);
 	if ((__pc == 0)) {
 		__trans := false;
 	}
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 287));
-	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 289 else 288);
+	assume (((__init == false) && (__trans == true)) && (__pc == 407));
+	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 409 else 408);
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 289));
+	assume (((__init == false) && (__trans == true)) && (__pc == 409));
 	master_ProducerMessageQueueOfproducer[sizeMasterProducerMessageQueueOfproducer] := 7;
 	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer + 1);
-	__pc := 288;
+	__pc := 408;
 } or {
-	assume (((__init == false) && (__trans == true)) && (__pc == 288));
+	assume (((__init == false) && (__trans == true)) && (__pc == 408));
 	output_start_Out_c2_Consumer := false;
 	__pc := 0;
 	__trans := false;
@@ -1467,8 +1911,8 @@ trans {
 } or {
 	assume (((__init == true)) && (__pc == 0));
 	main_producer_Producer := __Inactive__;
-	i1_start_In_producer_Producer := false;
 	i2_start_In_producer_Producer := false;
+	i1_start_In_producer_Producer := false;
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
 	amount_c1_Consumer := 5;
@@ -1479,139 +1923,139 @@ trans {
 	main_c2_Consumer := __Inactive__;
 	input_start_In_c2_Consumer := false;
 	output_start_Out_c2_Consumer := false;
-	master_ProducerMessageQueueOfproducer := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
-	sizeMasterProducerMessageQueueOfproducer := 0;
-	master_ConsumerMessageQueueOfc2 := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
-	sizeMasterConsumerMessageQueueOfc2 := 0;
 	master_ConsumerMessageQueueOfc1 := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
 	sizeMasterConsumerMessageQueueOfc1 := 0;
+	master_ConsumerMessageQueueOfc2 := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
+	sizeMasterConsumerMessageQueueOfc2 := 0;
+	master_ProducerMessageQueueOfproducer := [0 <- 0, 1 <- 0, 2 <- 0, 3 <- 0, default <- 0];
+	sizeMasterProducerMessageQueueOfproducer := 0;
 	__pc := 1;
 } or {
 	assume (((__init == true)) && (__pc == 1));
-	logs_producer_Producer := t_from_Initial_to_Send_effect;
+	o1_start_Out_producer_Producer := true;
 	__pc := 3;
 } or {
 	assume (((__init == true)) && (__pc == 3));
-	o1_start_Out_producer_Producer := true;
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 4;
 } or {
 	assume (((__init == true)) && (__pc == 4));
-	logs_c1_Consumer := t_from_Initial_to_Wait_effect;
+	o2_start_Out_producer_Producer := true;
 	__pc := 5;
 } or {
 	assume (((__init == true)) && (__pc == 5));
-	main_c1_Consumer := Wait;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 6;
 } or {
 	assume (((__init == true)) && (__pc == 6));
-	logs_c2_Consumer := t_from_Initial_to_Wait_effect;
-	__pc := 7;
-} or {
-	assume (((__init == true)) && (__pc == 7));
+	main_producer_Producer := Send;
+	main_c1_Consumer := Wait;
 	main_c2_Consumer := Wait;
 	__pc := 2;
 } or {
 	assume (((__init == true)) && (__pc == 2));
-	__pc := (if (main_producer_Producer == Send) then 9 else 8);
-} or {
-	assume (((__init == true)) && (__pc == 9));
-	logs_producer_Producer := Send_entry;
-	__pc := 8;
+	__pc := (if (main_producer_Producer == Send) then 8 else 7);
 } or {
 	assume (((__init == true)) && (__pc == 8));
-	__pc := (if (main_c1_Consumer == Wait) then 11 else 10);
+	logs_producer_Producer := Send_entry;
+	__pc := 7;
 } or {
-	assume (((__init == true)) && (__pc == 11));
-	logs_c1_Consumer := Wait_entry;
-	__pc := 10;
+	assume (((__init == true)) && (__pc == 7));
+	__pc := (if (main_c1_Consumer == Wait) then 10 else 9);
 } or {
 	assume (((__init == true)) && (__pc == 10));
-	__pc := (if (main_c2_Consumer == Wait) then 13 else 12);
+	logs_c1_Consumer := Wait_entry;
+	__pc := 9;
 } or {
-	assume (((__init == true)) && (__pc == 13));
-	logs_c2_Consumer := Wait_entry;
-	__pc := 12;
+	assume (((__init == true)) && (__pc == 9));
+	__pc := (if (main_c2_Consumer == Wait) then 12 else 11);
 } or {
 	assume (((__init == true)) && (__pc == 12));
-	__pc := (if o1_start_Out_producer_Producer then 15 else 14);
+	logs_c2_Consumer := Wait_entry;
+	__pc := 11;
 } or {
-	assume (((__init == true)) && (__pc == 15));
-	__pc := (if (sizeMasterConsumerMessageQueueOfc1 < 4) then 17 else 16);
-} or {
-	assume (((__init == true)) && (__pc == 17));
-	master_ConsumerMessageQueueOfc1[sizeMasterConsumerMessageQueueOfc1] := 1;
-	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 + 1);
-	__pc := 16;
-} or {
-	assume (((__init == true)) && (__pc == 16));
-	o1_start_Out_producer_Producer := false;
-	__pc := 14;
+	assume (((__init == true)) && (__pc == 11));
+	__pc := (if o1_start_Out_producer_Producer then 14 else 13);
 } or {
 	assume (((__init == true)) && (__pc == 14));
-	__pc := (if o2_start_Out_producer_Producer then 19 else 18);
+	__pc := (if (sizeMasterConsumerMessageQueueOfc1 < 4) then 16 else 15);
 } or {
-	assume (((__init == true)) && (__pc == 19));
-	__pc := (if (sizeMasterConsumerMessageQueueOfc2 < 4) then 21 else 20);
+	assume (((__init == true)) && (__pc == 16));
+	master_ConsumerMessageQueueOfc1[sizeMasterConsumerMessageQueueOfc1] := 1;
+	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 + 1);
+	__pc := 15;
 } or {
-	assume (((__init == true)) && (__pc == 21));
-	master_ConsumerMessageQueueOfc2[sizeMasterConsumerMessageQueueOfc2] := 1;
-	sizeMasterConsumerMessageQueueOfc2 := (sizeMasterConsumerMessageQueueOfc2 + 1);
-	__pc := 20;
+	assume (((__init == true)) && (__pc == 15));
+	o1_start_Out_producer_Producer := false;
+	__pc := 13;
 } or {
-	assume (((__init == true)) && (__pc == 20));
-	o2_start_Out_producer_Producer := false;
-	__pc := 18;
+	assume (((__init == true)) && (__pc == 13));
+	__pc := (if o2_start_Out_producer_Producer then 18 else 17);
 } or {
 	assume (((__init == true)) && (__pc == 18));
-	__pc := (if output_start_Out_c1_Consumer then 23 else 22);
+	__pc := (if (sizeMasterConsumerMessageQueueOfc2 < 4) then 20 else 19);
 } or {
-	assume (((__init == true)) && (__pc == 23));
-	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 25 else 24);
+	assume (((__init == true)) && (__pc == 20));
+	master_ConsumerMessageQueueOfc2[sizeMasterConsumerMessageQueueOfc2] := 1;
+	sizeMasterConsumerMessageQueueOfc2 := (sizeMasterConsumerMessageQueueOfc2 + 1);
+	__pc := 19;
 } or {
-	assume (((__init == true)) && (__pc == 25));
-	master_ProducerMessageQueueOfproducer[sizeMasterProducerMessageQueueOfproducer] := 1;
-	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer + 1);
-	__pc := 24;
+	assume (((__init == true)) && (__pc == 19));
+	o2_start_Out_producer_Producer := false;
+	__pc := 17;
 } or {
-	assume (((__init == true)) && (__pc == 24));
-	output_start_Out_c1_Consumer := false;
-	__pc := 22;
+	assume (((__init == true)) && (__pc == 17));
+	__pc := (if output_start_Out_c1_Consumer then 22 else 21);
 } or {
 	assume (((__init == true)) && (__pc == 22));
-	__pc := (if output_start_Out_c2_Consumer then 27 else 26);
+	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 24 else 23);
 } or {
-	assume (((__init == true)) && (__pc == 27));
-	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 29 else 28);
-} or {
-	assume (((__init == true)) && (__pc == 29));
-	master_ProducerMessageQueueOfproducer[sizeMasterProducerMessageQueueOfproducer] := 7;
+	assume (((__init == true)) && (__pc == 24));
+	master_ProducerMessageQueueOfproducer[sizeMasterProducerMessageQueueOfproducer] := 1;
 	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer + 1);
-	__pc := 28;
+	__pc := 23;
 } or {
-	assume (((__init == true)) && (__pc == 28));
-	output_start_Out_c2_Consumer := false;
-	__pc := 26;
+	assume (((__init == true)) && (__pc == 23));
+	output_start_Out_c1_Consumer := false;
+	__pc := 21;
+} or {
+	assume (((__init == true)) && (__pc == 21));
+	__pc := (if output_start_Out_c2_Consumer then 26 else 25);
 } or {
 	assume (((__init == true)) && (__pc == 26));
-	__pc := (if (0 < sizeMasterProducerMessageQueueOfproducer) then 31 else 30);
+	__pc := (if (sizeMasterProducerMessageQueueOfproducer < 4) then 28 else 27);
 } or {
-	assume (((__init == true)) && (__pc == 31));
-	eventId_master_ProducerMessageQueueOfproducer_12896569600 := master_ProducerMessageQueueOfproducer[0];
+	assume (((__init == true)) && (__pc == 28));
+	master_ProducerMessageQueueOfproducer[sizeMasterProducerMessageQueueOfproducer] := 7;
+	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer + 1);
+	__pc := 27;
+} or {
+	assume (((__init == true)) && (__pc == 27));
+	output_start_Out_c2_Consumer := false;
+	__pc := 25;
+} or {
+	assume (((__init == true)) && (__pc == 25));
+	__pc := (if (0 < sizeMasterProducerMessageQueueOfproducer) then 30 else 29);
+} or {
+	assume (((__init == true)) && (__pc == 30));
+	eventId_master_ProducerMessageQueueOfproducer_3482169060 := master_ProducerMessageQueueOfproducer[0];
 	master_ProducerMessageQueueOfproducer := [0 <- master_ProducerMessageQueueOfproducer[1], 1 <- master_ProducerMessageQueueOfproducer[2], 2 <- master_ProducerMessageQueueOfproducer[3], 3 <- 0, default <- 0];
 	sizeMasterProducerMessageQueueOfproducer := (sizeMasterProducerMessageQueueOfproducer - 1);
-	__pc := 32;
+	__pc := 31;
 } or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 0);
-	__pc := 30;
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 0);
+	__pc := 29;
 } or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 1);
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 1);
 	i1_start_In_producer_Producer := true;
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 32;
+} or {
+	assume (((__init == true)) && (__pc == 32));
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 33;
 } or {
 	assume (((__init == true)) && (__pc == 33));
@@ -1635,38 +2079,52 @@ trans {
 } or {
 	assume (((__init == true)) && (__pc == 39));
 	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
 	__pc := 40;
 } or {
 	assume (((__init == true)) && (__pc == 40));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 41;
+} or {
+	assume (((__init == true)) && (__pc == 41));
+	main_producer_Producer := Send;
+	__pc := 42;
+} or {
+	assume (((__init == true)) && (__pc == 42));
 	logs_producer_Producer := Send_entry;
 	__pc := 34;
 } or {
 	assume (((__init == true)) && (__pc == 33));
 	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 41;
-} or {
-	assume (((__init == true)) && (__pc == 41));
-	__pc := (if (main_producer_Producer == Send) then 43 else 42);
+	__pc := 43;
 } or {
 	assume (((__init == true)) && (__pc == 43));
-	logs_producer_Producer := Send_exit;
-	__pc := 42;
+	__pc := (if (main_producer_Producer == Send) then 45 else 44);
 } or {
-	assume (((__init == true)) && (__pc == 42));
-	main_producer_Producer := __Inactive__;
+	assume (((__init == true)) && (__pc == 45));
+	logs_producer_Producer := Send_exit;
 	__pc := 44;
 } or {
 	assume (((__init == true)) && (__pc == 44));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 45;
-} or {
-	assume (((__init == true)) && (__pc == 45));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	main_producer_Producer := __Inactive__;
 	__pc := 46;
 } or {
 	assume (((__init == true)) && (__pc == 46));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 47;
+} or {
+	assume (((__init == true)) && (__pc == 47));
+	o2_start_Out_producer_Producer := true;
+	__pc := 48;
+} or {
+	assume (((__init == true)) && (__pc == 48));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 49;
+} or {
+	assume (((__init == true)) && (__pc == 49));
+	main_producer_Producer := Send;
+	__pc := 50;
+} or {
+	assume (((__init == true)) && (__pc == 50));
 	logs_producer_Producer := Send_entry;
 	__pc := 34;
 } or {
@@ -1675,46 +2133,26 @@ trans {
 	__pc := 34;
 } or {
 	assume (((__init == true)) && (__pc == 34));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 2);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
-	__pc := 47;
-} or {
-	assume (((__init == true)) && (__pc == 47));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 49;
-} or {
-	assume (((__init == true)) && (__pc == 49));
-	__pc := (if (main_producer_Producer == Send) then 51 else 50);
+	logs_producer_Producer := endOfRtc;
+	__pc := 51;
 } or {
 	assume (((__init == true)) && (__pc == 51));
-	logs_producer_Producer := Send_exit;
-	__pc := 50;
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
 } or {
-	assume (((__init == true)) && (__pc == 50));
-	main_producer_Producer := __Inactive__;
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 2);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 52;
 } or {
 	assume (((__init == true)) && (__pc == 52));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 53;
 } or {
 	assume (((__init == true)) && (__pc == 53));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 54;
-} or {
-	assume (((__init == true)) && (__pc == 54));
-	logs_producer_Producer := Send_entry;
-	__pc := 48;
-} or {
-	assume (((__init == true)) && (__pc == 47));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
 	__pc := 55;
 } or {
 	assume (((__init == true)) && (__pc == 55));
@@ -1733,31 +2171,23 @@ trans {
 	__pc := 59;
 } or {
 	assume (((__init == true)) && (__pc == 59));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	o1_start_Out_producer_Producer := true;
 	__pc := 60;
 } or {
 	assume (((__init == true)) && (__pc == 60));
-	logs_producer_Producer := Send_entry;
-	__pc := 48;
-} or {
-	assume (((__init == true)) && (__pc == 47));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 48;
-} or {
-	assume (((__init == true)) && (__pc == 48));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 3);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 61;
 } or {
 	assume (((__init == true)) && (__pc == 61));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	main_producer_Producer := Send;
+	__pc := 62;
+} or {
+	assume (((__init == true)) && (__pc == 62));
+	logs_producer_Producer := Send_entry;
+	__pc := 54;
+} or {
+	assume (((__init == true)) && (__pc == 53));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
 	__pc := 63;
 } or {
 	assume (((__init == true)) && (__pc == 63));
@@ -1776,86 +2206,80 @@ trans {
 	__pc := 67;
 } or {
 	assume (((__init == true)) && (__pc == 67));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	o2_start_Out_producer_Producer := true;
 	__pc := 68;
 } or {
 	assume (((__init == true)) && (__pc == 68));
-	logs_producer_Producer := Send_entry;
-	__pc := 62;
-} or {
-	assume (((__init == true)) && (__pc == 61));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 69;
 } or {
 	assume (((__init == true)) && (__pc == 69));
-	__pc := (if (main_producer_Producer == Send) then 71 else 70);
-} or {
-	assume (((__init == true)) && (__pc == 71));
-	logs_producer_Producer := Send_exit;
+	main_producer_Producer := Send;
 	__pc := 70;
 } or {
 	assume (((__init == true)) && (__pc == 70));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := Send_entry;
+	__pc := 54;
+} or {
+	assume (((__init == true)) && (__pc == 53));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 54;
+} or {
+	assume (((__init == true)) && (__pc == 54));
+	logs_producer_Producer := endOfRtc;
+	__pc := 71;
+} or {
+	assume (((__init == true)) && (__pc == 71));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 3);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 72;
 } or {
 	assume (((__init == true)) && (__pc == 72));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 73;
 } or {
 	assume (((__init == true)) && (__pc == 73));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 74;
-} or {
-	assume (((__init == true)) && (__pc == 74));
-	logs_producer_Producer := Send_entry;
-	__pc := 62;
-} or {
-	assume (((__init == true)) && (__pc == 61));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 62;
-} or {
-	assume (((__init == true)) && (__pc == 62));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 4);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
 	__pc := 75;
 } or {
 	assume (((__init == true)) && (__pc == 75));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 77;
+	__pc := (if (main_producer_Producer == Send) then 77 else 76);
 } or {
 	assume (((__init == true)) && (__pc == 77));
-	__pc := (if (main_producer_Producer == Send) then 79 else 78);
-} or {
-	assume (((__init == true)) && (__pc == 79));
 	logs_producer_Producer := Send_exit;
+	__pc := 76;
+} or {
+	assume (((__init == true)) && (__pc == 76));
+	main_producer_Producer := __Inactive__;
 	__pc := 78;
 } or {
 	assume (((__init == true)) && (__pc == 78));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 79;
+} or {
+	assume (((__init == true)) && (__pc == 79));
+	o1_start_Out_producer_Producer := true;
 	__pc := 80;
 } or {
 	assume (((__init == true)) && (__pc == 80));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 81;
 } or {
 	assume (((__init == true)) && (__pc == 81));
-	o1_start_Out_producer_Producer := true;
 	main_producer_Producer := Send;
 	__pc := 82;
 } or {
 	assume (((__init == true)) && (__pc == 82));
 	logs_producer_Producer := Send_entry;
-	__pc := 76;
+	__pc := 74;
 } or {
-	assume (((__init == true)) && (__pc == 75));
+	assume (((__init == true)) && (__pc == 73));
 	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
 	__pc := 83;
 } or {
@@ -1876,453 +2300,414 @@ trans {
 } or {
 	assume (((__init == true)) && (__pc == 87));
 	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
 	__pc := 88;
 } or {
 	assume (((__init == true)) && (__pc == 88));
-	logs_producer_Producer := Send_entry;
-	__pc := 76;
-} or {
-	assume (((__init == true)) && (__pc == 75));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 76;
-} or {
-	assume (((__init == true)) && (__pc == 76));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 5);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 89;
 } or {
 	assume (((__init == true)) && (__pc == 89));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	main_producer_Producer := Send;
+	__pc := 90;
+} or {
+	assume (((__init == true)) && (__pc == 90));
+	logs_producer_Producer := Send_entry;
+	__pc := 74;
+} or {
+	assume (((__init == true)) && (__pc == 73));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 74;
+} or {
+	assume (((__init == true)) && (__pc == 74));
+	logs_producer_Producer := endOfRtc;
 	__pc := 91;
 } or {
 	assume (((__init == true)) && (__pc == 91));
-	__pc := (if (main_producer_Producer == Send) then 93 else 92);
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
 } or {
-	assume (((__init == true)) && (__pc == 93));
-	logs_producer_Producer := Send_exit;
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 4);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 92;
 } or {
 	assume (((__init == true)) && (__pc == 92));
-	main_producer_Producer := __Inactive__;
-	__pc := 94;
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 93;
 } or {
-	assume (((__init == true)) && (__pc == 94));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	assume (((__init == true)) && (__pc == 93));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
 	__pc := 95;
 } or {
 	assume (((__init == true)) && (__pc == 95));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	__pc := (if (main_producer_Producer == Send) then 97 else 96);
+} or {
+	assume (((__init == true)) && (__pc == 97));
+	logs_producer_Producer := Send_exit;
 	__pc := 96;
 } or {
 	assume (((__init == true)) && (__pc == 96));
-	logs_producer_Producer := Send_entry;
-	__pc := 90;
-} or {
-	assume (((__init == true)) && (__pc == 89));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 97;
-} or {
-	assume (((__init == true)) && (__pc == 97));
-	__pc := (if (main_producer_Producer == Send) then 99 else 98);
-} or {
-	assume (((__init == true)) && (__pc == 99));
-	logs_producer_Producer := Send_exit;
+	main_producer_Producer := __Inactive__;
 	__pc := 98;
 } or {
 	assume (((__init == true)) && (__pc == 98));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 99;
+} or {
+	assume (((__init == true)) && (__pc == 99));
+	o1_start_Out_producer_Producer := true;
 	__pc := 100;
 } or {
 	assume (((__init == true)) && (__pc == 100));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 101;
 } or {
 	assume (((__init == true)) && (__pc == 101));
-	o2_start_Out_producer_Producer := true;
 	main_producer_Producer := Send;
 	__pc := 102;
 } or {
 	assume (((__init == true)) && (__pc == 102));
 	logs_producer_Producer := Send_entry;
-	__pc := 90;
+	__pc := 94;
 } or {
-	assume (((__init == true)) && (__pc == 89));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 90;
-} or {
-	assume (((__init == true)) && (__pc == 90));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 6);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	assume (((__init == true)) && (__pc == 93));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
 	__pc := 103;
 } or {
 	assume (((__init == true)) && (__pc == 103));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 105;
+	__pc := (if (main_producer_Producer == Send) then 105 else 104);
 } or {
 	assume (((__init == true)) && (__pc == 105));
-	__pc := (if (main_producer_Producer == Send) then 107 else 106);
-} or {
-	assume (((__init == true)) && (__pc == 107));
 	logs_producer_Producer := Send_exit;
+	__pc := 104;
+} or {
+	assume (((__init == true)) && (__pc == 104));
+	main_producer_Producer := __Inactive__;
 	__pc := 106;
 } or {
 	assume (((__init == true)) && (__pc == 106));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 107;
+} or {
+	assume (((__init == true)) && (__pc == 107));
+	o2_start_Out_producer_Producer := true;
 	__pc := 108;
 } or {
 	assume (((__init == true)) && (__pc == 108));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 109;
 } or {
 	assume (((__init == true)) && (__pc == 109));
-	o1_start_Out_producer_Producer := true;
 	main_producer_Producer := Send;
 	__pc := 110;
 } or {
 	assume (((__init == true)) && (__pc == 110));
 	logs_producer_Producer := Send_entry;
-	__pc := 104;
+	__pc := 94;
 } or {
-	assume (((__init == true)) && (__pc == 103));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	assume (((__init == true)) && (__pc == 93));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 94;
+} or {
+	assume (((__init == true)) && (__pc == 94));
+	logs_producer_Producer := endOfRtc;
 	__pc := 111;
 } or {
 	assume (((__init == true)) && (__pc == 111));
-	__pc := (if (main_producer_Producer == Send) then 113 else 112);
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
 } or {
-	assume (((__init == true)) && (__pc == 113));
-	logs_producer_Producer := Send_exit;
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 5);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 112;
 } or {
 	assume (((__init == true)) && (__pc == 112));
-	main_producer_Producer := __Inactive__;
-	__pc := 114;
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 113;
 } or {
-	assume (((__init == true)) && (__pc == 114));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	assume (((__init == true)) && (__pc == 113));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
 	__pc := 115;
 } or {
 	assume (((__init == true)) && (__pc == 115));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	__pc := (if (main_producer_Producer == Send) then 117 else 116);
+} or {
+	assume (((__init == true)) && (__pc == 117));
+	logs_producer_Producer := Send_exit;
 	__pc := 116;
 } or {
 	assume (((__init == true)) && (__pc == 116));
-	logs_producer_Producer := Send_entry;
-	__pc := 104;
+	main_producer_Producer := __Inactive__;
+	__pc := 118;
 } or {
-	assume (((__init == true)) && (__pc == 103));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 104;
-} or {
-	assume (((__init == true)) && (__pc == 104));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 7);
-	i2_start_In_producer_Producer := true;
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
-	__pc := 117;
-} or {
-	assume (((__init == true)) && (__pc == 117));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	assume (((__init == true)) && (__pc == 118));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
 	__pc := 119;
 } or {
 	assume (((__init == true)) && (__pc == 119));
-	__pc := (if (main_producer_Producer == Send) then 121 else 120);
-} or {
-	assume (((__init == true)) && (__pc == 121));
-	logs_producer_Producer := Send_exit;
+	o1_start_Out_producer_Producer := true;
 	__pc := 120;
 } or {
 	assume (((__init == true)) && (__pc == 120));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 121;
+} or {
+	assume (((__init == true)) && (__pc == 121));
+	main_producer_Producer := Send;
 	__pc := 122;
 } or {
 	assume (((__init == true)) && (__pc == 122));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := Send_entry;
+	__pc := 114;
+} or {
+	assume (((__init == true)) && (__pc == 113));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
 	__pc := 123;
 } or {
 	assume (((__init == true)) && (__pc == 123));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	__pc := (if (main_producer_Producer == Send) then 125 else 124);
+} or {
+	assume (((__init == true)) && (__pc == 125));
+	logs_producer_Producer := Send_exit;
 	__pc := 124;
 } or {
 	assume (((__init == true)) && (__pc == 124));
-	logs_producer_Producer := Send_entry;
-	__pc := 118;
-} or {
-	assume (((__init == true)) && (__pc == 117));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 125;
-} or {
-	assume (((__init == true)) && (__pc == 125));
-	__pc := (if (main_producer_Producer == Send) then 127 else 126);
-} or {
-	assume (((__init == true)) && (__pc == 127));
-	logs_producer_Producer := Send_exit;
+	main_producer_Producer := __Inactive__;
 	__pc := 126;
 } or {
 	assume (((__init == true)) && (__pc == 126));
-	main_producer_Producer := __Inactive__;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 127;
+} or {
+	assume (((__init == true)) && (__pc == 127));
+	o2_start_Out_producer_Producer := true;
 	__pc := 128;
 } or {
 	assume (((__init == true)) && (__pc == 128));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 129;
 } or {
 	assume (((__init == true)) && (__pc == 129));
-	o2_start_Out_producer_Producer := true;
 	main_producer_Producer := Send;
 	__pc := 130;
 } or {
 	assume (((__init == true)) && (__pc == 130));
 	logs_producer_Producer := Send_entry;
-	__pc := 118;
+	__pc := 114;
 } or {
-	assume (((__init == true)) && (__pc == 117));
+	assume (((__init == true)) && (__pc == 113));
 	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 118;
+	__pc := 114;
 } or {
-	assume (((__init == true)) && (__pc == 118));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 8);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
+	assume (((__init == true)) && (__pc == 114));
+	logs_producer_Producer := endOfRtc;
 	__pc := 131;
 } or {
 	assume (((__init == true)) && (__pc == 131));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 133;
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
 } or {
-	assume (((__init == true)) && (__pc == 133));
-	__pc := (if (main_producer_Producer == Send) then 135 else 134);
-} or {
-	assume (((__init == true)) && (__pc == 135));
-	logs_producer_Producer := Send_exit;
-	__pc := 134;
-} or {
-	assume (((__init == true)) && (__pc == 134));
-	main_producer_Producer := __Inactive__;
-	__pc := 136;
-} or {
-	assume (((__init == true)) && (__pc == 136));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 137;
-} or {
-	assume (((__init == true)) && (__pc == 137));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 138;
-} or {
-	assume (((__init == true)) && (__pc == 138));
-	logs_producer_Producer := Send_entry;
-	__pc := 132;
-} or {
-	assume (((__init == true)) && (__pc == 131));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 139;
-} or {
-	assume (((__init == true)) && (__pc == 139));
-	__pc := (if (main_producer_Producer == Send) then 141 else 140);
-} or {
-	assume (((__init == true)) && (__pc == 141));
-	logs_producer_Producer := Send_exit;
-	__pc := 140;
-} or {
-	assume (((__init == true)) && (__pc == 140));
-	main_producer_Producer := __Inactive__;
-	__pc := 142;
-} or {
-	assume (((__init == true)) && (__pc == 142));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 143;
-} or {
-	assume (((__init == true)) && (__pc == 143));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 144;
-} or {
-	assume (((__init == true)) && (__pc == 144));
-	logs_producer_Producer := Send_entry;
-	__pc := 132;
-} or {
-	assume (((__init == true)) && (__pc == 131));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 6);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 132;
 } or {
 	assume (((__init == true)) && (__pc == 132));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 133;
 } or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 9);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
-	__pc := 145;
-} or {
-	assume (((__init == true)) && (__pc == 145));
+	assume (((__init == true)) && (__pc == 133));
 	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 147;
+	__pc := 135;
 } or {
-	assume (((__init == true)) && (__pc == 147));
-	__pc := (if (main_producer_Producer == Send) then 149 else 148);
+	assume (((__init == true)) && (__pc == 135));
+	__pc := (if (main_producer_Producer == Send) then 137 else 136);
 } or {
-	assume (((__init == true)) && (__pc == 149));
+	assume (((__init == true)) && (__pc == 137));
 	logs_producer_Producer := Send_exit;
-	__pc := 148;
+	__pc := 136;
 } or {
-	assume (((__init == true)) && (__pc == 148));
+	assume (((__init == true)) && (__pc == 136));
 	main_producer_Producer := __Inactive__;
-	__pc := 150;
+	__pc := 138;
 } or {
-	assume (((__init == true)) && (__pc == 150));
+	assume (((__init == true)) && (__pc == 138));
 	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 151;
+	__pc := 139;
 } or {
-	assume (((__init == true)) && (__pc == 151));
+	assume (((__init == true)) && (__pc == 139));
 	o1_start_Out_producer_Producer := true;
+	__pc := 140;
+} or {
+	assume (((__init == true)) && (__pc == 140));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 141;
+} or {
+	assume (((__init == true)) && (__pc == 141));
 	main_producer_Producer := Send;
-	__pc := 152;
+	__pc := 142;
 } or {
-	assume (((__init == true)) && (__pc == 152));
+	assume (((__init == true)) && (__pc == 142));
 	logs_producer_Producer := Send_entry;
-	__pc := 146;
+	__pc := 134;
 } or {
-	assume (((__init == true)) && (__pc == 145));
+	assume (((__init == true)) && (__pc == 133));
 	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 153;
+	__pc := 143;
 } or {
-	assume (((__init == true)) && (__pc == 153));
-	__pc := (if (main_producer_Producer == Send) then 155 else 154);
-} or {
-	assume (((__init == true)) && (__pc == 155));
-	logs_producer_Producer := Send_exit;
-	__pc := 154;
-} or {
-	assume (((__init == true)) && (__pc == 154));
-	main_producer_Producer := __Inactive__;
-	__pc := 156;
-} or {
-	assume (((__init == true)) && (__pc == 156));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 157;
-} or {
-	assume (((__init == true)) && (__pc == 157));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 158;
-} or {
-	assume (((__init == true)) && (__pc == 158));
-	logs_producer_Producer := Send_entry;
-	__pc := 146;
+	assume (((__init == true)) && (__pc == 143));
+	__pc := (if (main_producer_Producer == Send) then 145 else 144);
 } or {
 	assume (((__init == true)) && (__pc == 145));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	logs_producer_Producer := Send_exit;
+	__pc := 144;
+} or {
+	assume (((__init == true)) && (__pc == 144));
+	main_producer_Producer := __Inactive__;
 	__pc := 146;
 } or {
 	assume (((__init == true)) && (__pc == 146));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 147;
 } or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 10);
+	assume (((__init == true)) && (__pc == 147));
+	o2_start_Out_producer_Producer := true;
+	__pc := 148;
+} or {
+	assume (((__init == true)) && (__pc == 148));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 149;
+} or {
+	assume (((__init == true)) && (__pc == 149));
+	main_producer_Producer := Send;
+	__pc := 150;
+} or {
+	assume (((__init == true)) && (__pc == 150));
+	logs_producer_Producer := Send_entry;
+	__pc := 134;
+} or {
+	assume (((__init == true)) && (__pc == 133));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 134;
+} or {
+	assume (((__init == true)) && (__pc == 134));
+	logs_producer_Producer := endOfRtc;
+	__pc := 151;
+} or {
+	assume (((__init == true)) && (__pc == 151));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 7);
+	i2_start_In_producer_Producer := true;
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 152;
+} or {
+	assume (((__init == true)) && (__pc == 152));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 153;
+} or {
+	assume (((__init == true)) && (__pc == 153));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 155;
+} or {
+	assume (((__init == true)) && (__pc == 155));
+	__pc := (if (main_producer_Producer == Send) then 157 else 156);
+} or {
+	assume (((__init == true)) && (__pc == 157));
+	logs_producer_Producer := Send_exit;
+	__pc := 156;
+} or {
+	assume (((__init == true)) && (__pc == 156));
+	main_producer_Producer := __Inactive__;
+	__pc := 158;
+} or {
+	assume (((__init == true)) && (__pc == 158));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
 	__pc := 159;
 } or {
 	assume (((__init == true)) && (__pc == 159));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 161;
-} or {
-	assume (((__init == true)) && (__pc == 161));
-	__pc := (if (main_producer_Producer == Send) then 163 else 162);
-} or {
-	assume (((__init == true)) && (__pc == 163));
-	logs_producer_Producer := Send_exit;
-	__pc := 162;
-} or {
-	assume (((__init == true)) && (__pc == 162));
-	main_producer_Producer := __Inactive__;
-	__pc := 164;
-} or {
-	assume (((__init == true)) && (__pc == 164));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 165;
-} or {
-	assume (((__init == true)) && (__pc == 165));
 	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 166;
-} or {
-	assume (((__init == true)) && (__pc == 166));
-	logs_producer_Producer := Send_entry;
-	__pc := 160;
-} or {
-	assume (((__init == true)) && (__pc == 159));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 167;
-} or {
-	assume (((__init == true)) && (__pc == 167));
-	__pc := (if (main_producer_Producer == Send) then 169 else 168);
-} or {
-	assume (((__init == true)) && (__pc == 169));
-	logs_producer_Producer := Send_exit;
-	__pc := 168;
-} or {
-	assume (((__init == true)) && (__pc == 168));
-	main_producer_Producer := __Inactive__;
-	__pc := 170;
-} or {
-	assume (((__init == true)) && (__pc == 170));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 171;
-} or {
-	assume (((__init == true)) && (__pc == 171));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 172;
-} or {
-	assume (((__init == true)) && (__pc == 172));
-	logs_producer_Producer := Send_entry;
-	__pc := 160;
-} or {
-	assume (((__init == true)) && (__pc == 159));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
 	__pc := 160;
 } or {
 	assume (((__init == true)) && (__pc == 160));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 161;
 } or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 11);
+	assume (((__init == true)) && (__pc == 161));
+	main_producer_Producer := Send;
+	__pc := 162;
+} or {
+	assume (((__init == true)) && (__pc == 162));
+	logs_producer_Producer := Send_entry;
+	__pc := 154;
+} or {
+	assume (((__init == true)) && (__pc == 153));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 163;
+} or {
+	assume (((__init == true)) && (__pc == 163));
+	__pc := (if (main_producer_Producer == Send) then 165 else 164);
+} or {
+	assume (((__init == true)) && (__pc == 165));
+	logs_producer_Producer := Send_exit;
+	__pc := 164;
+} or {
+	assume (((__init == true)) && (__pc == 164));
+	main_producer_Producer := __Inactive__;
+	__pc := 166;
+} or {
+	assume (((__init == true)) && (__pc == 166));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 167;
+} or {
+	assume (((__init == true)) && (__pc == 167));
+	o2_start_Out_producer_Producer := true;
+	__pc := 168;
+} or {
+	assume (((__init == true)) && (__pc == 168));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 169;
+} or {
+	assume (((__init == true)) && (__pc == 169));
+	main_producer_Producer := Send;
+	__pc := 170;
+} or {
+	assume (((__init == true)) && (__pc == 170));
+	logs_producer_Producer := Send_entry;
+	__pc := 154;
+} or {
+	assume (((__init == true)) && (__pc == 153));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 154;
+} or {
+	assume (((__init == true)) && (__pc == 154));
+	logs_producer_Producer := endOfRtc;
+	__pc := 171;
+} or {
+	assume (((__init == true)) && (__pc == 171));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 8);
 	o2_start_Out_producer_Producer := false;
 	o1_start_Out_producer_Producer := false;
+	__pc := 172;
+} or {
+	assume (((__init == true)) && (__pc == 172));
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 173;
 } or {
 	assume (((__init == true)) && (__pc == 173));
@@ -2346,38 +2731,52 @@ trans {
 } or {
 	assume (((__init == true)) && (__pc == 179));
 	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
 	__pc := 180;
 } or {
 	assume (((__init == true)) && (__pc == 180));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 181;
+} or {
+	assume (((__init == true)) && (__pc == 181));
+	main_producer_Producer := Send;
+	__pc := 182;
+} or {
+	assume (((__init == true)) && (__pc == 182));
 	logs_producer_Producer := Send_entry;
 	__pc := 174;
 } or {
 	assume (((__init == true)) && (__pc == 173));
 	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
-	__pc := 181;
-} or {
-	assume (((__init == true)) && (__pc == 181));
-	__pc := (if (main_producer_Producer == Send) then 183 else 182);
+	__pc := 183;
 } or {
 	assume (((__init == true)) && (__pc == 183));
-	logs_producer_Producer := Send_exit;
-	__pc := 182;
+	__pc := (if (main_producer_Producer == Send) then 185 else 184);
 } or {
-	assume (((__init == true)) && (__pc == 182));
-	main_producer_Producer := __Inactive__;
+	assume (((__init == true)) && (__pc == 185));
+	logs_producer_Producer := Send_exit;
 	__pc := 184;
 } or {
 	assume (((__init == true)) && (__pc == 184));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
-	__pc := 185;
-} or {
-	assume (((__init == true)) && (__pc == 185));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	main_producer_Producer := __Inactive__;
 	__pc := 186;
 } or {
 	assume (((__init == true)) && (__pc == 186));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 187;
+} or {
+	assume (((__init == true)) && (__pc == 187));
+	o2_start_Out_producer_Producer := true;
+	__pc := 188;
+} or {
+	assume (((__init == true)) && (__pc == 188));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 189;
+} or {
+	assume (((__init == true)) && (__pc == 189));
+	main_producer_Producer := Send;
+	__pc := 190;
+} or {
+	assume (((__init == true)) && (__pc == 190));
 	logs_producer_Producer := Send_entry;
 	__pc := 174;
 } or {
@@ -2386,46 +2785,26 @@ trans {
 	__pc := 174;
 } or {
 	assume (((__init == true)) && (__pc == 174));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 32));
-	assume (eventId_master_ProducerMessageQueueOfproducer_12896569600 == 12);
-	o2_start_Out_producer_Producer := false;
-	o1_start_Out_producer_Producer := false;
-	__pc := 187;
-} or {
-	assume (((__init == true)) && (__pc == 187));
-	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
-	__pc := 189;
-} or {
-	assume (((__init == true)) && (__pc == 189));
-	__pc := (if (main_producer_Producer == Send) then 191 else 190);
+	logs_producer_Producer := endOfRtc;
+	__pc := 191;
 } or {
 	assume (((__init == true)) && (__pc == 191));
-	logs_producer_Producer := Send_exit;
-	__pc := 190;
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
 } or {
-	assume (((__init == true)) && (__pc == 190));
-	main_producer_Producer := __Inactive__;
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 9);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
 	__pc := 192;
 } or {
 	assume (((__init == true)) && (__pc == 192));
-	logs_producer_Producer := t_from_Send_to_Send_effect;
+	logs_producer_Producer := beginningOfRtc;
 	__pc := 193;
 } or {
 	assume (((__init == true)) && (__pc == 193));
-	o1_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
-	__pc := 194;
-} or {
-	assume (((__init == true)) && (__pc == 194));
-	logs_producer_Producer := Send_entry;
-	__pc := 188;
-} or {
-	assume (((__init == true)) && (__pc == 187));
-	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
 	__pc := 195;
 } or {
 	assume (((__init == true)) && (__pc == 195));
@@ -2444,54 +2823,379 @@ trans {
 	__pc := 199;
 } or {
 	assume (((__init == true)) && (__pc == 199));
-	o2_start_Out_producer_Producer := true;
-	main_producer_Producer := Send;
+	o1_start_Out_producer_Producer := true;
 	__pc := 200;
 } or {
 	assume (((__init == true)) && (__pc == 200));
-	logs_producer_Producer := Send_entry;
-	__pc := 188;
-} or {
-	assume (((__init == true)) && (__pc == 187));
-	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
-	__pc := 188;
-} or {
-	assume (((__init == true)) && (__pc == 188));
-	i2_start_In_producer_Producer := false;
-	i1_start_In_producer_Producer := false;
-	__pc := 30;
-} or {
-	assume (((__init == true)) && (__pc == 30));
-	__pc := (if o1_start_Out_producer_Producer then 202 else 201);
-} or {
-	assume (((__init == true)) && (__pc == 202));
-	__pc := (if (sizeMasterConsumerMessageQueueOfc1 < 4) then 204 else 203);
-} or {
-	assume (((__init == true)) && (__pc == 204));
-	master_ConsumerMessageQueueOfc1[sizeMasterConsumerMessageQueueOfc1] := 1;
-	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 + 1);
-	__pc := 203;
-} or {
-	assume (((__init == true)) && (__pc == 203));
-	o1_start_Out_producer_Producer := false;
+	logs_producer_Producer := raisingEvent_start;
 	__pc := 201;
 } or {
 	assume (((__init == true)) && (__pc == 201));
-	__pc := (if o2_start_Out_producer_Producer then 205 else 0);
+	main_producer_Producer := Send;
+	__pc := 202;
+} or {
+	assume (((__init == true)) && (__pc == 202));
+	logs_producer_Producer := Send_entry;
+	__pc := 194;
+} or {
+	assume (((__init == true)) && (__pc == 193));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 203;
+} or {
+	assume (((__init == true)) && (__pc == 203));
+	__pc := (if (main_producer_Producer == Send) then 205 else 204);
+} or {
+	assume (((__init == true)) && (__pc == 205));
+	logs_producer_Producer := Send_exit;
+	__pc := 204;
+} or {
+	assume (((__init == true)) && (__pc == 204));
+	main_producer_Producer := __Inactive__;
+	__pc := 206;
+} or {
+	assume (((__init == true)) && (__pc == 206));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 207;
+} or {
+	assume (((__init == true)) && (__pc == 207));
+	o2_start_Out_producer_Producer := true;
+	__pc := 208;
+} or {
+	assume (((__init == true)) && (__pc == 208));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 209;
+} or {
+	assume (((__init == true)) && (__pc == 209));
+	main_producer_Producer := Send;
+	__pc := 210;
+} or {
+	assume (((__init == true)) && (__pc == 210));
+	logs_producer_Producer := Send_entry;
+	__pc := 194;
+} or {
+	assume (((__init == true)) && (__pc == 193));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 194;
+} or {
+	assume (((__init == true)) && (__pc == 194));
+	logs_producer_Producer := endOfRtc;
+	__pc := 211;
+} or {
+	assume (((__init == true)) && (__pc == 211));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 10);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
+	__pc := 212;
+} or {
+	assume (((__init == true)) && (__pc == 212));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 213;
+} or {
+	assume (((__init == true)) && (__pc == 213));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 215;
+} or {
+	assume (((__init == true)) && (__pc == 215));
+	__pc := (if (main_producer_Producer == Send) then 217 else 216);
+} or {
+	assume (((__init == true)) && (__pc == 217));
+	logs_producer_Producer := Send_exit;
+	__pc := 216;
+} or {
+	assume (((__init == true)) && (__pc == 216));
+	main_producer_Producer := __Inactive__;
+	__pc := 218;
+} or {
+	assume (((__init == true)) && (__pc == 218));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 219;
+} or {
+	assume (((__init == true)) && (__pc == 219));
+	o1_start_Out_producer_Producer := true;
+	__pc := 220;
+} or {
+	assume (((__init == true)) && (__pc == 220));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 221;
+} or {
+	assume (((__init == true)) && (__pc == 221));
+	main_producer_Producer := Send;
+	__pc := 222;
+} or {
+	assume (((__init == true)) && (__pc == 222));
+	logs_producer_Producer := Send_entry;
+	__pc := 214;
+} or {
+	assume (((__init == true)) && (__pc == 213));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 223;
+} or {
+	assume (((__init == true)) && (__pc == 223));
+	__pc := (if (main_producer_Producer == Send) then 225 else 224);
+} or {
+	assume (((__init == true)) && (__pc == 225));
+	logs_producer_Producer := Send_exit;
+	__pc := 224;
+} or {
+	assume (((__init == true)) && (__pc == 224));
+	main_producer_Producer := __Inactive__;
+	__pc := 226;
+} or {
+	assume (((__init == true)) && (__pc == 226));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 227;
+} or {
+	assume (((__init == true)) && (__pc == 227));
+	o2_start_Out_producer_Producer := true;
+	__pc := 228;
+} or {
+	assume (((__init == true)) && (__pc == 228));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 229;
+} or {
+	assume (((__init == true)) && (__pc == 229));
+	main_producer_Producer := Send;
+	__pc := 230;
+} or {
+	assume (((__init == true)) && (__pc == 230));
+	logs_producer_Producer := Send_entry;
+	__pc := 214;
+} or {
+	assume (((__init == true)) && (__pc == 213));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 214;
+} or {
+	assume (((__init == true)) && (__pc == 214));
+	logs_producer_Producer := endOfRtc;
+	__pc := 231;
+} or {
+	assume (((__init == true)) && (__pc == 231));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 11);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
+	__pc := 232;
+} or {
+	assume (((__init == true)) && (__pc == 232));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 233;
+} or {
+	assume (((__init == true)) && (__pc == 233));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 235;
+} or {
+	assume (((__init == true)) && (__pc == 235));
+	__pc := (if (main_producer_Producer == Send) then 237 else 236);
+} or {
+	assume (((__init == true)) && (__pc == 237));
+	logs_producer_Producer := Send_exit;
+	__pc := 236;
+} or {
+	assume (((__init == true)) && (__pc == 236));
+	main_producer_Producer := __Inactive__;
+	__pc := 238;
+} or {
+	assume (((__init == true)) && (__pc == 238));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 239;
+} or {
+	assume (((__init == true)) && (__pc == 239));
+	o1_start_Out_producer_Producer := true;
+	__pc := 240;
+} or {
+	assume (((__init == true)) && (__pc == 240));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 241;
+} or {
+	assume (((__init == true)) && (__pc == 241));
+	main_producer_Producer := Send;
+	__pc := 242;
+} or {
+	assume (((__init == true)) && (__pc == 242));
+	logs_producer_Producer := Send_entry;
+	__pc := 234;
+} or {
+	assume (((__init == true)) && (__pc == 233));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 243;
+} or {
+	assume (((__init == true)) && (__pc == 243));
+	__pc := (if (main_producer_Producer == Send) then 245 else 244);
+} or {
+	assume (((__init == true)) && (__pc == 245));
+	logs_producer_Producer := Send_exit;
+	__pc := 244;
+} or {
+	assume (((__init == true)) && (__pc == 244));
+	main_producer_Producer := __Inactive__;
+	__pc := 246;
+} or {
+	assume (((__init == true)) && (__pc == 246));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 247;
+} or {
+	assume (((__init == true)) && (__pc == 247));
+	o2_start_Out_producer_Producer := true;
+	__pc := 248;
+} or {
+	assume (((__init == true)) && (__pc == 248));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 249;
+} or {
+	assume (((__init == true)) && (__pc == 249));
+	main_producer_Producer := Send;
+	__pc := 250;
+} or {
+	assume (((__init == true)) && (__pc == 250));
+	logs_producer_Producer := Send_entry;
+	__pc := 234;
+} or {
+	assume (((__init == true)) && (__pc == 233));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 234;
+} or {
+	assume (((__init == true)) && (__pc == 234));
+	logs_producer_Producer := endOfRtc;
+	__pc := 251;
+} or {
+	assume (((__init == true)) && (__pc == 251));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 31));
+	assume (eventId_master_ProducerMessageQueueOfproducer_3482169060 == 12);
+	o2_start_Out_producer_Producer := false;
+	o1_start_Out_producer_Producer := false;
+	__pc := 252;
+} or {
+	assume (((__init == true)) && (__pc == 252));
+	logs_producer_Producer := beginningOfRtc;
+	__pc := 253;
+} or {
+	assume (((__init == true)) && (__pc == 253));
+	assume ((main_producer_Producer == Send) && i1_start_In_producer_Producer);
+	__pc := 255;
+} or {
+	assume (((__init == true)) && (__pc == 255));
+	__pc := (if (main_producer_Producer == Send) then 257 else 256);
+} or {
+	assume (((__init == true)) && (__pc == 257));
+	logs_producer_Producer := Send_exit;
+	__pc := 256;
+} or {
+	assume (((__init == true)) && (__pc == 256));
+	main_producer_Producer := __Inactive__;
+	__pc := 258;
+} or {
+	assume (((__init == true)) && (__pc == 258));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 259;
+} or {
+	assume (((__init == true)) && (__pc == 259));
+	o1_start_Out_producer_Producer := true;
+	__pc := 260;
+} or {
+	assume (((__init == true)) && (__pc == 260));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 261;
+} or {
+	assume (((__init == true)) && (__pc == 261));
+	main_producer_Producer := Send;
+	__pc := 262;
+} or {
+	assume (((__init == true)) && (__pc == 262));
+	logs_producer_Producer := Send_entry;
+	__pc := 254;
+} or {
+	assume (((__init == true)) && (__pc == 253));
+	assume ((main_producer_Producer == Send) && i2_start_In_producer_Producer);
+	__pc := 263;
+} or {
+	assume (((__init == true)) && (__pc == 263));
+	__pc := (if (main_producer_Producer == Send) then 265 else 264);
+} or {
+	assume (((__init == true)) && (__pc == 265));
+	logs_producer_Producer := Send_exit;
+	__pc := 264;
+} or {
+	assume (((__init == true)) && (__pc == 264));
+	main_producer_Producer := __Inactive__;
+	__pc := 266;
+} or {
+	assume (((__init == true)) && (__pc == 266));
+	logs_producer_Producer := t_from_Send_to_Send_effect;
+	__pc := 267;
+} or {
+	assume (((__init == true)) && (__pc == 267));
+	o2_start_Out_producer_Producer := true;
+	__pc := 268;
+} or {
+	assume (((__init == true)) && (__pc == 268));
+	logs_producer_Producer := raisingEvent_start;
+	__pc := 269;
+} or {
+	assume (((__init == true)) && (__pc == 269));
+	main_producer_Producer := Send;
+	__pc := 270;
+} or {
+	assume (((__init == true)) && (__pc == 270));
+	logs_producer_Producer := Send_entry;
+	__pc := 254;
+} or {
+	assume (((__init == true)) && (__pc == 253));
+	assume (!((((main_producer_Producer == Send) && i1_start_In_producer_Producer) || ((main_producer_Producer == Send) && i2_start_In_producer_Producer))));
+	__pc := 254;
+} or {
+	assume (((__init == true)) && (__pc == 254));
+	logs_producer_Producer := endOfRtc;
+	__pc := 271;
+} or {
+	assume (((__init == true)) && (__pc == 271));
+	i1_start_In_producer_Producer := false;
+	i2_start_In_producer_Producer := false;
+	__pc := 29;
+} or {
+	assume (((__init == true)) && (__pc == 29));
+	__pc := (if o1_start_Out_producer_Producer then 273 else 272);
+} or {
+	assume (((__init == true)) && (__pc == 273));
+	__pc := (if (sizeMasterConsumerMessageQueueOfc1 < 4) then 275 else 274);
+} or {
+	assume (((__init == true)) && (__pc == 275));
+	master_ConsumerMessageQueueOfc1[sizeMasterConsumerMessageQueueOfc1] := 1;
+	sizeMasterConsumerMessageQueueOfc1 := (sizeMasterConsumerMessageQueueOfc1 + 1);
+	__pc := 274;
+} or {
+	assume (((__init == true)) && (__pc == 274));
+	o1_start_Out_producer_Producer := false;
+	__pc := 272;
+} or {
+	assume (((__init == true)) && (__pc == 272));
+	__pc := (if o2_start_Out_producer_Producer then 276 else 0);
 	if ((__pc == 0)) {
 		__init := false;
 		__trans := false;
 	}
 } or {
-	assume (((__init == true)) && (__pc == 205));
-	__pc := (if (sizeMasterConsumerMessageQueueOfc2 < 4) then 207 else 206);
+	assume (((__init == true)) && (__pc == 276));
+	__pc := (if (sizeMasterConsumerMessageQueueOfc2 < 4) then 278 else 277);
 } or {
-	assume (((__init == true)) && (__pc == 207));
+	assume (((__init == true)) && (__pc == 278));
 	master_ConsumerMessageQueueOfc2[sizeMasterConsumerMessageQueueOfc2] := 1;
 	sizeMasterConsumerMessageQueueOfc2 := (sizeMasterConsumerMessageQueueOfc2 + 1);
-	__pc := 206;
+	__pc := 277;
 } or {
-	assume (((__init == true)) && (__pc == 206));
+	assume (((__init == true)) && (__pc == 277));
 	o2_start_Out_producer_Producer := false;
 	__pc := 0;
 	__init := false;
