@@ -34,12 +34,12 @@ class LogActionInjector {
 	}
 	
 	def execute() {
-		statechart.allStates.forEach[
+		/*statechart.allStates.forEach[
 			it.injectLogAction
 		]
 		statechart.transitions.forEach[
 			it.injectLogAction
-		]
+		]*/
 	}
 	
 	private dispatch def injectLogAction(Transition transition) {

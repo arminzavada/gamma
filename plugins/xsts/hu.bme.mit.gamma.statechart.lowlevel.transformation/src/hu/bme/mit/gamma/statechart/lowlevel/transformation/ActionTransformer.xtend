@@ -262,7 +262,7 @@ class ActionTransformer {
 		result += lowlevelEvent.isRaised.createReferenceExpression
 			.createAssignment(createTrueExpression)
 		
-		result += createLogStatement => [it.text = "raising_" + port.name + "_" + event.name]
+		//result += createLogStatement => [it.text = "raising_" + port.name + "_" + event.name]
 		
 		return result
 	}
