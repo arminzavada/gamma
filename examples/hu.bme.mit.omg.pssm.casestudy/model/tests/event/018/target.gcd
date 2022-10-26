@@ -5,27 +5,24 @@ import "activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
-}
+} 
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -60,23 +57,27 @@ statechart TargetSC [
 				initial Initial
 				state wait
 				state S1 {
+					exit / log "S1_exit";
 					region S1Region {
 						initial S1Initial
 						state S1_1 {
+							exit / log "S1_1_exit";
 							region S1_1Region {
 								initial S1_1Initial
 								state S1_1_1 {
 									entry / raise completion_s1_1_1.completion;
+									exit / log "S1_1_1_exit";
 								}
 							}
 						}
 					}
 				}
 				state S2 { 
+					exit / log "S2_entry";
 					region S2Region {
 						initial S2Initial
 						state S1_2 {
-							entry / raise completion_s1_2.completion;
+							entry / log "S1_2_entry"; raise completion_s1_2.completion;
 						}
 						state S2Final {
 							entry / raise completion_s2.completion;
@@ -98,7 +99,7 @@ statechart TargetSC [
 		
 	transition "T1_1" from S1Initial to S1_1
 	transition "T1_1_1" from S1_1Initial to S1_1_1
-	transition "T3" from S1_1_1 to S1_2 when completion_s1_1_1.completion
+	transition "T3" from S1_1_1 to S1_2 when completion_s1_1_1.completion / log "T3_effect";
 	
 	transition from S2Initial to S1_2
 	transition "T1_1" from S1_2 to S2Final when completion_s1_2.completion

@@ -5,33 +5,30 @@ import "simple_activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	component doActivity_0 : DoActivity
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
 	
 	// Hooking up doActivity_0
 	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
 	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
 	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
 }
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -71,6 +68,7 @@ statechart TargetSC [
 				initial Initial
 				state waiting
 				state S1 {
+					entry / log "S1_entry";
 					region S2Region {
 						initial S2Initial
 						state S2_1 {
@@ -129,14 +127,14 @@ statechart TargetSC [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 		
 	transition "T1" from Initial to waiting
-	transition "T2" from waiting to S1 when data.start / raise dispatcherControl.ready;
+	transition "T2" from waiting to S1 when data.start / log "T2_effect"; raise dispatcherControl.ready;
 	
 	transition "T2_1" from S2Initial to S2_1
-	transition "T2_2" from S2_1 to S2Final when completion_s2_1.completion
+	transition "T2_2" from S2_1 to S2Final when completion_s2_1.completion / log "T2_2_effect";
 	
 	transition "T3_1" from S3Initial to S3_1
 	transition "T3_1_1" from S3_1Initial to S3_1_1
-	transition "T3_1_2" from S3_1_1 to S3_1Final when completion_s3_1_1.completion
+	transition "T3_1_2" from S3_1_1 to S3_1Final when completion_s3_1_1.completion / log "T3_1_2_effect";
 	
 	// Handling composite completion events for S3_1
 	transition from S3_1CompletionListener_Initial to S3_1CompletionListener_Waiting
@@ -145,7 +143,7 @@ statechart TargetSC [
 	transition from S3_1CompletionListener_activity_0 to S3_1CompletionListener_Done when completion_s3_1final.completion
 	transition from S3_1CompletionListener_S3_1Final to S3_1CompletionListener_Done when activity_0.done
 	
-	transition "T3_2" from S3_1 to S3Final when completion_s3_1.completion
+	transition "T3_2" from S3_1 to S3Final when completion_s3_1.completion / log "T3_2_effect";
 	
 	// Handling composite completion events for S1
 	transition from S1CompletionListener_Initial to S1CompletionListener_Waiting

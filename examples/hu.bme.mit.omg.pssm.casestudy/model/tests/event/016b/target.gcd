@@ -5,27 +5,24 @@ import "activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
-}
+} 
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -62,14 +59,18 @@ statechart TargetSC [
 				initial Initial
 				state wait
 				state S1 {
+					exit / log "S1_exit";
 					region S1Region {
 						initial S1Initial
 						state S1_1
-						state S1_2
+						state S1_2 {
+							exit / log "S1_2_exit";
+						}
 					}
 					region S2Region {
 						initial S2Initial
 						state S2_1 {
+							exit / log "S2_1_exit";
 							region S2_1Region {
 								initial S2_1Initial
 								state S2_1_1
@@ -98,19 +99,19 @@ statechart TargetSC [
 	transition "T2" from wait to S1 when data.start / raise dispatcherControl.ready;
 	
 	transition "T1_1" from S1Initial to S1_1
-	transition "T1_2" from S1_1 to S1_2 when data.continue / raise dispatcherControl.ready;
-	transition "T1_3" from S1_1 to S1_2 when data.continue / raise dispatcherControl.ready;
+	transition "T1_2" from S1_1 to S1_2 when data.continue / log "T1_2_effect"; raise dispatcherControl.ready;
+	transition "T1_3" from S1_1 to S1_2 when data.continue / log "T1_3_effect"; raise dispatcherControl.ready;
 	
 	transition "T2_1" from S2Initial to S2_1
-	transition "T2_2" from S2_1 to S2_2 when data.continue / raise dispatcherControl.ready;
-	transition "T2_3" from S2_1 to S2_2 when data.continue / raise dispatcherControl.ready;
-	transition "T2_4" from S2_1 to S2_2 when data.continue / raise dispatcherControl.ready;
+	transition "T2_2" from S2_1 to S2_2 when data.continue / log "T2_2_effect"; raise dispatcherControl.ready;
+	transition "T2_3" from S2_1 to S2_2 when data.continue / log "T2_3_effect"; raise dispatcherControl.ready;
+	transition "T2_4" from S2_1 to S2_2 when data.continue / log "T2_4_effect"; raise dispatcherControl.ready;
 	
 	transition "T2_1_1" from S2_1Initial to S2_1_1
-	transition "T2_1_2" from S2_1_1 to S2_1Final when data.continue / raise dispatcherControl.ready;
+	transition "T2_1_2" from S2_1_1 to S2_1Final when data.continue / log "T2_1_2_effect"; raise dispatcherControl.ready;
 		
 	transition "T2_2_1" from S2_2Initial to S2_2_1
-	transition "T2_2_2" from S2_2_1 to S2_2Final when data.continue / raise dispatcherControl.ready;
+	transition "T2_2_2" from S2_2_1 to S2_2Final when data.continue / log "T2_2_2_effect"; raise dispatcherControl.ready;
 	
 	transition from S1 to Final when data.continue / raise dispatcherControl.ready;
 }

@@ -3,6 +3,6 @@ import "target"
 analysis {
 	component : System
 	language : Theta
-	optimize : false
+	optimize : false // optimization would remove unreachable node
 	split-by : CHOICE
 }

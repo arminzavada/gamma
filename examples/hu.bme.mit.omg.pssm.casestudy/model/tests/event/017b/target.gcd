@@ -5,33 +5,30 @@ import "simple_activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	component doActivity_0 : DoActivity
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
 	
 	// Hooking up doActivity_0
 	channel [ doActivity_0.controller ] -o)- [ target.activity_0 ]
 	channel [ doActivity_0.dispatcherControl ] -o)- [ dispatcher.dispatcherControlActivity_0 ]
 	channel [ dispatcher.outputDataActivity_0 ] -o)- [ doActivity_0.data ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
 }
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -67,11 +64,12 @@ statechart TargetSC [
 				initial Initial
 				state wait
 				state S1 {
+					entry / log "S1_entry";
 					region S1Region {
 						initial S1Initial
 						state S1_1 {
-							entry / raise activity_0.control(true);
-							exit / raise activity_0.control(false);
+							entry / log "S1_1_entry"; raise activity_0.control(true);
+							exit / log "S1_1_exit"; raise activity_0.control(false);
 						}
 						state S1_1Final
 					}
@@ -90,7 +88,7 @@ statechart TargetSC [
 	transition "T2" from wait to S1 when data.data / raise dispatcherControl.ready;
 	
 	transition "T1_1" from S1Initial to S1_1
-	transition "T1_2" from S1_1 to S1_1Final when data.data / raise dispatcherControl.ready;
+	transition "T1_2" from S1_1 to S1_1Final when data.data / log "T1_2_effect"; raise dispatcherControl.ready;
 		
 	transition "T3" from S1 to Final when data.continue / raise dispatcherControl.ready;
 	

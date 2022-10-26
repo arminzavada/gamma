@@ -5,27 +5,24 @@ import "activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
-}
+} 
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -78,10 +75,10 @@ statechart TargetSC [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
 	transition from Initial to S1
-	transition "T1" from S1 to S3 when data.anotherSignal / raise dispatcherControl.ready;
-	transition "T2_1" from S3 to S1 when data.continue / raise dispatcherControl.ready;
-	transition "T2_2" from S3 to S1 when data.anotherSignal / raise dispatcherControl.ready;
-	transition "T3" from S1 to S2 when data.continue / raise dispatcherControl.ready;
+	transition "T1" from S1 to S3 when data.anotherSignal / log "T1_effect"; raise dispatcherControl.ready;
+	transition "T2_1" from S3 to S1 when data.continue / log "T2_effect"; raise dispatcherControl.ready;
+	transition "T2_2" from S3 to S1 when data.anotherSignal / log "T2_effect"; raise dispatcherControl.ready;
+	transition "T3" from S1 to S2 when data.continue / log "T3_effect"; raise dispatcherControl.ready;
 	transition "T4" from S2 to FinalState1 when completion_s2.completion
 	
 }

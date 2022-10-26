@@ -5,27 +5,24 @@ import "activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
-}
+} 
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -58,13 +55,15 @@ statechart TargetSC [
 				initial Initial
 				state waiting
 				state S1 {
+					entry / log "S1_entry";
 					region S1Region {
 						initial S1Initial
 						state S1_1 {
+							entry / log "S1_1_entry";
 							region S1_1Region {
 								initial S1_1Initial
 								state S1_1_1 {
-									entry / raise completion_s1_1_1.completion;
+									entry / log "S1_1_1_entry"; raise completion_s1_1_1.completion;
 								}
 								state S1_1_1Final
 							}
@@ -81,7 +80,7 @@ statechart TargetSC [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
 	transition "T1" from Initial to waiting
-	transition "T2" from waiting to S1_1_1 when data.start / raise dispatcherControl.ready;
+	transition "T2" from waiting to S1_1_1 when data.start / log "T2_effect"; raise dispatcherControl.ready;
 		
 	transition "T1_1" from S1Initial to S1_1
 	transition "T1_1_1" from S1_1Initial to S1_1_1

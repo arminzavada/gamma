@@ -5,27 +5,24 @@ import "activities"
 import "dispatchers"
  
 scheduled-async System {
-	
-	component eventQueue : EventQueue
+	component messageQueue : MessageQueue
 	component target : Target
 	component dispatcher : Dispatcher
 	
-	// Tester controlling - next, end
-	channel [ dispatcher.queueControl ] -o)- [ eventQueue.queueControl ]
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
 	
-	// Actual target data propagation
-	channel [ eventQueue.data ] -o)- [ dispatcher.inputData ]
+	// Hooking up target
 	channel [ dispatcher.outputData ] -o)- [ target.data ]
-	
-	// Scheduler controlling - ready, ignore
 	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
-
+	
+	// Initialize by executing the Dispatcher component
 	initial execute dispatcher
-
-}
+} 
 
 @Asynchronous
-statechart EventQueue [
+statechart MessageQueue [
 	port queueControl : requires QueueControl
 	
 	port data : provides Data
@@ -61,17 +58,18 @@ statechart TargetSC [
 				initial Initial
 				state waiting
 				state S1 {
+					entry / log "S1_entry";
 					region S1Region {
 						initial S1Initial
 						state S1_1 {
-							entry / raise completion_s1_1.completion;
+							entry / log "S1_1_entry"; raise completion_s1_1.completion;
 						}
 						state S1Final
 					}
 					region S2Region {
 						initial S2Initial
 						state S2_1 {
-							entry / raise completion_s2_1.completion;
+							entry / log "S1_2_entry"; raise completion_s2_1.completion;
 						}
 						state S2Final
 					}
@@ -89,10 +87,10 @@ statechart TargetSC [
 	transition "T1" from Initial to waiting
 	transition "T2" from waiting to S1_1 when data.start / raise dispatcherControl.ready;
 	
-	transition "T1_1" from S1Initial to S1_1
+	transition "T1_1" from S1Initial to S1_1 / log "T1_1_effect";
 	transition "T1_2" from S1_1 to S1Final when completion_s1_1.completion
 	
-	transition "T2_1" from S2Initial to S2_1
+	transition "T2_1" from S2Initial to S2_1 / log "T2_1_effect";
 	transition "T2_2" from S2_1 to S2Final when completion_s2_1.completion
 	
 	transition "T3" from S1 to Final when data.continue / raise dispatcherControl.ready;

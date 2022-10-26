@@ -7,7 +7,7 @@ statechart DispatcherSC [
 	port dispatcherControl : requires DispatcherControl
 	port inputData : requires Data
 	
-	port queueControl : provides QueueControl	
+	port queueControl : provides QueueControl
 	port outputData : provides Data	
 	port outputDataActivity_0 : provides Data
 ] {

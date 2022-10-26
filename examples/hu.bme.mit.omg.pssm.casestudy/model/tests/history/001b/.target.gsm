@@ -29,23 +29,23 @@
       <providedPort instance="//@components.0/@components.1" port="//@components.4/@ports.1"/>
       <requiredPort instance="//@components.0/@components.2" port="//@components.6/@ports.1"/>
     </channels>
-    <components name="eventQueue" type="//@components.1"/>
+    <components name="messageQueue" type="//@components.1"/>
     <components name="target" type="//@components.3"/>
     <components name="dispatcher" type="//@components.5"/>
     <initialExecutionList componentInstance="//@components.0/@components.2"/>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="EventQueue">
+  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="MessageQueue">
     <annotations xsi:type="hu.bme.mit.gamma.statechart.interface:WrapperComponentAnnotation"/>
     <controlSpecifications>
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
     </controlSpecifications>
-    <messageQueues name="EventQueueMessageQueue" priority="1">
+    <messageQueues name="MessageQueueMessageQueue" priority="1">
       <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="4"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.2/@ports.0"/>
     </messageQueues>
-    <wrappedComponent name="eventQueue_EventQueue" type="//@components.2"/>
+    <wrappedComponent name="messageQueue_MessageQueue" type="//@components.2"/>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="EventQueue">
+  <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="MessageQueue">
     <regions name="Main">
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="Initial"/>
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="_0"/>
@@ -124,6 +124,7 @@
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="S1Initial"/>
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:DeepHistoryState" name="S1Deep"/>
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_1">
+                <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_1_entry"/>
                 <entryActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.3">
                   <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>
                 </entryActions>
@@ -131,8 +132,11 @@
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_2">
                 <regions name="S1_2Region">
                   <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="S1_2Initial"/>
-                  <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_2_1"/>
+                  <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_2_1">
+                    <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_2_1_entry"/>
+                  </stateNodes>
                   <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_2_2">
+                    <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_2_2_entry"/>
                     <entryActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.5">
                       <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>
                     </entryActions>
@@ -143,6 +147,8 @@
                     </entryActions>
                   </stateNodes>
                 </regions>
+                <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_2_entry"/>
+                <exitActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_2_exit"/>
               </stateNodes>
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1Final">
                 <entryActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.2">
@@ -150,6 +156,7 @@
                 </entryActions>
               </stateNodes>
             </regions>
+            <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_entry"/>
           </stateNodes>
           <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="Final"/>
         </regions>
@@ -221,6 +228,7 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.1/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="T1_2_2_effect"/>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.1">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.1/@event"/>
       </effects>
@@ -239,7 +247,9 @@
         </eventReference>
       </trigger>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.3" name="T1_4"/>
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.3" name="T1_4">
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="T1_4_effect"/>
+    </transitions>
     <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2/@regions.0/@stateNodes.1" name="T3">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.0">

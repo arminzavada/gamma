@@ -49,24 +49,24 @@
       <providedPort instance="//@components.0/@components.2" port="//@components.6/@ports.5"/>
       <requiredPort instance="//@components.0/@components.3" port="//@components.8/@ports.3"/>
     </channels>
-    <components name="eventQueue" type="//@components.1"/>
+    <components name="messageQueue" type="//@components.1"/>
     <components name="target" type="//@components.3"/>
     <components name="dispatcher" type="//@components.5"/>
     <components name="doActivity_0" type="//@components.7"/>
     <initialExecutionList componentInstance="//@components.0/@components.2"/>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="EventQueue">
+  <components xsi:type="hu.bme.mit.gamma.statechart.composite:AsynchronousAdapter" name="MessageQueue">
     <annotations xsi:type="hu.bme.mit.gamma.statechart.interface:WrapperComponentAnnotation"/>
     <controlSpecifications>
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:AnyTrigger"/>
     </controlSpecifications>
-    <messageQueues name="EventQueueMessageQueue" priority="1">
+    <messageQueues name="MessageQueueMessageQueue" priority="1">
       <capacity xsi:type="hu.bme.mit.gamma.expression:IntegerLiteralExpression" value="4"/>
       <eventReferences xsi:type="hu.bme.mit.gamma.statechart:AnyPortEventReference" port="//@components.2/@ports.0"/>
     </messageQueues>
-    <wrappedComponent name="eventQueue_EventQueue" type="//@components.2"/>
+    <wrappedComponent name="messageQueue_MessageQueue" type="//@components.2"/>
   </components>
-  <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="EventQueue">
+  <components xsi:type="hu.bme.mit.gamma.statechart:SynchronousStatechartDefinition" name="MessageQueue">
     <regions name="Main">
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="Initial"/>
       <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="_0"/>
