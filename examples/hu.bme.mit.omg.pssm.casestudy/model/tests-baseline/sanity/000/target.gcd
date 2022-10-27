@@ -1,0 +1,54 @@
+package target
+
+import "interfaces"
+ 
+scheduled-async System {
+	
+	component producer : Producer
+	component c1 : Consumer
+	component c2 : Consumer
+
+	channel [ producer.o1 ] -o)- [ c1.input ]
+	channel [ producer.o2 ] -o)- [ c2.input ]
+	
+	channel [ c1.output ] -o)- [ producer.i1 ]
+	channel [ c2.output ] -o)- [ producer.i2 ]
+
+	initial execute producer
+
+}
+
+@Asynchronous
+statechart Producer [
+	port o1 : provides Data
+	port o2 : provides Data
+	port i1 : requires Data
+	port i2 : requires Data
+] {
+	region Main {
+		initial Initial
+		state Send
+	}
+	
+	transition from Initial to Send / raise o1.start; raise o2.start;
+	transition from Send to Send when i1.start / raise o1.start;
+	transition from Send to Send when i2.start / raise o2.start;
+}
+
+@Asynchronous
+statechart Consumer [
+	port input : requires Data
+	port output : provides Data
+] {
+	
+	var amount : integer := 5
+	
+	region Main {
+		initial Initial
+		state Wait
+	}
+	
+	transition from Initial to Wait
+	transition from Wait to Wait when input.start [amount > 0]  / amount := amount - 1; raise output.start;
+	
+}

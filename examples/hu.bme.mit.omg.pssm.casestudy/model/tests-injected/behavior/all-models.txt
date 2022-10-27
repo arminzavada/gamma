@@ -1,0 +1,5 @@
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/behavior/001/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/behavior/002/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/behavior/003a/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/behavior/003b/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/behavior/004/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher

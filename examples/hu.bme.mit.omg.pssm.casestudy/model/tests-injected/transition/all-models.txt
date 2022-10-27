@@ -1,0 +1,9 @@
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/001/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/007/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/010/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/015/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/016/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/017/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/019/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/020/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher
+--model "gamma/examples/hu.bme.mit.omg.pssm.casestudy/model/tests/transition/022/target.xsts" --simulate --simtrack logs_target_target,logs_doActivity_0_act,logs_dispatcher_dispatcher

@@ -1,0 +1,109 @@
+package target
+
+import "interfaces"
+import "activities"
+import "dispatchers"
+ 
+scheduled-async System {
+	component messageQueue : MessageQueue
+	component target : Target
+	component dispatcher : Dispatcher
+	
+	// Hooking up MessageQueue
+	channel [ dispatcher.queueControl ] -o)- [ messageQueue.queueControl ]
+	channel [ messageQueue.data ] -o)- [ dispatcher.inputData ]
+	
+	// Hooking up target
+	channel [ dispatcher.outputData ] -o)- [ target.data ]
+	channel [ target.dispatcherControl ] -o)- [ dispatcher.dispatcherControl ]
+	
+	// Initialize by executing the Dispatcher component
+	initial execute dispatcher
+} 
+
+@Asynchronous
+statechart MessageQueue [
+	port queueControl : requires QueueControl
+	
+	port data : provides Data
+] {
+	
+	region Main {
+		initial Initial
+		state _0
+		state _1
+		state _2
+	}
+	
+	transition from Initial to _0
+	transition from _0 to _1 when queueControl.next / raise data.start;
+	transition from _1 to _2 when queueControl.next / raise data.continue;
+	
+}
+
+@RegionSchedule=bottom-up
+statechart TargetSC [
+	port data : requires Data
+	
+	port dispatcherControl : provides DispatcherControl
+	
+	port completion_s1_1 : provides StatechartCompletion
+] {	
+	
+	region Wrapper {
+		initial WrapperInitial
+		state WrapperFunction {
+			region Main {
+				initial Initial
+				state wait
+				state S1 {
+					exit / log "S1_exit";
+					region S1Region {
+						initial S1Initial
+						state S1_1 {
+							entry / raise completion_s1_1.completion;
+							exit / log "S1_1_exit";
+						}
+						state S1Final
+					}
+					region S2Region {
+						initial S2Initial
+						state S2_1 {
+							exit / log "S2_1_exit";
+						}
+						state S2Final
+					}	
+				}
+				state Final
+			}
+		}
+	}
+	
+	transition from WrapperInitial to WrapperFunction
+	
+	@Internal
+	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
+	
+	transition "T1" from Initial to wait
+	transition "T2" from wait to S1_1 when data.start / raise dispatcherControl.ready;
+	
+	transition "T1_1" from S1Initial to S1_1
+	transition "T1_2" from S1_1 to S1Final when completion_s1_1.completion
+	
+	transition "T2_1" from S2Initial to S2_1
+	transition "T2_2" from S2_1 to S2Final when data.pending / raise dispatcherControl.ready;
+	
+	transition "T3" from S1 to Final when data.continue / raise dispatcherControl.ready;
+	
+}
+
+adapter Target of component target : TargetSC {
+	when any / run
+	
+	queue completionQueue(priority = 2, capacity = QUEUE_SIZE) {
+		completion_s1_1.any
+	}
+	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
+		data.any
+	}
+}
