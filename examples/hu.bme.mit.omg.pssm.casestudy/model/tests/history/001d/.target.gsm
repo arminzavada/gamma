@@ -220,19 +220,19 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.2/@event"/>
         </eventReference>
       </trigger>
+      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="T3_effect"/>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.1">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.2/@events.1/@event"/>
       </effects>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" name="T3">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.2" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" name="T4">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.2">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>
         </eventReference>
       </trigger>
-      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="T3_effect"/>
     </transitions>
-    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4" name="T4">
+    <transitions sourceState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.3" targetState="//@components.4/@regions.0/@stateNodes.1/@regions.0/@stateNodes.4" name="T5">
       <trigger xsi:type="hu.bme.mit.gamma.statechart.interface:EventTrigger">
         <eventReference xsi:type="hu.bme.mit.gamma.statechart:PortEventReference" port="//@components.4/@ports.4">
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>

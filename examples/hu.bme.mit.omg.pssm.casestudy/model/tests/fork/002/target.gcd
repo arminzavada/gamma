@@ -130,7 +130,7 @@ statechart TargetSC [
 	transition from S1_1CompletionListener_S1_2Final to S1_1CompletionListener_Done when completion_s1_11.completion
 		
 	transition "T2_5" from S1_1 to S1Final when completion_s1_1.completion
-	transition "T3" from S1 to Final when completion_s1.completion / log "T3_effect";
+	transition "T3" from S1 to Final when completion_s1.completion
 	
 }
 

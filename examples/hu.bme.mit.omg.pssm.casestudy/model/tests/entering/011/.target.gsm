@@ -119,7 +119,7 @@
             </regions>
             <regions name="S2Region">
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="S2Initial"/>
-              <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S2_1">
+              <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_2">
                 <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_2_entry"/>
                 <entryActions xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.4/@ports.3">
                   <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.6/@events.0/@event"/>

@@ -68,7 +68,7 @@ statechart TargetSC [
 					}
 					region S2Region {
 						initial S2Initial
-						state S2_1 {
+						state S1_2 {
 							entry / log "S1_2_entry"; raise completion_s2_1.completion;
 						}
 						state S2Final
@@ -90,8 +90,8 @@ statechart TargetSC [
 	transition "T1_1" from S1Initial to S1_1 / log "T1_1_effect";
 	transition "T1_2" from S1_1 to S1Final when completion_s1_1.completion
 	
-	transition "T2_1" from S2Initial to S2_1 / log "T2_1_effect";
-	transition "T2_2" from S2_1 to S2Final when completion_s2_1.completion
+	transition "T2_1" from S2Initial to S1_2 / log "T2_1_effect";
+	transition "T2_2" from S1_2 to S2Final when completion_s2_1.completion
 	
 	transition "T3" from S1 to Final when data.continue / raise dispatcherControl.ready;
 	

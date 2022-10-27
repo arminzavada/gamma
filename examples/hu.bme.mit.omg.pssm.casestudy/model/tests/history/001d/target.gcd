@@ -95,10 +95,10 @@ statechart TargetSC [
 	transition "T1_1" from S1Initial to S1_1
 	transition "T1_2" from S1_1 to S1_2 when completion_s1_1.completion / log "T1_2_effect";
 	transition "T1_3" from S1_2 to S1Final when data.continue / raise dispatcherControl.ready;
-	transition "T3" from S1_2 to Deep when data.anotherSignal / raise dispatcherControl.ready;
+	transition "T3" from S1_2 to Deep when data.anotherSignal / log "T3_effect"; raise dispatcherControl.ready;
 	
-	transition "T3" from S1 to S2 when completion_s1.completion / log "T3_effect";
-	transition "T4" from S2 to Final when completion_s2.completion
+	transition "T4" from S1 to S2 when completion_s1.completion
+	transition "T5" from S2 to Final when completion_s2.completion
 	
 }
 
