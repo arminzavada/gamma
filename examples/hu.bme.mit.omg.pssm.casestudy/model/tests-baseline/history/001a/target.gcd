@@ -67,7 +67,7 @@ statechart TargetSC [
 						deep history S1Deep
 						state S1_1 {
 							entry / log "S1_1_entry";
-							region S1Region {
+							region S1_1Region {
 								initial S1_1Initial
 								state S1_1_1 {
 									entry / log "S1_1_1_entry"; raise completion_s1_1_1.completion;

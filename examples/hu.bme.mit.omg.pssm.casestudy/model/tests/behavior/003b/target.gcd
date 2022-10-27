@@ -42,7 +42,7 @@ statechart MessageQueue [
 	}
 	
 	transition from Initial to _0
-	transition from _0 to _1 when queueControl.next / log "start"; raise data.start;
+	transition from _0 to _1 when queueControl.next / raise data.start;
 	transition from _1 to _2 when queueControl.next / raise data.continue;
 	
 }

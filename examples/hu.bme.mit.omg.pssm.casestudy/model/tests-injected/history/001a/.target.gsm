@@ -123,7 +123,7 @@
             <regions name="S1Region">
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:DeepHistoryState" name="S1Deep"/>
               <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_1">
-                <regions name="S1Region">
+                <regions name="S1_1Region">
                   <stateNodes xsi:type="hu.bme.mit.gamma.statechart:InitialState" name="S1_1Initial"/>
                   <stateNodes xsi:type="hu.bme.mit.gamma.statechart:State" name="S1_1_1">
                     <entryActions xsi:type="hu.bme.mit.gamma.action:LogStatement" text="S1_1_1_entry"/>

@@ -90,7 +90,6 @@
           <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.1/@events.0/@event"/>
         </eventReference>
       </trigger>
-      <effects xsi:type="hu.bme.mit.gamma.action:LogStatement" text="start"/>
       <effects xsi:type="hu.bme.mit.gamma.statechart:RaiseEventAction" port="//@components.2/@ports.1">
         <event href="platform:/resource/hu.bme.mit.omg.pssm/model/common/interfaces.gcd#//@interfaces.0/@events.0/@event"/>
       </effects>
