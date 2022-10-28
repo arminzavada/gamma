@@ -73,7 +73,7 @@ statechart TargetSC [
 					}
 				}
 				state S2 { 
-					exit / log "S2_entry";
+					entry / log "S2_entry";
 					region S2Region {
 						initial S2Initial
 						state S1_2 {

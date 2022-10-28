@@ -70,10 +70,10 @@ statechart TargetSC [
 	transition from WrapperFunction to WrapperFunction when data.any / raise dispatcherControl.ignore; // default ignore, without exit-entry
 	
 	transition "T1" from Initial to wait
-	transition "T2" from wait to Increment when data.start /  raise dispatcherControl.ready;
+	transition "T2" from wait to Increment when data.start / raise dispatcherControl.ready;
 	
 	transition "T3" from Increment to Choice when completion_increment.completion
-	transition "T4" from Choice to Increment [value < 5] / log "T4_effect";
+	transition "T4" from Choice to Increment [value < 5] / log "T4_effect"; log "None";
 	transition "T5" from Choice to Final [value == 5]
 	
 }

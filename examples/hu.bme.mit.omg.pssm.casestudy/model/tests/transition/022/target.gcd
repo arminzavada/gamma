@@ -70,7 +70,7 @@ statechart TargetSC [
 	
 	transition "T1" from Initial to Waiting
 	transition "T2" from Waiting to Incrementing when data.start / raise dispatcherControl.ready;
-	transition "T3" from Incrementing to Incrementing when completion_incrementing.completion [count < 5] / log "T3_effect"; count := count + 1;
+	transition "T3" from Incrementing to Incrementing when completion_incrementing.completion [count < 5] / log "T3_effect"; log "None"; count := count + 1;
 	transition "T4" from Incrementing to Final when completion_incrementing.completion [count == 5]
 		
 }

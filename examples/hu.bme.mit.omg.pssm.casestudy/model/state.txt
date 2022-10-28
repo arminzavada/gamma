@@ -6,29 +6,29 @@ to-do
 notation:
  - done - it has been modelled in gamma
  - partial - missing gamma implementation
- - interesting - according to EM, it contains some kind of bug
+ - according to EM, it contains some kind of bug
  - need * - something we have not decided how to model yet
  - skip - not interesting
 
 behavior
  - 001 - done
  - 002 - done
- - 003a - done - interesting
- - 003b - done - interesting
- - 004 - done - interesting
+ - 003a - done
+ - 003b - done
+ - 004 - done
 transition
  - 001 - done
  - 007 - done
  - 010 - done
- - 011a - partial, need @Local - interesting
+ - 011a - need @Local
  - 011b - need @Local and entry point
- - 011c - partial, need @Local
- - 011d - need @Local and exit point - interesting
+ - 011c - need @Local
+ - 011d - need @Local and exit point
  - 011e - need @Local and entry and exit point
  - 015 - done
  - 016 - done
- - 017 - done - interesting
- - 019 - done - interesting
+ - 017 - done
+ - 019 - done
  - 020 - done
  - 022 - done
  - 023 - need entry and exit point
@@ -53,14 +53,14 @@ entering
  - 004 - done
  - 005 - done
  - 009 - need entry point
- - 010 - done - interesting
- - 011 - done - interesting
+ - 010 - done
+ - 011 - done
 exiting
  - 001 - done
  - 002 - skip - unorthodox model
- - 003 - done - interesting
+ - 003 - done
  - 004 - need exit point
- - 005 - done - interesting
+ - 005 - done
 entry
  - 002a - need entry point
  - 002b - need entry point
@@ -89,42 +89,42 @@ fork
  - 001 - need exit point
  - 002 - done
 join
- - 001 - done - interesting
+ - 001 - done
  - 002 - done
- - 003 - error - "transition from join nodes cannot have guards" Gamma limitation - interesting
+ - 003 - error - "transition from join nodes cannot have guards" Gamma limitation
 terminate
- - 001 - need terminate - interesting
- - 002 - need terminate - interesting
- - 003 - need terminate - interesting
+ - 001 - need terminate
+ - 002 - need terminate
+ - 003 - need terminate
 final
- - 001 - done - interesting
+ - 001 - done
 history
- - 001a - done - interesting
- - 001b - done - interesting
- - 001c - done - interesting
+ - 001a - done
+ - 001b - done
+ - 001c - done
  - 001d - done
  - 002a - todo
- - 002b - todo - interesting
+ - 002b - todo
  - 002c - todo
  - 002d - todo
 deferred
- - 001 - need deferred dispatcher - interesting
+ - 001 - need deferred dispatcher
  - 002 - need deferred dispatcher
- - 003 - need deferred dispatcher - interesting
- - 004a - need deferred dispatcher - interesting
- - 004b - need deferred dispatcher - interesting
- - 005 - need deferred dispatcher - interesting
- - 006a - need deferred dispatcher - interesting
- - 006b - need deferred dispatcher - interesting
+ - 003 - need deferred dispatcher
+ - 004a - need deferred dispatcher
+ - 004b - need deferred dispatcher
+ - 005 - need deferred dispatcher
+ - 006a - need deferred dispatcher
+ - 006b - need deferred dispatcher
  - 006c - need deferred dispatcher
  - 007 - need deferred dispatcher
 redefinition
- - 001 - skipped
- - 002 - skipped
- - 003 - skipped
- - 004 - skipped
- - 005 - skipped
- - 006 - skipped
+ - 001 - not relevant
+ - 002 - not relevant
+ - 003 - not relevant
+ - 004 - not relevant
+ - 005 - not relevant
+ - 006 - not relevant
 standalone
  - 001 - need entry and exit point
  - 002 - need entry and exit point

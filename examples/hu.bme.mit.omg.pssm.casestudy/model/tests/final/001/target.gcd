@@ -49,6 +49,8 @@ statechart TargetSC [
 	
 	port completion_s1_1 : provides StatechartCompletion
 	port completion_s1_1_1 : provides StatechartCompletion
+	port completion_main1 : provides StatechartCompletion
+	port completion_main2 : provides StatechartCompletion
 ] {	
 	
 	region Wrapper {
@@ -69,16 +71,21 @@ statechart TargetSC [
 						}
 					}
 				}
-				state Final1
+				state Final1 {
+					entry / raise completion_main1.completion;
+				}
 			}
 			region Main2 {
 				initial Initial2
 				state S2_1 {
 					exit / log "S2_1_exit";
 				}
-				state Final2
+				state Final2 {
+					entry / raise completion_main2.completion;
+				}
 			}
 		}
+		state Final
 	}
 	
 	transition from WrapperInitial to WrapperFunction
@@ -94,6 +101,8 @@ statechart TargetSC [
 	transition from Initial2 to S2_1
 	transition from S2_1 to Final2 when data.continue / raise dispatcherControl.ready;
 	
+	transition from WrapperFunction to Final when completion_main1.completion || completion_main2.completion
+	
 }
 
 adapter Target of component target : TargetSC {
@@ -101,7 +110,9 @@ adapter Target of component target : TargetSC {
 	
 	queue completionQueue(priority = 2, capacity = QUEUE_SIZE) {
 		completion_s1_1.any,
-		completion_s1_1_1.any
+		completion_s1_1_1.any,
+		completion_main1.any,
+		completion_main2.any
 	}
 	queue dataQueue(priority = 1, capacity = QUEUE_SIZE) {
 		data.any
